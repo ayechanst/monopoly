@@ -1,5 +1,3 @@
-// pub mod properties;
-// use crate::models::spaces::Properties::Utility;
 use crate::models::spaces::Space;
 
 pub struct Board {
@@ -12,11 +10,15 @@ impl Board {
         // Go
         spaces.push(Space::Go);
         // Brown
-        spaces.push(Space::Property(Deed {
-            name: "Mediterranean Avenue",
-            color: "brown",
-            price: 60,
-        }));
+        // spaces.push(Space::Property(Deed {
+        spaces.push(Space::Property(ColoredProperty(
+            Brown::BrownProperty::MediterraneanAve,
+        )));
+        //     (Deed {
+        //     name: "Mediterranean Avenue",
+        //     color: "brown",
+        //     price: 60,
+        // }));
         // Comm Chest
         spaces.push(Space::CommunityChest);
         // Brown

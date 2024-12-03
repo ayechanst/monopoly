@@ -1,13 +1,20 @@
+use crate::models::{
+    self,
+    spaces::{
+        HouseCount::{self, Four, Hotel, One, Three, Two, Zero},
+        Space,
+    },
+};
 pub enum YellowProperty {
-    Atlantic { houses: HouseCount },
-    Marvin { houses: HouseCount },
-    Ventnor { houses: HouseCount },
+    AtlanticAve { houses: HouseCount },
+    VentnorAve { houses: HouseCount },
+    MarvinGardens { houses: HouseCount },
 }
 
 impl YellowProperty {
     pub fn rent_price(&self) -> i32 {
         match self {
-            AtlanticAve { houses } | VentnorAve => {
+            YellowProperty::AtlanticAve { houses } | YellowProperty::VentnorAve { houses } => {
                 let rent = 22;
                 match houses {
                     Zero => rent,
@@ -18,7 +25,7 @@ impl YellowProperty {
                     Hotel => 1150,
                 }
             }
-            MarvinGardens => {
+            YellowProperty::MarvinGardens { houses } => {
                 let rent = 24;
                 match houses {
                     Zero => rent,
@@ -39,7 +46,9 @@ impl YellowProperty {
 
     pub fn atlantic() -> Self {
         // class method
-        YellowProperty::Atlantic { houses: 0 }
+        YellowProperty::AtlanticAve {
+            houses: HouseCount::Zero,
+        }
     }
     // YellowPropery.atlantic().as_space()
 }

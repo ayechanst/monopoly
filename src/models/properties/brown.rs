@@ -1,3 +1,10 @@
+use crate::models::{
+    self,
+    spaces::{
+        HouseCount::{self, Four, Hotel, One, Three, Two, Zero},
+        Space,
+    },
+};
 pub enum BrownProperty {
     MediterraneanAve { houses: HouseCount },
     BalticAve { houses: HouseCount },
@@ -6,7 +13,7 @@ pub enum BrownProperty {
 impl BrownProperty {
     pub fn rent_price(&self) -> i32 {
         match self {
-            MediterraneanAve { houses } => {
+            BrownProperty::MediterraneanAve { houses } => {
                 let rent = 2;
                 match houses {
                     Zero => rent,
@@ -17,7 +24,7 @@ impl BrownProperty {
                     Hotel => rent * 125,
                 }
             }
-            BalticAve { houses } => {
+            BrownProperty::BalticAve { houses } => {
                 let rent = 4;
                 match houses {
                     Zero => rent,
@@ -30,7 +37,14 @@ impl BrownProperty {
             }
         }
     }
+    pub fn mediterranean_ave(self) -> Self {
+        BrownProperty::MediterraneanAve {
+            houses: HouseCount::Zero,
+        }
+    }
     pub fn as_space(self) -> Space {
-        Space::Property(ColoredProperty::Brown(self))
+        Space::Property(crate::models::spaces::Properties::ColoredProperty(
+            models::spaces::ColoredProperties::Brown(self),
+        ))
     }
 }

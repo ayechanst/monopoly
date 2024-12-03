@@ -1,3 +1,5 @@
+use crate::models::spaces::HouseCount::{self, Four, Hotel, One, Three, Two, Zero};
+
 pub enum LightBlueProperty {
     OrientalAve { houses: HouseCount },
     VermontAve { houses: HouseCount },
@@ -8,7 +10,8 @@ impl LightBlueProperty {
     pub fn rent_price(&self) -> i32 {
         // TODO: if a person has all properties, rent is doubled
         match self {
-            OrientalAve { houses } | VermontAve { houses } => {
+            LightBlueProperty::OrientalAve { houses }
+            | LightBlueProperty::VermontAve { houses } => {
                 let rent = 6;
                 match houses {
                     Zero => rent,
@@ -19,7 +22,7 @@ impl LightBlueProperty {
                     Hotel => 550,
                 }
             }
-            ConnecticutAve { houses } => {
+            LightBlueProperty::ConnecticutAve { houses } => {
                 let rent = 8;
                 match houses {
                     Zero => rent,
@@ -32,42 +35,4 @@ impl LightBlueProperty {
             }
         }
     }
-}
-
-// Pink
-
-pub enum YellowProperty {
-    Atlantic { houses: i32 },
-    Marvin { houses: i32 },
-    Ventnor { houses: i32 },
-}
-
-impl YellowProperty {
-    pub fn rent_price(&self) -> i32 {
-        match self {
-            Atlantic { houses } => {
-                let rent = 22;
-                match houses {
-                    0 => rent,
-                    1 => rent * 5,
-                    2 => todo!(),
-                    3 => todo!(),
-                    4 => todo!(),
-                    5 => todo!(),
-                }
-            }
-            Brown(prop) => prop.rent_price(),
-        }
-    }
-
-    pub fn as_space(self) -> Space {
-        // instance methods
-        Space::Property(ColoredProperty::Yellow(self))
-    }
-
-    pub fn atlantic() -> Self {
-        // class method
-        YellowProperty::Atlantic { houses: 0 }
-    }
-    // YellowPropery.atlantic().as_space()
 }
