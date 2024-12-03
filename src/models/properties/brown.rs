@@ -38,6 +38,7 @@ impl BrownProperty {
         }
     }
     pub fn mediterranean_ave() -> Self {
+        // class method: creates an instance of itself
         BrownProperty::MediterraneanAve {
             houses: HouseCount::Zero,
         }
@@ -48,6 +49,7 @@ impl BrownProperty {
         }
     }
     pub fn as_space(self) -> Space {
+        // instance method: takes in itself, and executes code on itself
         Space::Property(crate::models::spaces::Properties::ColoredProperty(
             models::spaces::ColoredProperties::Brown(self),
         ))

@@ -1,4 +1,4 @@
-use super::properties::BrownProperty;
+use super::properties::{BrownProperty, LightBlueProperty};
 use crate::models::spaces::Space;
 
 pub struct Board {
@@ -12,10 +12,13 @@ impl Board {
         spaces.push(Space::Go);
         // Brown
         spaces.push(BrownProperty::mediterranean_ave().as_space());
-        spaces.push(BrownProperty::baltic_ave().as_space());
-        // 1st Community Chest
         spaces.push(Space::CommunityChest);
-        // Brown
+        spaces.push(BrownProperty::baltic_ave().as_space());
+        // Light Blue
+        spaces.push(LightBlueProperty::oriental_ave().as_space());
+        spaces.push(Space::Chance);
+        spaces.push(LightBlueProperty::vermont_ave().as_space());
+        spaces.push(LightBlueProperty::connecticut_ave().as_space());
         Board { spaces }
     }
 }

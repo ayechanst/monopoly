@@ -1,4 +1,10 @@
-use crate::models::spaces::HouseCount::{self, Four, Hotel, One, Three, Two, Zero};
+use crate::models::{
+    self,
+    spaces::{
+        HouseCount::{self, Four, Hotel, One, Three, Two, Zero},
+        Space,
+    },
+};
 
 pub enum LightBlueProperty {
     OrientalAve { houses: HouseCount },
@@ -34,5 +40,25 @@ impl LightBlueProperty {
                 }
             }
         }
+    }
+    pub fn oriental_ave() -> Self {
+        LightBlueProperty::OrientalAve {
+            houses: HouseCount::Zero,
+        }
+    }
+    pub fn vermont_ave() -> Self {
+        LightBlueProperty::VermontAve {
+            houses: HouseCount::Zero,
+        }
+    }
+    pub fn connecticut_ave() -> Self {
+        LightBlueProperty::ConnecticutAve {
+            houses: HouseCount::Zero,
+        }
+    }
+    pub fn as_space(self) -> Space {
+        Space::Property(crate::models::spaces::Properties::ColoredProperty(
+            models::spaces::ColoredProperties::LightBlue(self),
+        ))
     }
 }
