@@ -1,3 +1,4 @@
+use super::properties::BrownProperty;
 use crate::models::spaces::Space;
 
 pub struct Board {
@@ -10,23 +11,12 @@ impl Board {
         // Go
         spaces.push(Space::Go);
         // Brown
-        // spaces.push(Space::Property(Deed {
-        spaces.push(Space::Property(ColoredProperty(
-            Brown::BrownProperty::MediterraneanAve,
-        )));
-        //     (Deed {
-        //     name: "Mediterranean Avenue",
-        //     color: "brown",
-        //     price: 60,
-        // }));
-        // Comm Chest
+        spaces.push(BrownProperty::mediterranean_ave().as_space());
+        spaces.push(BrownProperty::baltic_ave().as_space());
+        // 1st Community Chest
         spaces.push(Space::CommunityChest);
         // Brown
-        spaces.push(Space::Property(Deed {
-            name: "Baltic Avenue",
-            color: "brown",
-            price: 60,
-        }));
+        Board { spaces }
     }
 }
 // Tax

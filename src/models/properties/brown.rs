@@ -37,7 +37,12 @@ impl BrownProperty {
             }
         }
     }
-    pub fn mediterranean_ave(self) -> Self {
+    pub fn mediterranean_ave() -> Self {
+        BrownProperty::MediterraneanAve {
+            houses: HouseCount::Zero,
+        }
+    }
+    pub fn baltic_ave() -> Self {
         BrownProperty::MediterraneanAve {
             houses: HouseCount::Zero,
         }
