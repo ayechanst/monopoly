@@ -7,16 +7,16 @@ use crate::models::{
 };
 
 #[derive(Debug)]
-pub enum YellowProperty {
-    AtlanticAve { houses: HouseCount },
-    VentnorAve { houses: HouseCount },
-    MarvinGardens { houses: HouseCount },
+pub enum GreenProperty {
+    PacificAve { houses: HouseCount },
+    NorthCarolinaAve { houses: HouseCount },
+    PennsylvaniaAve { houses: HouseCount },
 }
 
-impl YellowProperty {
+impl GreenProperty {
     pub fn rent_price(&self) -> i32 {
         match self {
-            YellowProperty::AtlanticAve { houses } => {
+            GreenProperty::PacificAve { houses } => {
                 let rent = 22;
                 match houses {
                     Zero => rent,
@@ -27,7 +27,7 @@ impl YellowProperty {
                     Hotel => 1150,
                 }
             }
-            YellowProperty::VentnorAve { houses } => {
+            GreenProperty::NorthCarolinaAve { houses } => {
                 let rent = 22;
                 match houses {
                     Zero => rent,
@@ -38,7 +38,7 @@ impl YellowProperty {
                     Hotel => 1150,
                 }
             }
-            YellowProperty::MarvinGardens { houses } => {
+            GreenProperty::PennsylvaniaAve { houses } => {
                 let rent = 24;
                 match houses {
                     Zero => rent,
@@ -52,25 +52,25 @@ impl YellowProperty {
         }
     }
 
-    pub fn atlantic_ave() -> Self {
-        YellowProperty::AtlanticAve {
+    pub fn pacific_ave() -> Self {
+        GreenProperty::PacificAve {
             houses: HouseCount::Zero,
         }
     }
-    pub fn ventnor_ave() -> Self {
-        YellowProperty::VentnorAve {
+    pub fn north_carolina_ave() -> Self {
+        GreenProperty::NorthCarolinaAve {
             houses: HouseCount::Zero,
         }
     }
-    pub fn marvin_gardens() -> Self {
-        YellowProperty::MarvinGardens {
+    pub fn pennsylvania_ave() -> Self {
+        GreenProperty::PennsylvaniaAve {
             houses: HouseCount::Zero,
         }
     }
     pub fn as_space(self) -> Space {
         // instance method: takes in itself, and executes code on itself
         Space::Property(crate::models::spaces::Properties::ColoredProperty(
-            models::spaces::ColoredProperties::Yellow(self),
+            models::spaces::ColoredProperties::Green(self),
         ))
     }
 }

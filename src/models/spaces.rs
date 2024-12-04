@@ -1,9 +1,10 @@
 mod properties;
 use crate::models::properties::{
-    BrownProperty, LightBlueProperty, OrangeProperty, PinkProperty, RedProperty, Utilities,
-    YellowProperty,
+    BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty, PinkProperty,
+    RedProperty, Utilities, YellowProperty,
 };
 
+#[derive(Debug)]
 pub enum Space {
     Property(Properties), // ColoredProperty | Utility | Station
     Chance,
@@ -14,7 +15,7 @@ pub enum Space {
     Jail,
     FreeParking,
 }
-
+#[derive(Debug)]
 pub enum Properties {
     ColoredProperty(ColoredProperties),
     Utility(Utilities),
@@ -22,6 +23,7 @@ pub enum Properties {
 }
 
 // Colored Properties Logic
+#[derive(Debug)]
 pub enum ColoredProperties {
     Brown(BrownProperty),
     LightBlue(LightBlueProperty),
@@ -29,6 +31,8 @@ pub enum ColoredProperties {
     Orange(OrangeProperty),
     Red(RedProperty),
     Yellow(YellowProperty),
+    Green(GreenProperty),
+    Blue(BlueProperty),
 }
 
 impl ColoredProperties {
@@ -40,6 +44,8 @@ impl ColoredProperties {
             ColoredProperties::Orange(prop) => prop.rent_price(),
             ColoredProperties::Red(prop) => prop.rent_price(),
             ColoredProperties::Yellow(prop) => prop.rent_price(), // prop is YellowProperty
+            ColoredProperties::Green(prop) => prop.rent_price(),  // prop is YellowProperty
+            ColoredProperties::Blue(prop) => prop.rent_price(),   // prop is YellowProperty
         }
     }
 }
@@ -53,6 +59,7 @@ impl ColoredProperties {
 
 // Stations Logic
 
+#[derive(Debug)]
 pub enum Stations {
     Reading,
     Pennsylvania,
@@ -68,11 +75,13 @@ impl Stations {
 }
 
 //////////////////// other
+#[derive(Debug)]
 pub enum TaxType {
     IncomeTax,
     LuxuryTax,
 }
 
+#[derive(Debug)]
 pub enum HouseCount {
     Zero,
     One,

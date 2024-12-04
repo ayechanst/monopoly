@@ -6,6 +6,7 @@ use crate::models::{
     },
 };
 
+#[derive(Debug)]
 pub enum OrangeProperty {
     StJamesPlace { houses: HouseCount },
     TennesseeAve { houses: HouseCount },

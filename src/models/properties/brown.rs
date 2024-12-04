@@ -5,6 +5,7 @@ use crate::models::{
         Space,
     },
 };
+#[derive(Debug)]
 pub enum BrownProperty {
     MediterraneanAve { houses: HouseCount },
     BalticAve { houses: HouseCount },

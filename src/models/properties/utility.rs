@@ -1,5 +1,6 @@
 use crate::models::spaces::Space;
 
+#[derive(Debug)]
 pub enum Utilities {
     ElectricCompany,
     WaterWorks,
