@@ -1,4 +1,6 @@
-use super::properties::{BrownProperty, LightBlueProperty};
+use super::properties::{
+    BrownProperty, LightBlueProperty, OrangeProperty, PinkProperty, RedProperty, Utilities,
+};
 use crate::models::spaces::Space;
 
 pub struct Board {
@@ -19,6 +21,22 @@ impl Board {
         spaces.push(Space::Chance);
         spaces.push(LightBlueProperty::vermont_ave().as_space());
         spaces.push(LightBlueProperty::connecticut_ave().as_space());
+        spaces.push(Space::Jail);
+        // Pink
+        spaces.push(PinkProperty::st_charles_place().as_space());
+        spaces.push(Utilities::electric_company().as_space());
+        spaces.push(PinkProperty::states_ave().as_space());
+        spaces.push(PinkProperty::virginia_ave().as_space());
+        // Orange
+        spaces.push(OrangeProperty::st_james_place().as_space());
+        spaces.push(OrangeProperty::tennessee_ave().as_space());
+        spaces.push(OrangeProperty::new_york_ave().as_space());
+        // Red
+        spaces.push(RedProperty::kentucky_ave().as_space());
+        spaces.push(RedProperty::indiana_ave().as_space());
+        spaces.push(RedProperty::illinois_ave().as_space());
+        // Yellow
+
         Board { spaces }
     }
 }
