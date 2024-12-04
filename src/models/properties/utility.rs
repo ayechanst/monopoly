@@ -1,9 +1,9 @@
-use crate::models::spaces::Space;
+use crate::models::spaces::{PropertyState, Space};
 
 #[derive(Debug)]
 pub enum Utilities {
-    ElectricCompany,
-    WaterWorks,
+    ElectricCompany { state: PropertyState },
+    WaterWorks { state: PropertyState },
 }
 
 impl Utilities {
@@ -11,11 +11,25 @@ impl Utilities {
     pub fn rent_price(&self) -> i32 {
         420
     }
+    pub fn for_sale(&self) -> bool {
+        match self {
+            Utilities::ElectricCompany { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+            Utilities::WaterWorks { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+        }
+    }
     pub fn electric_company() -> Self {
-        Utilities::ElectricCompany
+        Utilities::ElectricCompany {
+            state: PropertyState::ForSale,
+        }
     }
     pub fn water_works() -> Self {
-        Utilities::WaterWorks
+        Utilities::WaterWorks {
+            state: PropertyState::ForSale,
+        }
     }
     pub fn as_space(self) -> Space {
         // instance method: takes in itself, and executes code on itself

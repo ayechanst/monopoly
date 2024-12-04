@@ -22,6 +22,16 @@ pub enum Properties {
     Railroad(Railroads),
 }
 
+impl Properties {
+    pub fn is_for_sale(&self) -> bool {
+        match self {
+            Properties::ColoredProperty(colored_properties) => colored_properties.for_sale(),
+            Properties::Utility(utilities) => utilities.for_sale(),
+            Properties::Railroad(railroads) => railroads.for_sale(),
+        }
+    }
+}
+
 // Colored Properties Logic
 #[derive(Debug)]
 pub enum ColoredProperties {
@@ -48,6 +58,18 @@ impl ColoredProperties {
             ColoredProperties::Blue(prop) => prop.rent_price(),   // prop is YellowProperty
         }
     }
+    pub fn for_sale(&self) -> bool {
+        match self {
+            ColoredProperties::Brown(brown_property) => brown_property.for_sale(),
+            ColoredProperties::LightBlue(light_blue_property) => todo!(),
+            ColoredProperties::Pink(pink_property) => todo!(),
+            ColoredProperties::Orange(orange_property) => todo!(),
+            ColoredProperties::Red(red_property) => todo!(),
+            ColoredProperties::Yellow(yellow_property) => todo!(),
+            ColoredProperties::Green(green_property) => todo!(),
+            ColoredProperties::Blue(blue_property) => todo!(),
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -58,4 +80,12 @@ pub enum HouseCount {
     Three,
     Four,
     Hotel,
+}
+
+#[derive(Debug)]
+pub enum PropertyState {
+    ForSale,
+    Owned,
+    Houses(HouseCount),
+    Mortgaged,
 }

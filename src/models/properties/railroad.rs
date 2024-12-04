@@ -1,11 +1,11 @@
-use crate::models::spaces::Space;
+use crate::models::spaces::{PropertyState, Space};
 
 #[derive(Debug)]
 pub enum Railroads {
-    Reading,
-    Pennsylvania,
-    Bo,
-    ShortLine,
+    Reading { state: PropertyState },
+    Pennsylvania { state: PropertyState },
+    Bo { state: PropertyState },
+    ShortLine { state: PropertyState },
 }
 
 impl Railroads {
@@ -13,21 +13,45 @@ impl Railroads {
     pub fn rent_price(&self) -> i32 {
         6699
     }
+    pub fn for_sale(&self) -> bool {
+        match self {
+            Railroads::Reading { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+            Railroads::Pennsylvania { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+            Railroads::Bo { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+            Railroads::ShortLine { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+        }
+    }
 
     pub fn reading() -> Self {
-        Railroads::Reading
+        Railroads::Reading {
+            state: PropertyState::ForSale,
+        }
     }
 
     pub fn pennsylvania() -> Self {
-        Railroads::Pennsylvania
+        Railroads::Pennsylvania {
+            state: PropertyState::ForSale,
+        }
     }
 
     pub fn bo() -> Self {
-        Railroads::Bo
+        Railroads::Bo {
+            state: PropertyState::ForSale,
+        }
     }
 
     pub fn shortline() -> Self {
-        Railroads::ShortLine
+        Railroads::ShortLine {
+            state: PropertyState::ForSale,
+        }
     }
 
     pub fn as_space(self) -> Space {

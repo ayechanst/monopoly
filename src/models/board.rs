@@ -80,7 +80,12 @@ impl Board {
             Space::Property(properties) => match properties {
                 super::spaces::Properties::ColoredProperty(colored_properties) => {
                     match colored_properties {
-                        super::spaces::ColoredProperties::Brown(brown_property) => todo!(),
+                        super::spaces::ColoredProperties::Brown(brown_property) => {
+                            match brown_property {
+                                BrownProperty::MediterraneanAve { houses } => todo!(), // add more than just houses
+                                BrownProperty::BalticAve { houses } => todo!(),
+                            }
+                        }
                         super::spaces::ColoredProperties::LightBlue(light_blue_property) => todo!(),
                         super::spaces::ColoredProperties::Pink(pink_property) => todo!(),
                         super::spaces::ColoredProperties::Orange(orange_property) => todo!(),
