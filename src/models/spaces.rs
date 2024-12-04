@@ -1,4 +1,3 @@
-mod properties;
 use crate::models::properties::{
     BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty, PinkProperty,
     Railroads, RedProperty, Utilities, YellowProperty,
@@ -9,7 +8,8 @@ pub enum Space {
     Property(Properties), // ColoredProperty | Utility | Station
     Chance,
     CommunityChest,
-    Tax(TaxType),
+    IncomeTax,
+    LuxuryTax,
     Go,
     GoToJail,
     Jail,
@@ -48,13 +48,6 @@ impl ColoredProperties {
             ColoredProperties::Blue(prop) => prop.rent_price(),   // prop is YellowProperty
         }
     }
-}
-
-//////////////////// other
-#[derive(Debug)]
-pub enum TaxType {
-    IncomeTax,
-    LuxuryTax,
 }
 
 #[derive(Debug)]
