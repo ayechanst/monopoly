@@ -14,7 +14,8 @@ pub struct Board {
 }
 
 impl Board {
-    pub fn new() -> Board {
+    pub fn new() -> Self {
+        // pub fn new() -> Board {
         let mut spaces = Vec::new();
         // Bottom 0-9
         spaces.push(Space::Go); // 0
@@ -70,10 +71,45 @@ impl Board {
 
         Board { spaces, players }
     }
-    pub fn player_turn(mut player: Player) {
+    pub fn player_turn(&mut self, mut player: Player) {
         // option to propose trade
         player.roll_dice();
         let position = player.position;
+        let space_landed_on = &self.spaces[position as usize];
+        match space_landed_on {
+            Space::Property(properties) => match properties {
+                super::spaces::Properties::ColoredProperty(colored_properties) => {
+                    match colored_properties {
+                        super::spaces::ColoredProperties::Brown(brown_property) => todo!(),
+                        super::spaces::ColoredProperties::LightBlue(light_blue_property) => todo!(),
+                        super::spaces::ColoredProperties::Pink(pink_property) => todo!(),
+                        super::spaces::ColoredProperties::Orange(orange_property) => todo!(),
+                        super::spaces::ColoredProperties::Red(red_property) => todo!(),
+                        super::spaces::ColoredProperties::Yellow(yellow_property) => todo!(),
+                        super::spaces::ColoredProperties::Green(green_property) => todo!(),
+                        super::spaces::ColoredProperties::Blue(blue_property) => todo!(),
+                    }
+                }
+                super::spaces::Properties::Utility(utilities) => match utilities {
+                    Utilities::ElectricCompany => todo!(),
+                    Utilities::WaterWorks => todo!(),
+                },
+                super::spaces::Properties::Railroad(railroads) => match railroads {
+                    Railroads::Reading => todo!(),
+                    Railroads::Pennsylvania => todo!(),
+                    Railroads::Bo => todo!(),
+                    Railroads::ShortLine => todo!(),
+                },
+            },
+            Space::Chance => todo!(),
+            Space::CommunityChest => todo!(),
+            Space::IncomeTax => todo!(),
+            Space::LuxuryTax => todo!(),
+            Space::Go => todo!(),
+            Space::GoToJail => todo!(),
+            Space::Jail => todo!(),
+            Space::FreeParking => todo!(),
+        }
     }
 }
 

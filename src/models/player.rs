@@ -34,12 +34,14 @@ impl Player {
     }
     pub fn movement(dice: (i32, i32), position: i32) -> i32 {
         let dice_total = dice.0 + dice.1;
-        if (position + dice_total >= 39) {
+        if position + dice_total >= 39 {
             (position - 40) + dice_total
         } else {
             position + dice_total
         }
     }
+
+    // updates the player's true position
     pub fn roll_dice(&mut self) {
         let dice_roll = Self::dice_logic();
         let doubles = Self::check_doubles(dice_roll);
