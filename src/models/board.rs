@@ -70,6 +70,11 @@ impl Board {
 
         Board { spaces, players }
     }
+    pub fn player_turn(mut player: Player) {
+        // option to propose trade
+        player.roll_dice();
+        let position = player.position;
+    }
 }
 
 // 22 properties

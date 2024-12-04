@@ -4,13 +4,13 @@ use rand::Rng;
 
 #[derive(Debug)]
 pub struct Player {
-    player_number: u8,
-    money: i64,
-    properties: Vec<Properties>,
-    get_out_of_jail_cards: u8,
-    player_state: PlayerState,
-    player_position: u8,
-    player_roll: i32,
+    pub player_number: u8,
+    pub money: i64,
+    pub properties: Vec<Properties>,
+    pub get_out_of_jail_cards: u8,
+    pub player_state: PlayerState,
+    pub position: i32,
+    pub player_roll: i32,
 }
 
 impl Player {
@@ -21,19 +21,40 @@ impl Player {
             properties: Vec::new(),
             get_out_of_jail_cards: 0,
             player_state: PlayerState::NotTheirTurn,
-            player_position: 0,
+            position: 0,
             player_roll: 0,
         }
     }
-    pub fn roll_dice(&mut self) -> (i32, i32) {
+    pub fn dice_logic() -> (i32, i32) {
         let mut rng = rand::thread_rng();
-        let die1 = rng.gen_range(1..=6);
-        let die2 = rng.gen_range(1..=6);
-        self.player_roll = die1 + die2;
-        (die1, die2)
+        (rng.gen_range(1..=6), rng.gen_range(1..=6))
     }
+    pub fn check_doubles(dice: (i32, i32)) -> bool {
+        dice.0 == dice.1
+    }
+    pub fn movement(dice: (i32, i32), position: i32) -> i32 {
+        let dice_total = dice.0 + dice.1;
+        if (position + dice_total >= 39) {
+            (position - 40) + dice_total
+        } else {
+            position + dice_total
+        }
+    }
+    pub fn roll_dice(&mut self) {
+        let dice_roll = Self::dice_logic();
+        let doubles = Self::check_doubles(dice_roll);
+        let new_position = Self::movement(dice_roll, self.position);
+        self.position = new_position;
+    }
+
+    // 1. Player rolls die
+    // 2. Player moves
+    // 3. Something checks what they landed on
+    // 4. That brings up a set of options (buy, pay rent, or nothing)
+    // 5. The player can trade
 }
 
+// payment logic, probably will be a trait shared with the bank
 #[derive(Debug)]
 pub enum PlayerState {
     NotTheirTurn,
