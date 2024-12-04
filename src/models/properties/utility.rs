@@ -14,7 +14,7 @@ impl Utilities {
     pub fn electric_company() -> Self {
         Utilities::ElectricCompany
     }
-    pub fn water_works(&self) -> Self {
+    pub fn water_works() -> Self {
         Utilities::WaterWorks
     }
     pub fn as_space(self) -> Space {

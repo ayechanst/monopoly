@@ -1,7 +1,7 @@
 mod properties;
 use crate::models::properties::{
     BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty, PinkProperty,
-    RedProperty, Utilities, YellowProperty,
+    Railroads, RedProperty, Utilities, YellowProperty,
 };
 
 #[derive(Debug)]
@@ -19,7 +19,7 @@ pub enum Space {
 pub enum Properties {
     ColoredProperty(ColoredProperties),
     Utility(Utilities),
-    Station(Stations),
+    Railroad(Railroads),
 }
 
 // Colored Properties Logic
@@ -47,30 +47,6 @@ impl ColoredProperties {
             ColoredProperties::Green(prop) => prop.rent_price(),  // prop is YellowProperty
             ColoredProperties::Blue(prop) => prop.rent_price(),   // prop is YellowProperty
         }
-    }
-}
-
-// Utilities Logic
-
-// pub enum Utilities {
-//     ElectricCompany,
-//     WaterWorks,
-// }
-
-// Stations Logic
-
-#[derive(Debug)]
-pub enum Stations {
-    Reading,
-    Pennsylvania,
-    Bo,
-    ShortLine,
-}
-
-impl Stations {
-    // NewRailRoad.rent_price(count of railroads)
-    pub fn rent_price(count: u32) -> u32 {
-        count * 100
     }
 }
 
