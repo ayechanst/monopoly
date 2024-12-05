@@ -41,7 +41,14 @@ impl Properties {
             Properties::Railroad(railroads) => railroads.buy_property(player),
         }
     }
-    pub fn pay_rent(&mut self, owner: &mut Player, renter: &mut Player) {
+    pub fn get_owner(&self) -> Player {
+        match self {
+            Properties::ColoredProperty(colored_properties) => todo!(),
+            Properties::Utility(utilities) => todo!(),
+            Properties::Railroad(railroads) => todo!(),
+        }
+    }
+    pub fn pay_rent(&mut self, renter: &mut Player) {
         match self {
             Properties::ColoredProperty(colored_properties) => todo!(),
             Properties::Utility(utilities) => todo!(),

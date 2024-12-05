@@ -51,7 +51,28 @@ impl BrownProperty {
         }
     }
 
-    // pub fn pay_rent(&self, )
+    // pub fn pay_rent(&self, renter: &mut Player) {
+    //     match self {
+    //         BrownProperty::MediterraneanAve { state } => {
+    //             match state {
+    //                 PropertyState::Owned(owner) => match owner {},
+    //                 _ => 0,
+    //             };
+    //         }
+    //         BrownProperty::BalticAve { state } => todo!(),
+    //     }
+    // }
+    pub fn get_owner(&self) -> Player {
+        match self {
+            BrownProperty::MediterraneanAve { state } => {
+                if *state != PropertyState::ForSale {
+                    // 1. get the owner out of Owned
+                    // 2. convert the owner to the corresponding Player struct
+                }
+            }
+            BrownProperty::BalticAve { state } => todo!(),
+        }
+    }
 
     pub fn for_sale(&self) -> bool {
         match self {
