@@ -1,19 +1,24 @@
+// use crate::models::{
+//     self,
+//     board::Board,
+//     player::{self, Player},
+//     space::{
+//         ColoredProperties,
+//         HouseCount::{self, HouseCount::Four, HouseCount::Hotel, HouseCount::One, HouseCount::Three, HouseCount::Two, HouseCount::Zero},
+//         Properties, PropertyState, Space,
+//     },
+// };
+
 use crate::models::{
-    self,
     board::Board,
-    player::{self, Player},
+    player::Player,
     spaces::{
-        ColoredProperties,
-        HouseCount::{self, Four, Hotel, One, Three, Two, Zero},
-        Properties, PropertyState, Space,
+        properties::properties::Properties,
+        space::{ColoredProperties, HouseCount, PropertyState, Space},
     },
 };
-// #[derive(Debug)]
-// pub enum BrownProperty {
-//     MediterraneanAve { houses: HouseCount },
-//     BalticAve { houses: HouseCount },
-// }
-#[derive(Debug, PartialEq)]
+
+#[derive(Debug, PartialEq, Clone)]
 pub enum BrownProperty {
     MediterraneanAve { state: PropertyState },
     BalticAve { state: PropertyState },
@@ -26,12 +31,12 @@ impl BrownProperty {
                 let rent = 2;
                 match state {
                     PropertyState::Houses(house_count) => match house_count {
-                        Zero => rent,
-                        One => rent * 5,
-                        Two => rent * 15,
-                        Three => rent * 45,
-                        Four => rent * 80,
-                        Hotel => rent * 125,
+                        HouseCount::Zero => rent,
+                        HouseCount::One => rent * 5,
+                        HouseCount::Two => rent * 15,
+                        HouseCount::Three => rent * 45,
+                        HouseCount::Four => rent * 80,
+                        HouseCount::Hotel => rent * 125,
                     },
                     _ => rent,
                 }
@@ -40,12 +45,12 @@ impl BrownProperty {
                 let rent = 4;
                 match state {
                     PropertyState::Houses(house_count) => match house_count {
-                        Zero => rent,
-                        One => rent * 5,
-                        Two => rent * 15,
-                        Three => rent * 45,
-                        Four => rent * 80,
-                        Hotel => 450,
+                        HouseCount::Zero => rent,
+                        HouseCount::One => rent * 5,
+                        HouseCount::Two => rent * 15,
+                        HouseCount::Three => rent * 45,
+                        HouseCount::Four => rent * 80,
+                        HouseCount::Hotel => 450,
                     },
                     _ => rent,
                 }
@@ -152,8 +157,6 @@ impl BrownProperty {
     }
     pub fn as_space(self) -> Space {
         // instance method: takes in itself, and executes code on itself
-        Space::Property(crate::models::spaces::Properties::ColoredProperty(
-            models::spaces::ColoredProperties::Brown(self),
-        ))
+        Space::Property(Properties::ColoredProperty(ColoredProperties::Brown(self)))
     }
 }

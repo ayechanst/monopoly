@@ -1,9 +1,10 @@
+use super::properties::Properties;
 use crate::models::{
     player::Player,
-    spaces::{Properties, PropertyState, Space},
+    spaces::space::{PropertyState, Space},
 };
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Utilities {
     ElectricCompany { state: PropertyState },
     WaterWorks { state: PropertyState },
@@ -57,7 +58,6 @@ impl Utilities {
         }
     }
     pub fn as_space(self) -> Space {
-        // instance method: takes in itself, and executes code on itself
-        Space::Property(crate::models::spaces::Properties::Utility(self))
+        Space::Property(Properties::Utility(self))
     }
 }

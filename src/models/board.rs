@@ -1,10 +1,17 @@
 use super::{
     player::Player,
-    properties::{
-        BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty,
-        PinkProperty, Railroads, RedProperty, Utilities, YellowProperty,
+    spaces::{
+        properties::{
+            colored_properties::{
+                colored_properties::ColoredProperties, BlueProperty, BrownProperty, GreenProperty,
+                LightBlueProperty, OrangeProperty, PinkProperty, RedProperty, YellowProperty,
+            },
+            properties::Properties,
+            railroad::Railroads,
+            utility::Utilities,
+        },
+        space::Space,
     },
-    spaces::Space,
 };
 
 #[derive(Debug)]
@@ -77,25 +84,21 @@ impl Board {
         let space_landed_on = &self.spaces[position as usize];
         match space_landed_on {
             Space::Property(properties) => match properties {
-                super::spaces::Properties::ColoredProperty(colored_properties) => {
-                    match colored_properties {
-                        super::spaces::ColoredProperties::Brown(brown_property) => {
-                            match brown_property {
-                                BrownProperty::MediterraneanAve { state } => {}
-                                BrownProperty::BalticAve { state } => todo!(),
-                            }
-                        }
-                        super::spaces::ColoredProperties::LightBlue(light_blue_property) => todo!(),
-                        super::spaces::ColoredProperties::Pink(pink_property) => todo!(),
-                        super::spaces::ColoredProperties::Orange(orange_property) => todo!(),
-                        super::spaces::ColoredProperties::Red(red_property) => todo!(),
-                        super::spaces::ColoredProperties::Yellow(yellow_property) => todo!(),
-                        super::spaces::ColoredProperties::Green(green_property) => todo!(),
-                        super::spaces::ColoredProperties::Blue(blue_property) => todo!(),
-                    }
-                }
-                super::spaces::Properties::Utility(utilities) => todo!(),
-                super::spaces::Properties::Railroad(railroads) => todo!(),
+                Properties::ColoredProperty(colored_properties) => match colored_properties {
+                    ColoredProperties::Brown(brown_property) => match brown_property {
+                        BrownProperty::MediterraneanAve { state } => {}
+                        BrownProperty::BalticAve { state } => todo!(),
+                    },
+                    ColoredProperties::LightBlue(light_blue_property) => todo!(),
+                    ColoredProperties::Pink(pink_property) => todo!(),
+                    ColoredProperties::Orange(orange_property) => todo!(),
+                    ColoredProperties::Red(red_property) => todo!(),
+                    ColoredProperties::Yellow(yellow_property) => todo!(),
+                    ColoredProperties::Green(green_property) => todo!(),
+                    ColoredProperties::Blue(blue_property) => todo!(),
+                },
+                Properties::Utility(utilities) => todo!(),
+                Properties::Railroad(railroads) => todo!(),
             },
             Space::Chance => todo!(),
             Space::CommunityChest => todo!(),

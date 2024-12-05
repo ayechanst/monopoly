@@ -1,9 +1,6 @@
-use crate::models::{
-    self,
-    spaces::{
-        HouseCount::{self, Four, Hotel, One, Three, Two, Zero},
-        Space,
-    },
+use crate::models::spaces::{
+    properties::properties::Properties,
+    space::{ColoredProperties, HouseCount, Space},
 };
 
 #[derive(Debug)]
@@ -19,34 +16,34 @@ impl GreenProperty {
             GreenProperty::PacificAve { houses } => {
                 let rent = 22;
                 match houses {
-                    Zero => rent,
-                    One => rent * 5,
-                    Two => 330,
-                    Three => 800,
-                    Four => 975,
-                    Hotel => 1150,
+                    HouseCount::Zero => rent,
+                    HouseCount::One => rent * 5,
+                    HouseCount::Two => 330,
+                    HouseCount::Three => 800,
+                    HouseCount::Four => 975,
+                    HouseCount::Hotel => 1150,
                 }
             }
             GreenProperty::NorthCarolinaAve { houses } => {
                 let rent = 22;
                 match houses {
-                    Zero => rent,
-                    One => rent * 5,
-                    Two => 330,
-                    Three => 800,
-                    Four => 975,
-                    Hotel => 1150,
+                    HouseCount::Zero => rent,
+                    HouseCount::One => rent * 5,
+                    HouseCount::Two => 330,
+                    HouseCount::Three => 800,
+                    HouseCount::Four => 975,
+                    HouseCount::Hotel => 1150,
                 }
             }
             GreenProperty::PennsylvaniaAve { houses } => {
                 let rent = 24;
                 match houses {
-                    Zero => rent,
-                    One => rent * 5,
-                    Two => 360,
-                    Three => 850,
-                    Four => 1025,
-                    Hotel => 1200,
+                    HouseCount::Zero => rent,
+                    HouseCount::One => rent * 5,
+                    HouseCount::Two => 360,
+                    HouseCount::Three => 850,
+                    HouseCount::Four => 1025,
+                    HouseCount::Hotel => 1200,
                 }
             }
         }
@@ -69,8 +66,6 @@ impl GreenProperty {
     }
     pub fn as_space(self) -> Space {
         // instance method: takes in itself, and executes code on itself
-        Space::Property(crate::models::spaces::Properties::ColoredProperty(
-            models::spaces::ColoredProperties::Green(self),
-        ))
+        Space::Property(Properties::ColoredProperty(ColoredProperties::Green(self)))
     }
 }

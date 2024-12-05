@@ -1,4 +1,4 @@
-use super::spaces::Properties;
+use crate::models::spaces::properties::properties::Properties;
 use rand::Rng;
 
 #[derive(Debug, PartialEq, Clone)]

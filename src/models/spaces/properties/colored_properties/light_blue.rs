@@ -1,6 +1,6 @@
 use crate::models::{
     self,
-    spaces::{
+    space::{
         HouseCount::{self, Four, Hotel, One, Three, Two, Zero},
         Space,
     },
@@ -68,8 +68,8 @@ impl LightBlueProperty {
         }
     }
     pub fn as_space(self) -> Space {
-        Space::Property(crate::models::spaces::Properties::ColoredProperty(
-            models::spaces::ColoredProperties::LightBlue(self),
+        Space::Property(crate::models::space::Properties::ColoredProperty(
+            models::space::ColoredProperties::LightBlue(self),
         ))
     }
 }

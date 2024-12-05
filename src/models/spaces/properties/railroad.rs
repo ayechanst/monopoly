@@ -1,10 +1,11 @@
 use crate::models::{
     player::Player,
-    spaces::{Properties, PropertyState, Space},
+    spaces::space::{PropertyState, Space},
 };
 
-// #[derive(Debug)]
-#[derive(Debug, PartialEq)]
+use super::properties::Properties;
+
+#[derive(Debug, PartialEq, Clone)]
 pub enum Railroads {
     Reading { state: PropertyState },
     Pennsylvania { state: PropertyState },
@@ -99,7 +100,6 @@ impl Railroads {
     }
 
     pub fn as_space(self) -> Space {
-        // instance method: takes in itself, and executes code on itself
-        Space::Property(crate::models::spaces::Properties::Railroad(self))
+        Space::Property(Properties::Railroad(self))
     }
 }
