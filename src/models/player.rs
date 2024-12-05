@@ -1,7 +1,7 @@
 use super::spaces::Properties;
 use rand::Rng;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Player {
     pub player_number: u8,
     pub money: i64,
@@ -25,8 +25,8 @@ impl Player {
         }
     }
 
-    pub fn add_property(&mut self, property: Properties) {
-        self.properties.push(property);
+    pub fn add_property(&mut self, bought_property: Properties) {
+        self.properties.push(bought_property);
     }
 
     pub fn dice_logic() -> (i32, i32) {
@@ -63,7 +63,7 @@ impl Player {
 }
 
 // payment logic, probably will be a trait shared with the bank
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum PlayerState {
     NotTheirTurn,
     TheirTurn,

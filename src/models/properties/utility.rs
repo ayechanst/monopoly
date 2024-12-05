@@ -1,6 +1,6 @@
 use crate::models::{
     player::Player,
-    spaces::{PropertyState, Space},
+    spaces::{Properties, PropertyState, Space},
 };
 
 #[derive(Debug, PartialEq)]
@@ -29,13 +29,19 @@ impl Utilities {
             Utilities::ElectricCompany { state } => {
                 if *state == PropertyState::ForSale {
                     player.money -= 150;
-                    *state = PropertyState::Owned(player.player_number);
+                    let bought_property = Properties::Utility(Utilities::ElectricCompany {
+                        state: PropertyState::Owned,
+                    });
+                    player.add_property(bought_property);
                 }
             }
             Utilities::WaterWorks { state } => {
                 if *state == PropertyState::ForSale {
                     player.money -= 150;
-                    *state = PropertyState::Owned(player.player_number);
+                    let bought_property = Properties::Utility(Utilities::WaterWorks {
+                        state: PropertyState::Owned,
+                    });
+                    player.add_property(bought_property);
                 }
             }
         }

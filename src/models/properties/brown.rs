@@ -1,9 +1,11 @@
 use crate::models::{
     self,
-    player::Player,
+    board::Board,
+    player::{self, Player},
     spaces::{
+        ColoredProperties,
         HouseCount::{self, Four, Hotel, One, Three, Two, Zero},
-        PropertyState, Space,
+        Properties, PropertyState, Space,
     },
 };
 // #[derive(Debug)]
@@ -63,16 +65,41 @@ impl BrownProperty {
     //     }
     // }
 
-    pub fn get_owner(&self) -> Player {
+    pub fn get_owner(&self, board: Board) -> Option<Player> {
+        let players = board.players;
         match self {
             BrownProperty::MediterraneanAve { state } => {
-                if *state != PropertyState::ForSale {
-
-                    // 1. get the owner out of Owned
-                    // 2. convert the owner to the corresponding Player struct
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::ColoredProperty(ColoredProperties::Brown(
+                            brown_property,
+                        )) = property
+                        {
+                            if brown_property == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
                 }
+                None
             }
-            BrownProperty::BalticAve { state } => todo!(),
+            BrownProperty::BalticAve { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::ColoredProperty(ColoredProperties::Brown(
+                            brown_property,
+                        )) = property
+                        {
+                            if brown_property == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
         }
     }
 
@@ -91,16 +118,23 @@ impl BrownProperty {
             BrownProperty::MediterraneanAve { state } => {
                 if *state == PropertyState::ForSale {
                     player.money -= 60;
-                    // *state = PropertyState::Owned(player.player_number);
-                    let property = BrownProperty::MediterraneanAve {
-                        state: PropertyState::Owned,
-                    }
+                    let bought_property = Properties::ColoredProperty(ColoredProperties::Brown(
+                        BrownProperty::MediterraneanAve {
+                            state: PropertyState::Owned,
+                        },
+                    ));
+                    player.add_property(bought_property);
                 }
             }
             BrownProperty::BalticAve { state } => {
                 if *state == PropertyState::ForSale {
+                    let bought_property = Properties::ColoredProperty(ColoredProperties::Brown(
+                        BrownProperty::BalticAve {
+                            state: PropertyState::Owned,
+                        },
+                    ));
+                    player.add_property(bought_property);
                     player.money -= 60;
-                    *state = PropertyState::Owned(player.player_number);
                 }
             }
         }

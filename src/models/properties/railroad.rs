@@ -1,6 +1,6 @@
 use crate::models::{
     player::Player,
-    spaces::{PropertyState, Space},
+    spaces::{Properties, PropertyState, Space},
 };
 
 // #[derive(Debug)]
@@ -38,25 +38,37 @@ impl Railroads {
             Railroads::Reading { state } => {
                 if *state == PropertyState::ForSale {
                     player.money -= 200;
-                    *state = PropertyState::Owned(player.player_number);
+                    let bought_property = Properties::Railroad(Railroads::Reading {
+                        state: PropertyState::Owned,
+                    });
+                    player.add_property(bought_property);
                 }
             }
             Railroads::Pennsylvania { state } => {
                 if *state == PropertyState::ForSale {
                     player.money -= 200;
-                    *state = PropertyState::Owned(player.player_number);
+                    let bought_property = Properties::Railroad(Railroads::Pennsylvania {
+                        state: PropertyState::Owned,
+                    });
+                    player.add_property(bought_property);
                 }
             }
             Railroads::Bo { state } => {
                 if *state == PropertyState::ForSale {
                     player.money -= 200;
-                    *state = PropertyState::Owned(player.player_number);
+                    let bought_property = Properties::Railroad(Railroads::Bo {
+                        state: PropertyState::Owned,
+                    });
+                    player.add_property(bought_property);
                 }
             }
             Railroads::ShortLine { state } => {
                 if *state == PropertyState::ForSale {
                     player.money -= 200;
-                    *state = PropertyState::Owned(player.player_number);
+                    let bought_property = Properties::Railroad(Railroads::ShortLine {
+                        state: PropertyState::Owned,
+                    });
+                    player.add_property(bought_property);
                 }
             }
         }
