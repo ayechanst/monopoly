@@ -62,10 +62,12 @@ impl BrownProperty {
     //         BrownProperty::BalticAve { state } => todo!(),
     //     }
     // }
+
     pub fn get_owner(&self) -> Player {
         match self {
             BrownProperty::MediterraneanAve { state } => {
                 if *state != PropertyState::ForSale {
+
                     // 1. get the owner out of Owned
                     // 2. convert the owner to the corresponding Player struct
                 }
@@ -89,7 +91,10 @@ impl BrownProperty {
             BrownProperty::MediterraneanAve { state } => {
                 if *state == PropertyState::ForSale {
                     player.money -= 60;
-                    *state = PropertyState::Owned(player.player_number);
+                    // *state = PropertyState::Owned(player.player_number);
+                    let property = BrownProperty::MediterraneanAve {
+                        state: PropertyState::Owned,
+                    }
                 }
             }
             BrownProperty::BalticAve { state } => {

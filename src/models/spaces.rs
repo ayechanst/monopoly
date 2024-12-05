@@ -112,7 +112,8 @@ impl ColoredProperties {
 #[derive(Debug, PartialEq)]
 pub enum PropertyState {
     ForSale,
-    Owned(u8),
+    // Owned(u8),
+    Owned,
     Houses(HouseCount),
     Mortgaged,
 }

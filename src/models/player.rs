@@ -24,13 +24,20 @@ impl Player {
             player_roll: 0,
         }
     }
+
+    pub fn add_property(&mut self, property: Properties) {
+        self.properties.push(property);
+    }
+
     pub fn dice_logic() -> (i32, i32) {
         let mut rng = rand::thread_rng();
         (rng.gen_range(1..=6), rng.gen_range(1..=6))
     }
+
     pub fn check_doubles(dice: (i32, i32)) -> bool {
         dice.0 == dice.1
     }
+
     pub fn movement(dice: (i32, i32), position: i32) -> i32 {
         let dice_total = dice.0 + dice.1;
         if position + dice_total >= 39 {

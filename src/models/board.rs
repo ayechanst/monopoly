@@ -15,7 +15,6 @@ pub struct Board {
 
 impl Board {
     pub fn new() -> Self {
-        // pub fn new() -> Board {
         let mut spaces = Vec::new();
         // Bottom 0-9
         spaces.push(Space::Go); // 0
