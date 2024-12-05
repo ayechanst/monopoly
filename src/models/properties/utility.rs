@@ -1,6 +1,9 @@
-use crate::models::spaces::{PropertyState, Space};
+use crate::models::{
+    player::Player,
+    spaces::{PropertyState, Space},
+};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Utilities {
     ElectricCompany { state: PropertyState },
     WaterWorks { state: PropertyState },
@@ -18,6 +21,22 @@ impl Utilities {
             }
             Utilities::WaterWorks { state } => {
                 matches!(state, PropertyState::ForSale)
+            }
+        }
+    }
+    pub fn buy_property(&mut self, player: &mut Player) {
+        match self {
+            Utilities::ElectricCompany { state } => {
+                if *state == PropertyState::ForSale {
+                    player.money -= 150;
+                    *state = PropertyState::Owned(player.player_number);
+                }
+            }
+            Utilities::WaterWorks { state } => {
+                if *state == PropertyState::ForSale {
+                    player.money -= 150;
+                    *state = PropertyState::Owned(player.player_number);
+                }
             }
         }
     }

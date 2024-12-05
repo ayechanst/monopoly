@@ -1,5 +1,6 @@
 use crate::models::{
     self,
+    player::Player,
     spaces::{
         HouseCount::{self, Four, Hotel, One, Three, Two, Zero},
         PropertyState, Space,
@@ -10,7 +11,7 @@ use crate::models::{
 //     MediterraneanAve { houses: HouseCount },
 //     BalticAve { houses: HouseCount },
 // }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum BrownProperty {
     MediterraneanAve { state: PropertyState },
     BalticAve { state: PropertyState },
@@ -49,14 +50,32 @@ impl BrownProperty {
             }
         }
     }
+
+    // pub fn pay_rent(&self, )
+
     pub fn for_sale(&self) -> bool {
-        // put this on utils and trains also
         match self {
             BrownProperty::MediterraneanAve { state } => {
                 matches!(state, PropertyState::ForSale)
             }
             BrownProperty::BalticAve { state } => {
                 matches!(state, PropertyState::ForSale)
+            }
+        }
+    }
+    pub fn buy_property(&mut self, player: &mut Player) {
+        match self {
+            BrownProperty::MediterraneanAve { state } => {
+                if *state == PropertyState::ForSale {
+                    player.money -= 60;
+                    *state = PropertyState::Owned(player.player_number);
+                }
+            }
+            BrownProperty::BalticAve { state } => {
+                if *state == PropertyState::ForSale {
+                    player.money -= 60;
+                    *state = PropertyState::Owned(player.player_number);
+                }
             }
         }
     }

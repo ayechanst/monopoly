@@ -3,7 +3,9 @@ use crate::models::properties::{
     Railroads, RedProperty, Utilities, YellowProperty,
 };
 
-#[derive(Debug)]
+use super::player::{self, Player};
+
+#[derive(Debug, PartialEq)]
 pub enum Space {
     Property(Properties), // ColoredProperty | Utility | Station
     Chance,
@@ -15,7 +17,7 @@ pub enum Space {
     Jail,
     FreeParking,
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Properties {
     ColoredProperty(ColoredProperties),
     Utility(Utilities),
@@ -30,10 +32,26 @@ impl Properties {
             Properties::Railroad(railroads) => railroads.for_sale(),
         }
     }
+    pub fn buy_property(&mut self, player: &mut Player) {
+        match self {
+            Properties::ColoredProperty(colored_properties) => {
+                colored_properties.buy_property(player)
+            }
+            Properties::Utility(utilities) => utilities.buy_property(player),
+            Properties::Railroad(railroads) => railroads.buy_property(player),
+        }
+    }
+    pub fn pay_rent(&mut self, owner: &mut Player, renter: &mut Player) {
+        match self {
+            Properties::ColoredProperty(colored_properties) => todo!(),
+            Properties::Utility(utilities) => todo!(),
+            Properties::Railroad(railroads) => todo!(),
+        }
+    }
 }
 
 // Colored Properties Logic
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ColoredProperties {
     Brown(BrownProperty),
     LightBlue(LightBlueProperty),
@@ -70,9 +88,37 @@ impl ColoredProperties {
             ColoredProperties::Blue(blue_property) => todo!(),
         }
     }
+    pub fn buy_property(&mut self, player: &mut Player) {
+        match self {
+            ColoredProperties::Brown(brown_property) => brown_property.buy_property(player),
+            ColoredProperties::LightBlue(light_blue_property) => todo!(),
+            ColoredProperties::Pink(pink_property) => todo!(),
+            ColoredProperties::Orange(orange_property) => todo!(),
+            ColoredProperties::Red(red_property) => todo!(),
+            ColoredProperties::Yellow(yellow_property) => todo!(),
+            ColoredProperties::Green(green_property) => todo!(),
+            ColoredProperties::Blue(blue_property) => todo!(),
+        }
+    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
+pub enum PropertyState {
+    ForSale,
+    Owned(u8),
+    Houses(HouseCount),
+    Mortgaged,
+}
+
+// #[derive(Debug, PartialEq)]
+// pub enum Players {
+//     PlayerOne,
+//     PlayerTwo,
+//     PlayerThree,
+//     PlayerFour,
+// }
+
+#[derive(Debug, PartialEq)]
 pub enum HouseCount {
     Zero,
     One,
@@ -80,12 +126,4 @@ pub enum HouseCount {
     Three,
     Four,
     Hotel,
-}
-
-#[derive(Debug)]
-pub enum PropertyState {
-    ForSale,
-    Owned,
-    Houses(HouseCount),
-    Mortgaged,
 }

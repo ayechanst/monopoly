@@ -82,8 +82,8 @@ impl Board {
                     match colored_properties {
                         super::spaces::ColoredProperties::Brown(brown_property) => {
                             match brown_property {
-                                BrownProperty::MediterraneanAve { houses } => todo!(), // add more than just houses
-                                BrownProperty::BalticAve { houses } => todo!(),
+                                BrownProperty::MediterraneanAve { state } => {}
+                                BrownProperty::BalticAve { state } => todo!(),
                             }
                         }
                         super::spaces::ColoredProperties::LightBlue(light_blue_property) => todo!(),
@@ -95,16 +95,8 @@ impl Board {
                         super::spaces::ColoredProperties::Blue(blue_property) => todo!(),
                     }
                 }
-                super::spaces::Properties::Utility(utilities) => match utilities {
-                    Utilities::ElectricCompany => todo!(),
-                    Utilities::WaterWorks => todo!(),
-                },
-                super::spaces::Properties::Railroad(railroads) => match railroads {
-                    Railroads::Reading => todo!(),
-                    Railroads::Pennsylvania => todo!(),
-                    Railroads::Bo => todo!(),
-                    Railroads::ShortLine => todo!(),
-                },
+                super::spaces::Properties::Utility(utilities) => todo!(),
+                super::spaces::Properties::Railroad(railroads) => todo!(),
             },
             Space::Chance => todo!(),
             Space::CommunityChest => todo!(),

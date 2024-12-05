@@ -1,8 +1,7 @@
 use super::spaces::Properties;
-// use rand::prelude::*;
 use rand::Rng;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Player {
     pub player_number: u8,
     pub money: i64,
@@ -57,7 +56,7 @@ impl Player {
 }
 
 // payment logic, probably will be a trait shared with the bank
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum PlayerState {
     NotTheirTurn,
     TheirTurn,
