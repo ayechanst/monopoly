@@ -1,58 +1,148 @@
+use super::colored_properties::ColoredProperties;
 use crate::models::{
-    self,
-    space::{
-        HouseCount::{self, Four, Hotel, One, Three, Two, Zero},
-        Space,
+    board::Board,
+    player::Player,
+    spaces::{
+        properties::properties::Properties,
+        space::{HouseCount, PropertyState, Space},
     },
 };
-#[derive(Debug)]
+
+#[derive(Debug, PartialEq, Clone)]
 pub enum BlueProperty {
-    ParkPlace { houses: HouseCount },
-    Boardwalk { houses: HouseCount },
+    ParkPlace { state: PropertyState },
+    Boardwalk { state: PropertyState },
 }
 
 impl BlueProperty {
     pub fn rent_price(&self) -> i32 {
         match self {
-            BlueProperty::ParkPlace { houses } => {
-                let rent = 35;
-                match houses {
-                    Zero => rent,
-                    One => rent * 5,
-                    Two => 500,
-                    Three => 1100,
-                    Four => 1300,
-                    Hotel => 1500,
+            BlueProperty::ParkPlace { state } => {
+                let rent = 2;
+                match state {
+                    PropertyState::Houses(house_count) => match house_count {
+                        HouseCount::Zero => rent,
+                        HouseCount::One => rent * 5,
+                        HouseCount::Two => rent * 15,
+                        HouseCount::Three => rent * 45,
+                        HouseCount::Four => rent * 80,
+                        HouseCount::Hotel => rent * 125,
+                    },
+                    _ => rent,
                 }
             }
-            BlueProperty::Boardwalk { houses } => {
-                let rent = 50;
-                match houses {
-                    Zero => rent,
-                    One => rent * 4,
-                    Two => 600,
-                    Three => 1400,
-                    Four => 1700,
-                    Hotel => 2000,
+            BlueProperty::Boardwalk { state } => {
+                let rent = 4;
+                match state {
+                    PropertyState::Houses(house_count) => match house_count {
+                        HouseCount::Zero => rent,
+                        HouseCount::One => rent * 5,
+                        HouseCount::Two => rent * 15,
+                        HouseCount::Three => rent * 45,
+                        HouseCount::Four => rent * 80,
+                        HouseCount::Hotel => 450,
+                    },
+                    _ => rent,
+                }
+            }
+        }
+    }
+
+    // pub fn pay_rent(&self, renter: &mut Player) {
+    //     match self {
+    //         BlueProperty::ParkPlace { state } => {
+    //             match state {
+    //                 PropertyState::Owned(owner) => match owner {},
+    //                 _ => 0,
+    //             };
+    //         }
+    //         BlueProperty::Boardwalk { state } => todo!(),
+    //     }
+    // }
+
+    pub fn get_owner(&self, board: Board) -> Option<Player> {
+        let players = board.players;
+        match self {
+            BlueProperty::ParkPlace { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::ColoredProperty(ColoredProperties::Blue(blue_property)) =
+                            property
+                        {
+                            if blue_property == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
+            BlueProperty::Boardwalk { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::ColoredProperty(ColoredProperties::Blue(blue_property)) =
+                            property
+                        {
+                            if blue_property == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
+        }
+    }
+
+    pub fn for_sale(&self) -> bool {
+        match self {
+            BlueProperty::ParkPlace { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+            BlueProperty::Boardwalk { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+        }
+    }
+    pub fn buy_property(&mut self, player: &mut Player) {
+        match self {
+            BlueProperty::ParkPlace { state } => {
+                if *state == PropertyState::ForSale {
+                    player.money -= 60;
+                    let bought_property = Properties::ColoredProperty(ColoredProperties::Blue(
+                        BlueProperty::ParkPlace {
+                            state: PropertyState::Owned,
+                        },
+                    ));
+                    player.add_property(bought_property);
+                }
+            }
+            BlueProperty::Boardwalk { state } => {
+                if *state == PropertyState::ForSale {
+                    let bought_property = Properties::ColoredProperty(ColoredProperties::Blue(
+                        BlueProperty::Boardwalk {
+                            state: PropertyState::Owned,
+                        },
+                    ));
+                    player.add_property(bought_property);
+                    player.money -= 60;
                 }
             }
         }
     }
     pub fn park_place() -> Self {
-        // class method: creates an instance of itself
         BlueProperty::ParkPlace {
-            houses: HouseCount::Zero,
+            state: PropertyState::ForSale,
         }
     }
     pub fn boardwalk() -> Self {
         BlueProperty::Boardwalk {
-            houses: HouseCount::Zero,
+            state: PropertyState::ForSale,
         }
     }
     pub fn as_space(self) -> Space {
-        // instance method: takes in itself, and executes code on itself
-        Space::Property(crate::models::space::Properties::ColoredProperty(
-            models::space::ColoredProperties::Blue(self),
-        ))
+        Space::Property(Properties::ColoredProperty(ColoredProperties::Blue(self)))
     }
 }

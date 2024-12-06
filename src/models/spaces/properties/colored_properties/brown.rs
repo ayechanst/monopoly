@@ -1,20 +1,10 @@
-// use crate::models::{
-//     self,
-//     board::Board,
-//     player::{self, Player},
-//     space::{
-//         ColoredProperties,
-//         HouseCount::{self, HouseCount::Four, HouseCount::Hotel, HouseCount::One, HouseCount::Three, HouseCount::Two, HouseCount::Zero},
-//         Properties, PropertyState, Space,
-//     },
-// };
-
+use super::colored_properties::ColoredProperties;
 use crate::models::{
     board::Board,
     player::Player,
     spaces::{
         properties::properties::Properties,
-        space::{ColoredProperties, HouseCount, PropertyState, Space},
+        space::{HouseCount, PropertyState, Space},
     },
 };
 
@@ -156,7 +146,6 @@ impl BrownProperty {
         }
     }
     pub fn as_space(self) -> Space {
-        // instance method: takes in itself, and executes code on itself
         Space::Property(Properties::ColoredProperty(ColoredProperties::Brown(self)))
     }
 }

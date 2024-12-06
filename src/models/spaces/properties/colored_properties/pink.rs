@@ -1,65 +1,185 @@
+use super::colored_properties::ColoredProperties;
 use crate::models::{
-    self,
-    space::{
-        HouseCount::{self, Four, Hotel, One, Three, Two, Zero},
-        Space,
+    board::Board,
+    player::Player,
+    spaces::{
+        properties::properties::Properties,
+        space::{HouseCount, PropertyState, Space},
     },
 };
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum PinkProperty {
-    StCharlesPlace { houses: HouseCount },
-    StatesAve { houses: HouseCount },
-    VirginiaAve { houses: HouseCount },
+    StCharlesPlace { state: PropertyState },
+    StatesAve { state: PropertyState },
+    VirginiaAve { state: PropertyState },
 }
 
 impl PinkProperty {
     pub fn rent_price(&self) -> i32 {
-        // TODO: if a person has all properties, rent is doubled
         match self {
-            PinkProperty::StCharlesPlace { houses } | PinkProperty::StatesAve { houses } => {
+            PinkProperty::StCharlesPlace { state } => {
                 let rent = 10;
-                match houses {
-                    Zero => rent,
-                    One => rent * 5,
-                    Two => rent * 15,
-                    Three => rent * 45,
-                    Four => 625,
-                    Hotel => 750,
+                match state {
+                    PropertyState::Houses(house_count) => match house_count {
+                        HouseCount::Zero => rent,
+                        HouseCount::One => rent * 5,
+                        HouseCount::Two => 150,
+                        HouseCount::Three => 450,
+                        HouseCount::Four => 625,
+                        HouseCount::Hotel => 750,
+                    },
+                    _ => rent,
                 }
             }
-            PinkProperty::VirginiaAve { houses } => {
+            PinkProperty::StatesAve { state } => {
+                let rent = 10;
+                match state {
+                    PropertyState::Houses(house_count) => match house_count {
+                        HouseCount::Zero => rent,
+                        HouseCount::One => rent * 5,
+                        HouseCount::Two => 150,
+                        HouseCount::Three => 450,
+                        HouseCount::Four => 625,
+                        HouseCount::Hotel => 750,
+                    },
+                    _ => rent,
+                }
+            }
+            PinkProperty::VirginiaAve { state } => {
                 let rent = 12;
-                match houses {
-                    Zero => rent,
-                    One => rent * 5,
-                    Two => rent * 15,
-                    Three => 500,
-                    Four => 700,
-                    Hotel => 900,
+                match state {
+                    PropertyState::Houses(house_count) => match house_count {
+                        HouseCount::Zero => rent,
+                        HouseCount::One => rent * 5,
+                        HouseCount::Two => 180,
+                        HouseCount::Three => 500,
+                        HouseCount::Four => 700,
+                        HouseCount::Hotel => 900,
+                    },
+                    _ => rent,
+                }
+            }
+        }
+    }
+
+    pub fn get_owner(&self, board: Board) -> Option<Player> {
+        let players = board.players;
+        match self {
+            PinkProperty::StCharlesPlace { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::ColoredProperty(ColoredProperties::Pink(pink_property)) =
+                            property
+                        {
+                            if pink_property == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
+            PinkProperty::StatesAve { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::ColoredProperty(ColoredProperties::Pink(pink_property)) =
+                            property
+                        {
+                            if pink_property == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
+            PinkProperty::VirginiaAve { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::ColoredProperty(ColoredProperties::Pink(pink_property)) =
+                            property
+                        {
+                            if pink_property == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
+        }
+    }
+
+    pub fn for_sale(&self) -> bool {
+        match self {
+            PinkProperty::StCharlesPlace { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+            PinkProperty::StatesAve { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+            PinkProperty::VirginiaAve { state } => {
+                matches!(state, PropertyState::ForSale)
+            }
+        }
+    }
+    pub fn buy_property(&mut self, player: &mut Player) {
+        match self {
+            PinkProperty::StCharlesPlace { state } => {
+                if *state == PropertyState::ForSale {
+                    player.money -= 60;
+                    let bought_property = Properties::ColoredProperty(ColoredProperties::Pink(
+                        PinkProperty::StCharlesPlace {
+                            state: PropertyState::Owned,
+                        },
+                    ));
+                    player.add_property(bought_property);
+                }
+            }
+            PinkProperty::StatesAve { state } => {
+                if *state == PropertyState::ForSale {
+                    let bought_property = Properties::ColoredProperty(ColoredProperties::Pink(
+                        PinkProperty::StatesAve {
+                            state: PropertyState::Owned,
+                        },
+                    ));
+                    player.add_property(bought_property);
+                    player.money -= 60;
+                }
+            }
+            PinkProperty::VirginiaAve { state } => {
+                if *state == PropertyState::ForSale {
+                    let bought_property = Properties::ColoredProperty(ColoredProperties::Pink(
+                        PinkProperty::VirginiaAve {
+                            state: PropertyState::Owned,
+                        },
+                    ));
+                    player.add_property(bought_property);
+                    player.money -= 60;
                 }
             }
         }
     }
     pub fn st_charles_place() -> Self {
         PinkProperty::StCharlesPlace {
-            houses: HouseCount::Zero,
+            state: PropertyState::ForSale,
         }
     }
     pub fn states_ave() -> Self {
         PinkProperty::StatesAve {
-            houses: HouseCount::Zero,
+            state: PropertyState::ForSale,
         }
     }
     pub fn virginia_ave() -> Self {
         PinkProperty::VirginiaAve {
-            houses: HouseCount::Zero,
+            state: PropertyState::ForSale,
         }
     }
     pub fn as_space(self) -> Space {
-        // instance method: takes in itself, and executes code on itself
-        Space::Property(crate::models::space::Properties::ColoredProperty(
-            models::space::ColoredProperties::Pink(self),
-        ))
+        Space::Property(Properties::ColoredProperty(ColoredProperties::Pink(self)))
     }
 }
