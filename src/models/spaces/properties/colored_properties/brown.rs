@@ -134,14 +134,14 @@ impl BrownProperty {
             }
         }
     }
-    pub fn baltic_ave() -> Self {
+    pub fn mediterranean_ave() -> Self {
         BrownProperty::MediterraneanAve {
             state: PropertyState::ForSale,
         }
     }
-    pub fn mediterranean_ave() -> Self {
+    pub fn baltic_ave() -> Self {
         // class method: creates an instance of itself
-        BrownProperty::MediterraneanAve {
+        BrownProperty::BalticAve {
             state: PropertyState::ForSale,
         }
     }

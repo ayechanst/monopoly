@@ -72,10 +72,10 @@ impl YellowProperty {
                     let properties = &player.properties;
                     for property in properties.iter() {
                         if let Properties::ColoredProperty(ColoredProperties::Yellow(
-                            orange_property,
+                            yellow_property,
                         )) = property
                         {
-                            if orange_property == self {
+                            if yellow_property == self {
                                 return Some(player.clone());
                             }
                         }
@@ -88,10 +88,10 @@ impl YellowProperty {
                     let properties = &player.properties;
                     for property in properties.iter() {
                         if let Properties::ColoredProperty(ColoredProperties::Yellow(
-                            orange_property,
+                            yellow_property,
                         )) = property
                         {
-                            if orange_property == self {
+                            if yellow_property == self {
                                 return Some(player.clone());
                             }
                         }
@@ -104,10 +104,10 @@ impl YellowProperty {
                     let properties = &player.properties;
                     for property in properties.iter() {
                         if let Properties::ColoredProperty(ColoredProperties::Yellow(
-                            orange_property,
+                            yellow_property,
                         )) = property
                         {
-                            if orange_property == self {
+                            if yellow_property == self {
                                 return Some(player.clone());
                             }
                         }
@@ -135,7 +135,7 @@ impl YellowProperty {
         match self {
             YellowProperty::AtlanticAve { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 60;
+                    player.money -= 260;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Yellow(
                         YellowProperty::AtlanticAve {
                             state: PropertyState::Owned,
@@ -145,6 +145,7 @@ impl YellowProperty {
                 }
             }
             YellowProperty::VentnorAve { state } => {
+                player.money -= 260;
                 if *state == PropertyState::ForSale {
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Yellow(
                         YellowProperty::VentnorAve {
@@ -152,18 +153,17 @@ impl YellowProperty {
                         },
                     ));
                     player.add_property(bought_property);
-                    player.money -= 60;
                 }
             }
             YellowProperty::MarvinGardens { state } => {
                 if *state == PropertyState::ForSale {
+                    player.money -= 280;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Yellow(
                         YellowProperty::MarvinGardens {
                             state: PropertyState::Owned,
                         },
                     ));
                     player.add_property(bought_property);
-                    player.money -= 60;
                 }
             }
         }

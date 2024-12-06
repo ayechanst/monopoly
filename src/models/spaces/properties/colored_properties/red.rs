@@ -71,11 +71,10 @@ impl RedProperty {
                 for player in players.iter() {
                     let properties = &player.properties;
                     for property in properties.iter() {
-                        if let Properties::ColoredProperty(ColoredProperties::Red(
-                            orange_property,
-                        )) = property
+                        if let Properties::ColoredProperty(ColoredProperties::Red(red_property)) =
+                            property
                         {
-                            if orange_property == self {
+                            if red_property == self {
                                 return Some(player.clone());
                             }
                         }
@@ -87,11 +86,10 @@ impl RedProperty {
                 for player in players.iter() {
                     let properties = &player.properties;
                     for property in properties.iter() {
-                        if let Properties::ColoredProperty(ColoredProperties::Red(
-                            orange_property,
-                        )) = property
+                        if let Properties::ColoredProperty(ColoredProperties::Red(red_property)) =
+                            property
                         {
-                            if orange_property == self {
+                            if red_property == self {
                                 return Some(player.clone());
                             }
                         }
@@ -103,11 +101,10 @@ impl RedProperty {
                 for player in players.iter() {
                     let properties = &player.properties;
                     for property in properties.iter() {
-                        if let Properties::ColoredProperty(ColoredProperties::Red(
-                            orange_property,
-                        )) = property
+                        if let Properties::ColoredProperty(ColoredProperties::Red(red_property)) =
+                            property
                         {
-                            if orange_property == self {
+                            if red_property == self {
                                 return Some(player.clone());
                             }
                         }
@@ -135,7 +132,7 @@ impl RedProperty {
         match self {
             RedProperty::KentuckyAve { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 60;
+                    player.money -= 220;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Red(
                         RedProperty::KentuckyAve {
                             state: PropertyState::Owned,
@@ -146,24 +143,24 @@ impl RedProperty {
             }
             RedProperty::IndianaAve { state } => {
                 if *state == PropertyState::ForSale {
+                    player.money -= 220;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Red(
                         RedProperty::IndianaAve {
                             state: PropertyState::Owned,
                         },
                     ));
                     player.add_property(bought_property);
-                    player.money -= 60;
                 }
             }
             RedProperty::IllinoisAve { state } => {
                 if *state == PropertyState::ForSale {
+                    player.money -= 240;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Red(
                         RedProperty::IllinoisAve {
                             state: PropertyState::Owned,
                         },
                     ));
                     player.add_property(bought_property);
-                    player.money -= 60;
                 }
             }
         }

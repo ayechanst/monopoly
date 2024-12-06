@@ -135,7 +135,7 @@ impl OrangeProperty {
         match self {
             OrangeProperty::StJamesPlace { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 60;
+                    player.money -= 180;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Orange(
                         OrangeProperty::StJamesPlace {
                             state: PropertyState::Owned,
@@ -146,24 +146,24 @@ impl OrangeProperty {
             }
             OrangeProperty::TennesseeAve { state } => {
                 if *state == PropertyState::ForSale {
+                    player.money -= 180;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Orange(
                         OrangeProperty::TennesseeAve {
                             state: PropertyState::Owned,
                         },
                     ));
                     player.add_property(bought_property);
-                    player.money -= 60;
                 }
             }
             OrangeProperty::NewYorkAve { state } => {
                 if *state == PropertyState::ForSale {
+                    player.money -= 200;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Orange(
                         OrangeProperty::NewYorkAve {
                             state: PropertyState::Owned,
                         },
                     ));
                     player.add_property(bought_property);
-                    player.money -= 60;
                 }
             }
         }

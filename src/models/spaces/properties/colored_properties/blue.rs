@@ -48,18 +48,6 @@ impl BlueProperty {
         }
     }
 
-    // pub fn pay_rent(&self, renter: &mut Player) {
-    //     match self {
-    //         BlueProperty::ParkPlace { state } => {
-    //             match state {
-    //                 PropertyState::Owned(owner) => match owner {},
-    //                 _ => 0,
-    //             };
-    //         }
-    //         BlueProperty::Boardwalk { state } => todo!(),
-    //     }
-    // }
-
     pub fn get_owner(&self, board: Board) -> Option<Player> {
         let players = board.players;
         match self {
@@ -110,7 +98,7 @@ impl BlueProperty {
         match self {
             BlueProperty::ParkPlace { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 60;
+                    player.money -= 350;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Blue(
                         BlueProperty::ParkPlace {
                             state: PropertyState::Owned,
@@ -121,13 +109,13 @@ impl BlueProperty {
             }
             BlueProperty::Boardwalk { state } => {
                 if *state == PropertyState::ForSale {
+                    player.money -= 400;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Blue(
                         BlueProperty::Boardwalk {
                             state: PropertyState::Owned,
                         },
                     ));
                     player.add_property(bought_property);
-                    player.money -= 60;
                 }
             }
         }

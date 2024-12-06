@@ -133,7 +133,7 @@ impl LightBlueProperty {
         match self {
             LightBlueProperty::OrientalAve { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 60;
+                    player.money -= 100;
                     let bought_property = Properties::ColoredProperty(
                         ColoredProperties::LightBlue(LightBlueProperty::OrientalAve {
                             state: PropertyState::Owned,
@@ -144,24 +144,24 @@ impl LightBlueProperty {
             }
             LightBlueProperty::VermontAve { state } => {
                 if *state == PropertyState::ForSale {
+                    player.money -= 100;
                     let bought_property = Properties::ColoredProperty(
                         ColoredProperties::LightBlue(LightBlueProperty::VermontAve {
                             state: PropertyState::Owned,
                         }),
                     );
                     player.add_property(bought_property);
-                    player.money -= 60;
                 }
             }
             LightBlueProperty::ConnecticutAve { state } => {
                 if *state == PropertyState::ForSale {
+                    player.money -= 120;
                     let bought_property = Properties::ColoredProperty(
                         ColoredProperties::LightBlue(LightBlueProperty::ConnecticutAve {
                             state: PropertyState::Owned,
                         }),
                     );
                     player.add_property(bought_property);
-                    player.money -= 60;
                 }
             }
         }
