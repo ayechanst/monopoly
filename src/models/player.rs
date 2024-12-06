@@ -26,6 +26,7 @@ impl Player {
     }
 
     pub fn add_property(&mut self, bought_property: Properties) {
+        // used on properties
         self.properties.push(bought_property);
     }
 

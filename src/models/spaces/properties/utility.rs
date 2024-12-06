@@ -1,5 +1,6 @@
 use super::properties::Properties;
 use crate::models::{
+    board::Board,
     player::Player,
     spaces::space::{PropertyState, Space},
 };
@@ -22,6 +23,37 @@ impl Utilities {
             }
             Utilities::WaterWorks { state } => {
                 matches!(state, PropertyState::ForSale)
+            }
+        }
+    }
+    pub fn get_owner(&self, board: Board) -> Option<Player> {
+        let players = board.players;
+        match self {
+            Utilities::ElectricCompany { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::Utility(electric_company) = property {
+                            if electric_company == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
+            Utilities::WaterWorks { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::Utility(water_works) = property {
+                            if water_works == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
             }
         }
     }

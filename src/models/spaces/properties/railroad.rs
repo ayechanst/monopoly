@@ -1,4 +1,5 @@
 use crate::models::{
+    board::Board,
     player::Player,
     spaces::space::{PropertyState, Space},
 };
@@ -34,6 +35,64 @@ impl Railroads {
             }
         }
     }
+    pub fn get_owner(&self, board: Board) -> Option<Player> {
+        let players = board.players;
+        match self {
+            Railroads::Reading { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::Railroad(reading) = property {
+                            if reading == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
+            Railroads::Pennsylvania { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::Railroad(pennsylvania) = property {
+                            if pennsylvania == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
+            Railroads::Bo { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::Railroad(bo) = property {
+                            if bo == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
+            Railroads::ShortLine { state } => {
+                for player in players.iter() {
+                    let properties = &player.properties;
+                    for property in properties.iter() {
+                        if let Properties::Railroad(short_line) = property {
+                            if short_line == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                }
+                None
+            }
+        }
+    }
+
     pub fn buy_property(&mut self, player: &mut Player) {
         match self {
             Railroads::Reading { state } => {

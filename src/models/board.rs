@@ -81,25 +81,19 @@ impl Board {
         // option to propose trade
         player.roll_dice();
         let position = player.position;
-        let space_landed_on = &self.spaces[position as usize];
+        let space_landed_on = &mut self.spaces[position as usize];
         match space_landed_on {
-            Space::Property(properties) => match properties {
-                Properties::ColoredProperty(colored_properties) => match colored_properties {
-                    ColoredProperties::Brown(brown_property) => match brown_property {
-                        BrownProperty::MediterraneanAve { state } => {}
-                        BrownProperty::BalticAve { state } => todo!(),
-                    },
-                    ColoredProperties::LightBlue(light_blue_property) => todo!(),
-                    ColoredProperties::Pink(pink_property) => todo!(),
-                    ColoredProperties::Orange(orange_property) => todo!(),
-                    ColoredProperties::Red(red_property) => todo!(),
-                    ColoredProperties::Yellow(yellow_property) => todo!(),
-                    ColoredProperties::Green(green_property) => todo!(),
-                    ColoredProperties::Blue(blue_property) => todo!(),
-                },
-                Properties::Utility(utilities) => todo!(),
-                Properties::Railroad(railroads) => todo!(),
-            },
+            Space::Property(properties) => {
+                if properties.is_for_sale() {
+                    properties.buy_property(&mut player);
+                    // testing
+                    let player_properties = player.properties;
+                    println!("Player prop: {:?}", player_properties);
+                    println!("Player 1 new position: {}", player.position);
+                    println!("Player 1 remaining money: {}", player.money);
+                    // println!("Player 1 properties: {:?}", player.properties);
+                }
+            }
             Space::Chance => todo!(),
             Space::CommunityChest => todo!(),
             Space::IncomeTax => todo!(),
