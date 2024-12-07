@@ -64,7 +64,7 @@ impl Player {
 }
 
 // payment logic, probably will be a trait shared with the bank
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum PlayerState {
     NotTheirTurn,
     TheirTurn,

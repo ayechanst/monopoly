@@ -82,26 +82,76 @@ impl Board {
         player.roll_dice();
         let position = player.position;
         let space_landed_on = &mut self.spaces[position as usize];
+        // let space_landed_on = self.spaces[position as usize].clone();
         match space_landed_on {
-            Space::Property(properties) => {
+            Space::Property(mut properties) => {
+                println!("property landed on's state: {:?}", properties.is_for_sale());
                 if properties.is_for_sale() {
+                    println!(
+                        "Player {:?} has bought the property: {:?}",
+                        player.player_number, properties
+                    );
                     properties.buy_property(&mut player);
                     // testing
                     let player_properties = player.properties;
-                    println!("Player prop: {:?}", player_properties);
-                    println!("Player 1 new position: {}", player.position);
-                    println!("Player 1 remaining money: {}", player.money);
-                    // println!("Player 1 properties: {:?}", player.properties);
+                    println!(
+                        "Player {:?} properties: {:?}",
+                        player.player_number, player_properties
+                    );
+                    println!(
+                        "Player {:?} new position: {}",
+                        player.player_number, player.position
+                    );
+                    println!(
+                        "Player {:?} remaining money: {}",
+                        player.player_number, player.money
+                    );
+                } else {
+                    let owner = properties.get_owner(&self);
+                    if let Some(owner) = owner {
+                        println!(
+                            "Player {:?} has landed on {:?}'s property",
+                            player.player_number, owner
+                        );
+                    }
                 }
             }
-            Space::Chance => todo!(),
-            Space::CommunityChest => todo!(),
-            Space::IncomeTax => todo!(),
-            Space::LuxuryTax => todo!(),
-            Space::Go => todo!(),
-            Space::GoToJail => todo!(),
-            Space::Jail => todo!(),
-            Space::FreeParking => todo!(),
+            Space::Chance => {
+                println!("Player {:?} has landed on Chance!", player.player_number)
+            }
+            Space::CommunityChest => {
+                println!(
+                    "Player {:?} has landed on Community Chest!",
+                    player.player_number
+                )
+            }
+            Space::IncomeTax => {
+                println!("Player {:?} has landed on IncomeTax!", player.player_number)
+            }
+            Space::LuxuryTax => {
+                println!("Player {:?} has farted", player.player_number)
+            }
+            Space::Go => {
+                println!("Player {:?} has  pooped", player.player_number)
+            }
+            Space::GoToJail => {
+                println!(
+                    "Player {:?} has landed on Go To Jail Bitch!",
+                    player.player_number
+                )
+            }
+            Space::Jail => {
+                println!(
+                    "Player {:?} has landed on Jail (just passing)",
+                    player.player_number
+                )
+            }
+            Space::FreeParking => {
+                println!(
+                    "Player {:?} has landed on Free Parking",
+                    player.player_number
+                )
+            }
         }
     }
 }

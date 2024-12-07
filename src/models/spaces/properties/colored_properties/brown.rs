@@ -1,6 +1,6 @@
 use super::colored_properties::ColoredProperties;
 use crate::models::{
-    board::Board,
+    board::{self, Board},
     player::Player,
     spaces::{
         properties::properties::Properties,
@@ -8,7 +8,7 @@ use crate::models::{
     },
 };
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum BrownProperty {
     MediterraneanAve { state: PropertyState },
     BalticAve { state: PropertyState },
@@ -51,17 +51,15 @@ impl BrownProperty {
     // pub fn pay_rent(&self, renter: &mut Player) {
     //     match self {
     //         BrownProperty::MediterraneanAve { state } => {
-    //             match state {
-    //                 PropertyState::Owned(owner) => match owner {},
-    //                 _ => 0,
-    //             };
+    //             let owner = self.get_owner(board);
     //         }
     //         BrownProperty::BalticAve { state } => todo!(),
     //     }
     // }
 
-    pub fn get_owner(&self, board: Board) -> Option<Player> {
-        let players = board.players;
+    pub fn get_owner(&self, board: &Board) -> Option<Player> {
+        // maybe this can be put in a loop
+        let players = &board.players;
         match self {
             BrownProperty::MediterraneanAve { state } => {
                 for player in players.iter() {
@@ -101,36 +99,42 @@ impl BrownProperty {
     pub fn for_sale(&self) -> bool {
         match self {
             BrownProperty::MediterraneanAve { state } => {
+                println!("for_sale: {:?}", state);
                 matches!(state, PropertyState::ForSale)
             }
             BrownProperty::BalticAve { state } => {
+                println!("for_sale: {:?}", state);
                 matches!(state, PropertyState::ForSale)
             }
         }
     }
     pub fn buy_property(&mut self, player: &mut Player) {
         match self {
-            BrownProperty::MediterraneanAve { state } => {
-                if *state == PropertyState::ForSale {
-                    player.money -= 60;
-                    let bought_property = Properties::ColoredProperty(ColoredProperties::Brown(
-                        BrownProperty::MediterraneanAve {
-                            state: PropertyState::Owned,
-                        },
-                    ));
-                    player.add_property(bought_property);
-                }
+            BrownProperty::MediterraneanAve { mut state } => {
+                // if *state == PropertyState::ForSale {
+                player.money -= 60;
+                let bought_property = Properties::ColoredProperty(ColoredProperties::Brown(
+                    BrownProperty::MediterraneanAve {
+                        state: PropertyState::Owned,
+                    },
+                ));
+                player.add_property(bought_property);
+                state = PropertyState::Owned;
+                println!("Property State: {:?}", state);
+                // }
             }
-            BrownProperty::BalticAve { state } => {
-                if *state == PropertyState::ForSale {
-                    let bought_property = Properties::ColoredProperty(ColoredProperties::Brown(
-                        BrownProperty::BalticAve {
-                            state: PropertyState::Owned,
-                        },
-                    ));
-                    player.add_property(bought_property);
-                    player.money -= 60;
-                }
+            BrownProperty::BalticAve { mut state } => {
+                // if *state == PropertyState::ForSale {
+                let bought_property = Properties::ColoredProperty(ColoredProperties::Brown(
+                    BrownProperty::BalticAve {
+                        state: PropertyState::Owned,
+                    },
+                ));
+                player.add_property(bought_property);
+                player.money -= 60;
+                state = PropertyState::Owned;
+                println!("Property State: {:?}", state);
+                // }
             }
         }
     }

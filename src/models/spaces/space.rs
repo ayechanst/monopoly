@@ -1,6 +1,6 @@
 use super::properties::properties::Properties;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Space {
     Property(Properties), // ColoredProperty | Utility | Station
     Chance,
@@ -13,7 +13,7 @@ pub enum Space {
     FreeParking,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum PropertyState {
     ForSale,
     Owned,
@@ -21,7 +21,7 @@ pub enum PropertyState {
     Mortgaged,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum HouseCount {
     Zero,
     One,

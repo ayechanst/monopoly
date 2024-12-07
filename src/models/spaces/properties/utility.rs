@@ -5,7 +5,7 @@ use crate::models::{
     spaces::space::{PropertyState, Space},
 };
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Utilities {
     ElectricCompany { state: PropertyState },
     WaterWorks { state: PropertyState },
@@ -26,8 +26,8 @@ impl Utilities {
             }
         }
     }
-    pub fn get_owner(&self, board: Board) -> Option<Player> {
-        let players = board.players;
+    pub fn get_owner(&self, board: &Board) -> Option<Player> {
+        let players = &board.players;
         match self {
             Utilities::ElectricCompany { state } => {
                 for player in players.iter() {

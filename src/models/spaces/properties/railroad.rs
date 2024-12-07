@@ -6,7 +6,7 @@ use crate::models::{
 
 use super::properties::Properties;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Railroads {
     Reading { state: PropertyState },
     Pennsylvania { state: PropertyState },
@@ -35,8 +35,8 @@ impl Railroads {
             }
         }
     }
-    pub fn get_owner(&self, board: Board) -> Option<Player> {
-        let players = board.players;
+    pub fn get_owner(&self, board: &Board) -> Option<Player> {
+        let players = &board.players;
         match self {
             Railroads::Reading { state } => {
                 for player in players.iter() {

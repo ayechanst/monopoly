@@ -4,7 +4,7 @@ use super::{
 };
 use crate::models::{board::Board, player::Player};
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Properties {
     ColoredProperty(ColoredProperties),
     Utility(Utilities),
@@ -29,7 +29,8 @@ impl Properties {
             Properties::Railroad(railroads) => railroads.buy_property(player),
         }
     }
-    pub fn get_owner(&self, board: Board) -> Option<Player> {
+    // pub fn get_owner(&self, board: Board) -> Option<Player> {
+    pub fn get_owner(&self, board: &Board) -> Option<Player> {
         match self {
             Properties::ColoredProperty(colored_properties) => colored_properties.get_owner(board),
             Properties::Utility(utilities) => utilities.get_owner(board),

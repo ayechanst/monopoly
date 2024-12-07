@@ -8,7 +8,7 @@ use crate::models::{
     },
 };
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum YellowProperty {
     AtlanticAve { state: PropertyState },
     VentnorAve { state: PropertyState },
@@ -64,8 +64,8 @@ impl YellowProperty {
         }
     }
 
-    pub fn get_owner(&self, board: Board) -> Option<Player> {
-        let players = board.players;
+    pub fn get_owner(&self, board: &Board) -> Option<Player> {
+        let players = &board.players;
         match self {
             YellowProperty::AtlanticAve { state } => {
                 for player in players.iter() {
