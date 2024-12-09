@@ -134,9 +134,9 @@ impl LightBlueProperty {
     }
     pub fn buy_property(&mut self, player: &mut Player) {
         match self {
-            // LightBlueProperty::OrientalAve { mut state } => {
-            LightBlueProperty::OrientalAve { state } => {
-                if *state == PropertyState::ForSale {
+            LightBlueProperty::OrientalAve { mut state } => {
+                // LightBlueProperty::OrientalAve { state } => {
+                if state == PropertyState::ForSale {
                     player.money -= 100;
                     let bought_property = Properties::ColoredProperty(
                         ColoredProperties::LightBlue(LightBlueProperty::OrientalAve {
@@ -144,27 +144,14 @@ impl LightBlueProperty {
                         }),
                     );
                     player.add_property(bought_property);
-                    *state = PropertyState::Owned;
+                    state = PropertyState::Owned;
                     println!("Property State: {:?}", state);
                 }
             }
-            // LightBlueProperty::VermontAve { state } => {
-            //     if *state == PropertyState::ForSale {
-            //         player.money -= 100;
-            //         let bought_property = Properties::ColoredProperty(
-            //             ColoredProperties::LightBlue(LightBlueProperty::VermontAve {
-            //                 state: PropertyState::Owned,
-            //             }),
-            //         );
-            //         player.add_property(bought_property);
-            //         *state = PropertyState::Owned;
-            //         println!("Property State: {:?}", state);
-            //     }
-            // }
-            // LightBlueProperty::VermontAve { mut state } => {
-            LightBlueProperty::VermontAve { state } => {
+            LightBlueProperty::VermontAve { mut state } => {
+                // LightBlueProperty::VermontAve { state } => {
                 // look more into this
-                if *state == PropertyState::ForSale {
+                if state == PropertyState::ForSale {
                     player.money -= 100;
                     let bought_property = Properties::ColoredProperty(
                         ColoredProperties::LightBlue(LightBlueProperty::VermontAve {
@@ -172,13 +159,13 @@ impl LightBlueProperty {
                         }),
                     );
                     player.add_property(bought_property);
-                    *state = PropertyState::Owned; // this is not actually updating
+                    state = PropertyState::Owned; // this is not actually updating
                     println!("Property State: {:?}", state);
                 }
             }
-            // LightBlueProperty::ConnecticutAve { mut state } => {
-            LightBlueProperty::ConnecticutAve { state } => {
-                if *state == PropertyState::ForSale {
+            LightBlueProperty::ConnecticutAve { mut state } => {
+                // LightBlueProperty::ConnecticutAve { state } => {
+                if state == PropertyState::ForSale {
                     player.money -= 120;
                     let bought_property = Properties::ColoredProperty(
                         ColoredProperties::LightBlue(LightBlueProperty::ConnecticutAve {
@@ -186,7 +173,7 @@ impl LightBlueProperty {
                         }),
                     );
                     player.add_property(bought_property);
-                    *state = PropertyState::Owned;
+                    state = PropertyState::Owned;
                     println!("Property State: {:?}", state);
                 }
             }

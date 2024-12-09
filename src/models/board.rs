@@ -77,34 +77,26 @@ impl Board {
 
         Board { spaces, players }
     }
-    pub fn player_turn(&mut self, mut player: Player) {
-        // option to propose trade
-        player.roll_dice();
+    pub fn roll_player_dice(&mut self, index: usize) {
+        self.players.get_mut(index).unwrap().roll_dice();
+    }
+    pub fn player_turn(&mut self, index: usize) {
+        self.roll_player_dice(index);
+        let player = self.players.get(index).unwrap();
         let position = player.position;
         let space_landed_on = &mut self.spaces[position as usize];
-        // let space_landed_on = self.spaces[position as usize].clone();
         match space_landed_on {
             Space::Property(mut properties) => {
                 println!("property landed on's state: {:?}", properties.is_for_sale());
                 if properties.is_for_sale() {
-                    println!(
-                        "Player {:?} has bought the property: {:?}",
-                        player.player_number, properties
-                    );
-                    properties.buy_property(&mut player);
+                    println!("Player {:?} bought: {:?}", player.player_number, properties);
+                    let player = self.players.get_mut(index).unwrap();
+                    properties.buy_property(player);
                     // testing
-                    let player_properties = player.properties;
+                    let player_properties = &player.properties;
                     println!(
                         "Player {:?} properties: {:?}",
                         player.player_number, player_properties
-                    );
-                    println!(
-                        "Player {:?} new position: {}",
-                        player.player_number, player.position
-                    );
-                    println!(
-                        "Player {:?} remaining money: {}",
-                        player.player_number, player.money
                     );
                 } else {
                     let owner = properties.get_owner(&self);

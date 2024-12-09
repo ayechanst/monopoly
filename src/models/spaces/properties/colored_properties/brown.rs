@@ -48,17 +48,7 @@ impl BrownProperty {
         }
     }
 
-    // pub fn pay_rent(&self, renter: &mut Player) {
-    //     match self {
-    //         BrownProperty::MediterraneanAve { state } => {
-    //             let owner = self.get_owner(board);
-    //         }
-    //         BrownProperty::BalticAve { state } => todo!(),
-    //     }
-    // }
-
     pub fn get_owner(&self, board: &Board) -> Option<Player> {
-        // maybe this can be put in a loop
         let players = &board.players;
         match self {
             BrownProperty::MediterraneanAve { state } => {
@@ -99,11 +89,9 @@ impl BrownProperty {
     pub fn for_sale(&self) -> bool {
         match self {
             BrownProperty::MediterraneanAve { state } => {
-                println!("for_sale: {:?}", state);
                 matches!(state, PropertyState::ForSale)
             }
             BrownProperty::BalticAve { state } => {
-                println!("for_sale: {:?}", state);
                 matches!(state, PropertyState::ForSale)
             }
         }
