@@ -28,6 +28,7 @@ impl Board {
         let mut spaces = Vec::new();
         // Bottom 0-9
         spaces.push(Space::Go); // 0
+                                // spaces.push(Rc::new(RefCell::new(Space::Go)));
         spaces.push(BrownProperty::mediterranean_ave().as_space()); // 1
         spaces.push(Space::CommunityChest); // 2
         spaces.push(BrownProperty::baltic_ave().as_space()); // 3
@@ -82,21 +83,17 @@ impl Board {
     }
 
     pub fn roll_player_dice(self, index: usize) {
-        let player = self.players.get(index).unwrap().clone();
-        let player_ref = player.borrow_mut();
-        player_ref.clone().roll_dice();
+        let player = self.players[index].borrow_mut();
+        player.clone().roll_dice();
     }
-
-    // borrow_mut(): returns a mutable reference to the value inside the RefCell
 
     pub fn player_turn(&mut self, index: usize) {
         self.roll_player_dice(index);
-        // let player = self.players.get(index).borrow_mut().unwrap();
         let player = self.players.get(index).unwrap();
         let position = player.borrow().position;
         let space_landed_on = &mut self.spaces[position as usize];
         match space_landed_on {
-            Space::Property(mut properties) => {
+            Space::Property(properties) => {
                 println!("property landed on's state: {:?}", properties.is_for_sale());
                 if properties.is_for_sale() {
                     println!(
@@ -104,9 +101,8 @@ impl Board {
                         player.borrow().player_number,
                         properties
                     );
-                    let player = self.players[index].borrow_mut();
-                    properties.buy_property(player);
-                    // let player_properties = &player.borrow().properties;
+                    // let player = self.players[index].borrow_mut();
+                    properties.buy_property(self.players[index].clone());
                 } else {
                     let owner = properties.get_owner(&self);
                     if let Some(owner) = owner {

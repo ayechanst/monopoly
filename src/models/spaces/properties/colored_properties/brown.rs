@@ -1,7 +1,6 @@
 use super::colored_properties::ColoredProperties;
 use crate::models::{
-    board::{self, Board, PlayerRef},
-    player::Player,
+    board::{Board, PlayerRef},
     spaces::{
         properties::properties::Properties,
         space::{HouseCount, PropertyState, Space},
@@ -48,8 +47,9 @@ impl BrownProperty {
         }
     }
 
-    pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
-        let players = &board.players;
+    // pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
+    pub fn get_owner(&self, board: Board) -> Option<PlayerRef> {
+        let players = board.players;
         match self {
             BrownProperty::MediterraneanAve { state } => {
                 for player in players.iter() {
