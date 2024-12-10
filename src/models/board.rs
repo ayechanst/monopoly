@@ -3,21 +3,24 @@ use super::{
     spaces::{
         properties::{
             colored_properties::{
-                colored_properties::ColoredProperties, BlueProperty, BrownProperty, GreenProperty,
-                LightBlueProperty, OrangeProperty, PinkProperty, RedProperty, YellowProperty,
+                BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty,
+                PinkProperty, RedProperty, YellowProperty,
             },
-            properties::Properties,
             railroad::Railroads,
             utility::Utilities,
         },
         space::Space,
     },
 };
+use std::cell::RefCell;
+use std::rc::Rc;
+
+pub type PlayerRef = Rc<RefCell<Player>>;
 
 #[derive(Debug)]
 pub struct Board {
     pub spaces: Vec<Space>,
-    pub players: Vec<Player>, // have a Vec of players, with their current position
+    pub players: Vec<PlayerRef>,
 }
 
 impl Board {
@@ -69,79 +72,92 @@ impl Board {
         spaces.push(BlueProperty::boardwalk().as_space()); // 39
 
         let players = vec![
-            Player::new(1),
-            Player::new(2),
-            Player::new(3),
-            Player::new(4),
+            Rc::new(RefCell::new(Player::new(1))),
+            Rc::new(RefCell::new(Player::new(2))),
+            Rc::new(RefCell::new(Player::new(3))),
+            Rc::new(RefCell::new(Player::new(4))),
         ];
 
         Board { spaces, players }
     }
-    pub fn roll_player_dice(&mut self, index: usize) {
-        self.players.get_mut(index).unwrap().roll_dice();
+
+    pub fn roll_player_dice(self, index: usize) {
+        let player = self.players.get(index).unwrap().clone();
+        let player_ref = player.borrow_mut();
+        player_ref.clone().roll_dice();
     }
+
+    // borrow_mut(): returns a mutable reference to the value inside the RefCell
+
     pub fn player_turn(&mut self, index: usize) {
         self.roll_player_dice(index);
+        // let player = self.players.get(index).borrow_mut().unwrap();
         let player = self.players.get(index).unwrap();
-        let position = player.position;
+        let position = player.borrow().position;
         let space_landed_on = &mut self.spaces[position as usize];
         match space_landed_on {
             Space::Property(mut properties) => {
                 println!("property landed on's state: {:?}", properties.is_for_sale());
                 if properties.is_for_sale() {
-                    println!("Player {:?} bought: {:?}", player.player_number, properties);
-                    let player = self.players.get_mut(index).unwrap();
-                    properties.buy_property(player);
-                    // testing
-                    let player_properties = &player.properties;
                     println!(
-                        "Player {:?} properties: {:?}",
-                        player.player_number, player_properties
+                        "Player {:?} bought: {:?}",
+                        player.borrow().player_number,
+                        properties
                     );
+                    let player = self.players[index].borrow_mut();
+                    properties.buy_property(player);
+                    // let player_properties = &player.borrow().properties;
                 } else {
                     let owner = properties.get_owner(&self);
                     if let Some(owner) = owner {
                         println!(
                             "Player {:?} has landed on {:?}'s property",
-                            player.player_number, owner
+                            player.borrow().player_number,
+                            owner
                         );
                     }
                 }
             }
             Space::Chance => {
-                println!("Player {:?} has landed on Chance!", player.player_number)
+                println!(
+                    "Player {:?} has landed on Chance!",
+                    player.borrow().player_number
+                )
             }
             Space::CommunityChest => {
                 println!(
                     "Player {:?} has landed on Community Chest!",
-                    player.player_number
+                    player.borrow().player_number
                 )
             }
             Space::IncomeTax => {
-                println!("Player {:?} has landed on IncomeTax!", player.player_number)
+                println!(
+                    "Player {:?} has landed on IncomeTax!",
+                    player.borrow().player_number
+                )
             }
             Space::LuxuryTax => {
-                println!("Player {:?} has farted", player.player_number)
+                println!("Player {:?} has farted", player.borrow().player_number)
             }
             Space::Go => {
-                println!("Player {:?} has  pooped", player.player_number)
+                println!("Player {:?} has  pooped", player.borrow().player_number)
             }
             Space::GoToJail => {
                 println!(
                     "Player {:?} has landed on Go To Jail Bitch!",
-                    player.player_number
+                    player.borrow().player_number
                 )
             }
             Space::Jail => {
                 println!(
                     "Player {:?} has landed on Jail (just passing)",
-                    player.player_number
+                    player.borrow().player_number
                 )
             }
             Space::FreeParking => {
                 println!(
                     "Player {:?} has landed on Free Parking",
-                    player.player_number
+                    player.borrow().player_number
                 )
             }
         }

@@ -2,7 +2,10 @@ use super::{
     BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty, PinkProperty,
     RedProperty, YellowProperty,
 };
-use crate::models::{board::Board, player::Player};
+use crate::models::{
+    board::{Board, PlayerRef},
+    player::Player,
+};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ColoredProperties {
@@ -41,7 +44,7 @@ impl ColoredProperties {
             ColoredProperties::Blue(blue_property) => blue_property.for_sale(),
         }
     }
-    pub fn buy_property(&mut self, player: &mut Player) {
+    pub fn buy_property(&mut self, player: PlayerRef) {
         // pub fn buy_property(&mut self, player: Player) {
         match self {
             ColoredProperties::Brown(brown_property) => brown_property.buy_property(player),
@@ -49,26 +52,36 @@ impl ColoredProperties {
                 light_blue_property.buy_property(player)
             }
             ColoredProperties::Pink(pink_property) => pink_property.buy_property(player),
-            ColoredProperties::Orange(orange_property) => orange_property.buy_property(player),
-            ColoredProperties::Red(red_property) => red_property.buy_property(player),
-            ColoredProperties::Yellow(yellow_property) => yellow_property.buy_property(player),
-            ColoredProperties::Green(green_property) => green_property.buy_property(player),
-            ColoredProperties::Blue(blue_property) => blue_property.buy_property(player),
+            ColoredProperties::Orange(orange_property) => todo!(),
+            ColoredProperties::Red(red_property) => todo!(),
+            ColoredProperties::Yellow(yellow_property) => todo!(),
+            ColoredProperties::Green(green_property) => todo!(),
+            ColoredProperties::Blue(blue_property) => todo!(),
+            // ColoredProperties::Orange(orange_property) => orange_property.buy_property(player),
+            // ColoredProperties::Red(red_property) => red_property.buy_property(player),
+            // ColoredProperties::Yellow(yellow_property) => yellow_property.buy_property(player),
+            // ColoredProperties::Green(green_property) => green_property.buy_property(player),
+            // ColoredProperties::Blue(blue_property) => blue_property.buy_property(player),
         }
     }
     // pub fn get_owner(&self, board: Board) -> Option<Player> {
-    pub fn get_owner(&self, board: &Board) -> Option<Player> {
+    pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         match self {
             ColoredProperties::Brown(brown_property) => brown_property.get_owner(board),
             ColoredProperties::LightBlue(light_blue_property) => {
                 light_blue_property.get_owner(board)
             }
             ColoredProperties::Pink(pink_property) => pink_property.get_owner(board),
-            ColoredProperties::Orange(orange_property) => orange_property.get_owner(board),
-            ColoredProperties::Red(red_property) => red_property.get_owner(board),
-            ColoredProperties::Yellow(yellow_property) => yellow_property.get_owner(board),
-            ColoredProperties::Green(green_property) => green_property.get_owner(board),
-            ColoredProperties::Blue(blue_property) => blue_property.get_owner(board),
+            ColoredProperties::Orange(orange_property) => todo!(),
+            ColoredProperties::Red(red_property) => todo!(),
+            ColoredProperties::Yellow(yellow_property) => todo!(),
+            ColoredProperties::Green(green_property) => todo!(),
+            ColoredProperties::Blue(blue_property) => todo!(),
+            // ColoredProperties::Orange(orange_property) => orange_property.get_owner(board),
+            // ColoredProperties::Red(red_property) => red_property.get_owner(board),
+            // ColoredProperties::Yellow(yellow_property) => yellow_property.get_owner(board),
+            // ColoredProperties::Green(green_property) => green_property.get_owner(board),
+            // ColoredProperties::Blue(blue_property) => blue_property.get_owner(board),
         }
     }
 }
