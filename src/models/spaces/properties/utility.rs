@@ -1,6 +1,6 @@
 use super::properties::Properties;
 use crate::models::{
-    board::Board,
+    board::{Board, PlayerRef},
     player::Player,
     spaces::space::{PropertyState, Space},
 };
@@ -26,12 +26,12 @@ impl Utilities {
             }
         }
     }
-    pub fn get_owner(&self, board: &Board) -> Option<Player> {
+    pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
         match self {
             Utilities::ElectricCompany { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::Utility(electric_company) = property {
                             if electric_company == self {
@@ -44,7 +44,7 @@ impl Utilities {
             }
             Utilities::WaterWorks { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::Utility(water_works) = property {
                             if water_works == self {
@@ -57,24 +57,24 @@ impl Utilities {
             }
         }
     }
-    pub fn buy_property(&mut self, player: &mut Player) {
+    pub fn buy_property(&mut self, player: PlayerRef) {
         match self {
             Utilities::ElectricCompany { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 150;
+                    player.borrow_mut().money -= 150;
                     let bought_property = Properties::Utility(Utilities::ElectricCompany {
                         state: PropertyState::Owned,
                     });
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
             Utilities::WaterWorks { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 150;
+                    player.borrow_mut().money -= 150;
                     let bought_property = Properties::Utility(Utilities::WaterWorks {
                         state: PropertyState::Owned,
                     });
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
         }

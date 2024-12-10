@@ -37,7 +37,7 @@ impl Properties {
     // pub fn get_owner(&self, board: Board) -> Option<Player> {
     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         match self {
-            Properties::ColoredProperty(colored_properties) => colored_properties.get_owner(board),
+            Properties::ColoredProperty(colored_properties) => colored_properties.get_owner(&board),
             Properties::Utility(utilities) => todo!(),
             Properties::Railroad(railroads) => todo!(),
             // Properties::Utility(utilities) => utilities.get_owner(board),

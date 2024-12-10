@@ -62,7 +62,7 @@ impl PinkProperty {
         }
     }
 
-    pub fn get_owner(&self, board: Board) -> Option<PlayerRef> {
+    pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
         match self {
             PinkProperty::StCharlesPlace { state } => {

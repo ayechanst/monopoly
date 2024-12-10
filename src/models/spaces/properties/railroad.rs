@@ -1,6 +1,5 @@
 use crate::models::{
-    board::Board,
-    player::Player,
+    board::{Board, PlayerRef},
     spaces::space::{PropertyState, Space},
 };
 
@@ -35,12 +34,12 @@ impl Railroads {
             }
         }
     }
-    pub fn get_owner(&self, board: &Board) -> Option<Player> {
+    pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
         match self {
             Railroads::Reading { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::Railroad(reading) = property {
                             if reading == self {
@@ -53,7 +52,7 @@ impl Railroads {
             }
             Railroads::Pennsylvania { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::Railroad(pennsylvania) = property {
                             if pennsylvania == self {
@@ -66,7 +65,7 @@ impl Railroads {
             }
             Railroads::Bo { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::Railroad(bo) = property {
                             if bo == self {
@@ -79,7 +78,7 @@ impl Railroads {
             }
             Railroads::ShortLine { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::Railroad(short_line) = property {
                             if short_line == self {
@@ -93,42 +92,42 @@ impl Railroads {
         }
     }
 
-    pub fn buy_property(&mut self, player: &mut Player) {
+    pub fn buy_property(&mut self, player: PlayerRef) {
         match self {
             Railroads::Reading { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 200;
+                    player.borrow_mut().money -= 200;
                     let bought_property = Properties::Railroad(Railroads::Reading {
                         state: PropertyState::Owned,
                     });
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
             Railroads::Pennsylvania { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 200;
+                    player.borrow_mut().money -= 200;
                     let bought_property = Properties::Railroad(Railroads::Pennsylvania {
                         state: PropertyState::Owned,
                     });
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
             Railroads::Bo { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 200;
+                    player.borrow_mut().money -= 200;
                     let bought_property = Properties::Railroad(Railroads::Bo {
                         state: PropertyState::Owned,
                     });
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
             Railroads::ShortLine { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 200;
+                    player.borrow_mut().money -= 200;
                     let bought_property = Properties::Railroad(Railroads::ShortLine {
                         state: PropertyState::Owned,
                     });
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
         }

@@ -1,7 +1,6 @@
 use super::colored_properties::ColoredProperties;
 use crate::models::{
-    board::Board,
-    player::Player,
+    board::{Board, PlayerRef},
     spaces::{
         properties::properties::Properties,
         space::{HouseCount, PropertyState, Space},
@@ -64,12 +63,12 @@ impl OrangeProperty {
         }
     }
 
-    pub fn get_owner(&self, board: &Board) -> Option<Player> {
+    pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
         match self {
             OrangeProperty::StJamesPlace { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::ColoredProperty(ColoredProperties::Orange(
                             orange_property,
@@ -85,7 +84,7 @@ impl OrangeProperty {
             }
             OrangeProperty::TennesseeAve { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::ColoredProperty(ColoredProperties::Orange(
                             orange_property,
@@ -101,7 +100,7 @@ impl OrangeProperty {
             }
             OrangeProperty::NewYorkAve { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::ColoredProperty(ColoredProperties::Orange(
                             orange_property,
@@ -131,39 +130,39 @@ impl OrangeProperty {
             }
         }
     }
-    pub fn buy_property(&mut self, player: &mut Player) {
+    pub fn buy_property(&mut self, player: PlayerRef) {
         match self {
             OrangeProperty::StJamesPlace { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 180;
+                    player.borrow_mut().money -= 180;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Orange(
                         OrangeProperty::StJamesPlace {
                             state: PropertyState::Owned,
                         },
                     ));
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
             OrangeProperty::TennesseeAve { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 180;
+                    player.borrow_mut().money -= 180;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Orange(
                         OrangeProperty::TennesseeAve {
                             state: PropertyState::Owned,
                         },
                     ));
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
             OrangeProperty::NewYorkAve { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 200;
+                    player.borrow_mut().money -= 200;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Orange(
                         OrangeProperty::NewYorkAve {
                             state: PropertyState::Owned,
                         },
                     ));
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
         }

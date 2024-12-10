@@ -1,6 +1,6 @@
 use super::colored_properties::ColoredProperties;
 use crate::models::{
-    board::Board,
+    board::{Board, PlayerRef},
     player::Player,
     spaces::{
         properties::properties::Properties,
@@ -48,12 +48,12 @@ impl BlueProperty {
         }
     }
 
-    pub fn get_owner(&self, board: &Board) -> Option<Player> {
+    pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
         match self {
             BlueProperty::ParkPlace { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::ColoredProperty(ColoredProperties::Blue(blue_property)) =
                             property
@@ -68,7 +68,7 @@ impl BlueProperty {
             }
             BlueProperty::Boardwalk { state } => {
                 for player in players.iter() {
-                    let properties = &player.properties;
+                    let properties = &player.borrow().properties;
                     for property in properties.iter() {
                         if let Properties::ColoredProperty(ColoredProperties::Blue(blue_property)) =
                             property
@@ -94,28 +94,28 @@ impl BlueProperty {
             }
         }
     }
-    pub fn buy_property(&mut self, player: &mut Player) {
+    pub fn buy_property(&mut self, player: PlayerRef) {
         match self {
             BlueProperty::ParkPlace { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 350;
+                    player.borrow_mut().money -= 350;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Blue(
                         BlueProperty::ParkPlace {
                             state: PropertyState::Owned,
                         },
                     ));
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
             BlueProperty::Boardwalk { state } => {
                 if *state == PropertyState::ForSale {
-                    player.money -= 400;
+                    player.borrow_mut().money -= 400;
                     let bought_property = Properties::ColoredProperty(ColoredProperties::Blue(
                         BlueProperty::Boardwalk {
                             state: PropertyState::Owned,
                         },
                     ));
-                    player.add_property(bought_property);
+                    player.borrow_mut().add_property(bought_property);
                 }
             }
         }

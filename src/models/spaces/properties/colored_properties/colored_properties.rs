@@ -64,8 +64,8 @@ impl ColoredProperties {
             // ColoredProperties::Blue(blue_property) => blue_property.buy_property(player),
         }
     }
-    pub fn get_owner(&self, board: Board) -> Option<PlayerRef> {
-        // pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
+    // pub fn get_owner(&self, board: Board) -> Option<PlayerRef> {
+    pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         match self {
             ColoredProperties::Brown(brown_property) => brown_property.get_owner(board),
             ColoredProperties::LightBlue(light_blue_property) => {
