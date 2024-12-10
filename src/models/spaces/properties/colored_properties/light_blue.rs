@@ -132,51 +132,66 @@ impl LightBlueProperty {
             }
         }
     }
-    pub fn buy_property(&mut self, player: PlayerRef) {
+    pub fn buy_property(&mut self, player_ref: PlayerRef) {
+        let cost = match self {
+            LightBlueProperty::ConnecticutAve { .. } => 120,
+            _ => 100,
+        };
+
+        // Mutably borrow the player and update their state.
+        let mut player = player_ref.borrow_mut();
+        player.money -= cost;
+        player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
+            *self,
+        )));
+
+        // Update the property state after releasing the mutable borrow on the player.
         match self {
-            LightBlueProperty::OrientalAve { mut state } => {
-                if state == PropertyState::ForSale {
-                    player.borrow_mut().money -= 100;
-                    player
-                        .borrow_mut()
-                        .add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
-                            LightBlueProperty::OrientalAve {
-                                state: PropertyState::Owned,
-                            },
-                        )));
-                    state = PropertyState::Owned;
-                    println!("Property State: {:?}", state);
-                }
-            }
-            LightBlueProperty::VermontAve { mut state } => {
-                if state == PropertyState::ForSale {
-                    player.borrow_mut().money -= 100;
-                    player
-                        .borrow_mut()
-                        .add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
-                            LightBlueProperty::VermontAve {
-                                state: PropertyState::Owned,
-                            },
-                        )));
-                    state = PropertyState::Owned;
-                    println!("Property State: {:?}", state);
-                }
-            }
-            LightBlueProperty::ConnecticutAve { mut state } => {
-                if state == PropertyState::ForSale {
-                    player.borrow_mut().money -= 120;
-                    player
-                        .borrow_mut()
-                        .add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
-                            LightBlueProperty::ConnecticutAve {
-                                state: PropertyState::Owned,
-                            },
-                        )));
-                    state = PropertyState::Owned;
-                    println!("Property State: {:?}", state);
-                }
-            }
+            LightBlueProperty::OrientalAve { state }
+            | LightBlueProperty::VermontAve { state }
+            | LightBlueProperty::ConnecticutAve { state } => *state = PropertyState::Owned,
         }
+
+        println!("Property State: {:?}", PropertyState::Owned);
+        // let mut player = player_ref.borrow_mut();
+        // match self {
+        //     LightBlueProperty::OrientalAve { mut state } => {
+        //         if state == PropertyState::ForSale {
+        //             player.money -= 100;
+        //             player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
+        //                 LightBlueProperty::OrientalAve {
+        //                     state: PropertyState::Owned,
+        //                 },
+        //             )));
+        //             state = PropertyState::Owned;
+        //             println!("Property State: {:?}", state);
+        //         }
+        //     }
+        //     LightBlueProperty::VermontAve { mut state } => {
+        //         if state == PropertyState::ForSale {
+        //             player.money -= 100;
+        //             player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
+        //                 LightBlueProperty::VermontAve {
+        //                     state: PropertyState::Owned,
+        //                 },
+        //             )));
+        //             state = PropertyState::Owned;
+        //             println!("Property State: {:?}", state);
+        //         }
+        //     }
+        //     LightBlueProperty::ConnecticutAve { mut state } => {
+        //         if state == PropertyState::ForSale {
+        //             player.money -= 120;
+        //             player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
+        //                 LightBlueProperty::ConnecticutAve {
+        //                     state: PropertyState::Owned,
+        //                 },
+        //             )));
+        //             state = PropertyState::Owned;
+        //             println!("Property State: {:?}", state);
+        //         }
+        //     }
+        // }
     }
     pub fn oriental_ave() -> Self {
         LightBlueProperty::OrientalAve {

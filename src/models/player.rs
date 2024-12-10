@@ -50,7 +50,7 @@ impl Player {
 
     // updates the player's true position
     // pub fn roll_dice(&mut self) {
-    pub fn roll_dice(mut self) {
+    pub fn roll_dice(&mut self) {
         let dice_roll = Self::dice_logic();
         // let doubles = Self::check_doubles(dice_roll);
         let new_position = Self::movement(dice_roll, self.position);

@@ -107,67 +107,84 @@ impl Board {
     }
 
     pub fn roll_player_dice(&self, index: usize) {
-        let player = self.players[index].borrow_mut();
-        player.clone().roll_dice();
+        let mut player = self.players[index].borrow_mut();
+        player.roll_dice();
+    }
+    pub fn get_position(&self, index: usize) -> usize {
+        (self.players[index].borrow().position) as usize
     }
 
     pub fn player_turn(&mut self, index: usize) {
-        // self.roll_player_dice(index);
-        let player = self.players[index].borrow_mut();
-        player.clone().roll_dice();
-        // let position = player.borrow().position;
-        let position = player.position;
-        let space_landed_on = &mut *self.spaces[position as usize].borrow_mut();
-        match space_landed_on {
+        // let mut player = self.players[index].borrow_mut();
+        // player.roll_dice();
+        self.roll_player_dice(index);
+        // let position = player.position;
+        let position = self.get_position(index);
+        let mut space_landed_on = self.spaces[position].borrow_mut();
+        let player_ref = self.players[index].clone();
+        match &mut *space_landed_on {
             Space::Property(properties) => {
                 println!("property landed on's state: {:?}", properties.is_for_sale());
                 if properties.is_for_sale() {
-                    println!("Player {:?} bought: {:?}", player.player_number, properties);
-                    properties.buy_property(self.players[index].clone());
+                    // let player_ref = self.players[index].clone();
+                    println!(
+                        "Player {:?} bought: {:?}",
+                        player_ref.borrow().player_number,
+                        properties
+                    );
+                    // properties.buy_property(self.players[index].clone());
+                    properties.buy_property(player_ref);
                 } else {
                     let owner = properties.get_owner(self);
                     if let Some(owner) = owner {
                         println!(
                             "Player {:?} has landed on {:?}'s property",
-                            player.player_number, owner
+                            player_ref.borrow().player_number,
+                            owner
                         );
                     }
                 }
             }
             Space::Chance => {
-                println!("Player {:?} has landed on Chance!", player.player_number)
+                println!(
+                    "Player {:?} has landed on Chance!",
+                    player_ref.borrow().player_number
+                )
             }
             Space::CommunityChest => {
                 println!(
                     "Player {:?} has landed on Community Chest!",
-                    player.player_number
+                    player_ref.borrow().player_number
                 )
             }
             Space::IncomeTax => {
-                println!("Player {:?} has landed on IncomeTax!", player.player_number)
+                println!(
+                    "Player {:?} has landed on IncomeTax!",
+                    player_ref.borrow().player_number
+                )
             }
             Space::LuxuryTax => {
-                println!("Player {:?} has farted", player.player_number)
+                println!("Player {:?} has farted", player_ref.borrow().player_number)
             }
             Space::Go => {
-                println!("Player {:?} has  pooped", player.player_number)
+                println!("Player {:?} has  pooped", player_ref.borrow().player_number)
             }
             Space::GoToJail => {
                 println!(
                     "Player {:?} has landed on Go To Jail Bitch!",
-                    player.player_number
+                    player_ref.borrow().player_number
                 )
             }
             Space::Jail => {
                 println!(
                     "Player {:?} has landed on Jail (just passing)",
-                    player.player_number
+                    player_ref.borrow().player_number
                 )
             }
             Space::FreeParking => {
                 println!(
                     "Player {:?} has landed on Free Parking",
-                    player.player_number
+                    player_ref.borrow().player_number
                 )
             }
         }
