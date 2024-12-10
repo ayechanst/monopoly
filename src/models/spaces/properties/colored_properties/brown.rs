@@ -107,7 +107,6 @@ impl BrownProperty {
                 ));
                 player.borrow_mut().add_property(bought_property);
                 state = PropertyState::Owned;
-                println!("Property State: {:?}", state);
             }
             BrownProperty::BalticAve { mut state } => {
                 player.borrow_mut().money -= 60;
@@ -118,7 +117,6 @@ impl BrownProperty {
                 ));
                 player.borrow_mut().add_property(bought_property);
                 state = PropertyState::Owned;
-                println!("Property State: {:?}", state);
             }
         }
     }

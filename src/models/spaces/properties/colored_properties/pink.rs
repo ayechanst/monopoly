@@ -138,7 +138,6 @@ impl PinkProperty {
                         },
                     )));
                 state = PropertyState::Owned;
-                println!("Property State: {:?}", state);
             }
             PinkProperty::StatesAve { mut state } => {
                 player.borrow_mut().money -= 140;
@@ -150,7 +149,6 @@ impl PinkProperty {
                         },
                     )));
                 state = PropertyState::Owned;
-                println!("Property State: {:?}", state);
             }
             PinkProperty::VirginiaAve { mut state } => {
                 player.borrow_mut().money -= 160;
@@ -162,7 +160,6 @@ impl PinkProperty {
                         },
                     )));
                 state = PropertyState::Owned;
-                println!("Property State: {:?}", state);
             }
         }
     }

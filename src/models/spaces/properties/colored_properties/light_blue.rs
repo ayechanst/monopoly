@@ -119,15 +119,12 @@ impl LightBlueProperty {
     pub fn for_sale(&self) -> bool {
         match self {
             LightBlueProperty::OrientalAve { state } => {
-                println!("for_sale: {:?}", state);
                 matches!(state, PropertyState::ForSale)
             }
             LightBlueProperty::VermontAve { state } => {
-                println!("for_sale: {:?}", state);
                 matches!(state, PropertyState::ForSale)
             }
             LightBlueProperty::ConnecticutAve { state } => {
-                println!("for_sale: {:?}", state);
                 matches!(state, PropertyState::ForSale)
             }
         }
