@@ -24,7 +24,7 @@ impl ColoredProperties {
         match self {
             ColoredProperties::Brown(prop) => prop.rent_price(),
             ColoredProperties::LightBlue(prop) => prop.rent_price(board),
-            ColoredProperties::Pink(prop) => prop.rent_price(),
+            ColoredProperties::Pink(prop) => prop.rent_price(board),
             ColoredProperties::Orange(prop) => prop.rent_price(),
             ColoredProperties::Red(prop) => prop.rent_price(),
             ColoredProperties::Yellow(prop) => prop.rent_price(),

@@ -1,11 +1,9 @@
-// use std::borrow::BorrowMut;
-
 use super::colored_properties::ColoredProperties;
 use crate::models::{
     board::{Board, PlayerRef},
     spaces::{
-        properties::{self, properties::Properties},
-        space::{HouseCount, PropertyState, Space},
+        properties::properties::Properties,
+        space::{HouseCount, PropertyState},
     },
 };
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -16,7 +14,6 @@ pub enum LightBlueProperty {
 }
 
 impl LightBlueProperty {
-    // pub fn rent_price(&self) -> i32 {
     pub fn rent_price(&self, board: &Board) -> i32 {
         let rent = 6;
         match self {
@@ -54,26 +51,23 @@ impl LightBlueProperty {
                 },
                 _ => rent,
             },
-            LightBlueProperty::ConnecticutAve { state } => {
-                // let rent = 8;
-                match state {
-                    PropertyState::Houses(house_count) => match house_count {
-                        HouseCount::Zero => {
-                            if self.has_monopoly(board) {
-                                rent * 2
-                            } else {
-                                rent
-                            }
+            LightBlueProperty::ConnecticutAve { state } => match state {
+                PropertyState::Houses(house_count) => match house_count {
+                    HouseCount::Zero => {
+                        if self.has_monopoly(board) {
+                            rent * 2
+                        } else {
+                            rent
                         }
-                        HouseCount::One => 40,
-                        HouseCount::Two => 100,
-                        HouseCount::Three => 300,
-                        HouseCount::Four => 450,
-                        HouseCount::Hotel => 600,
-                    },
-                    _ => rent,
-                }
-            }
+                    }
+                    HouseCount::One => 40,
+                    HouseCount::Two => 100,
+                    HouseCount::Three => 300,
+                    HouseCount::Four => 450,
+                    HouseCount::Hotel => 600,
+                },
+                _ => rent,
+            },
         }
     }
     pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
@@ -84,7 +78,6 @@ impl LightBlueProperty {
         owner.money += rent_price;
         renter.money -= rent_price;
     }
-
     pub fn has_monopoly(&self, board: &Board) -> bool {
         if let Some(owner_ref) = self.get_owner(board) {
             let owner = owner_ref.borrow();
@@ -112,7 +105,6 @@ impl LightBlueProperty {
             false
         }
     }
-
     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
         for player in players.iter() {
@@ -121,31 +113,28 @@ impl LightBlueProperty {
             for property in properties.iter() {
                 match self {
                     LightBlueProperty::OrientalAve { state } => {
-                        if let Properties::ColoredProperty(ColoredProperties::LightBlue(
-                            light_blue_property,
-                        )) = property
+                        if let Properties::ColoredProperty(ColoredProperties::LightBlue(prop)) =
+                            property
                         {
-                            if light_blue_property == self {
+                            if prop == self {
                                 return Some(player.clone());
                             }
                         }
                     }
                     LightBlueProperty::VermontAve { state } => {
-                        if let Properties::ColoredProperty(ColoredProperties::LightBlue(
-                            light_blue_property,
-                        )) = property
+                        if let Properties::ColoredProperty(ColoredProperties::LightBlue(prop)) =
+                            property
                         {
-                            if light_blue_property == self {
+                            if prop == self {
                                 return Some(player.clone());
                             }
                         }
                     }
                     LightBlueProperty::ConnecticutAve { state } => {
-                        if let Properties::ColoredProperty(ColoredProperties::LightBlue(
-                            light_blue_property,
-                        )) = property
+                        if let Properties::ColoredProperty(ColoredProperties::LightBlue(prop)) =
+                            property
                         {
-                            if light_blue_property == self {
+                            if prop == self {
                                 return Some(player.clone());
                             }
                         }
@@ -155,7 +144,6 @@ impl LightBlueProperty {
         }
         None
     }
-
     pub fn buy_property(&mut self, player_ref: PlayerRef) {
         let cost = match self {
             LightBlueProperty::ConnecticutAve { .. } => 120,

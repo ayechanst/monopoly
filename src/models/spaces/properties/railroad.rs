@@ -14,19 +14,40 @@ pub enum Railroads {
 }
 
 impl Railroads {
-    // NewRailRoad.rent_price(count of railroads)
-    pub fn rent_price(&self) -> i32 {
-        6699
+    pub fn rent_price(&self, board: &Board) -> i32 {
+        let railroads_owned = self.count_railroads(board);
+        if railroads_owned == 1 {
+            25
+        } else if railroads_owned == 2 {
+            50
+        } else if railroads_owned == 3 {
+            150
+        } else if railroads_owned == 4 {
+            200
+        } else {
+            0
+        }
     }
     pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
         let owner_ref = self.get_owner(board).unwrap();
         let mut owner = owner_ref.borrow_mut();
         let mut renter = renter_ref.borrow_mut();
-        let rent_price = self.rent_price();
+        let rent_price = self.rent_price(board);
         owner.money += rent_price;
         renter.money -= rent_price;
     }
-
+    pub fn count_railroads(&self, board: &Board) -> u8 {
+        if let Some(owner_ref) = self.get_owner(board) {
+            let owner = owner_ref.borrow();
+            owner
+                .properties
+                .iter()
+                .filter(|property| matches!(property, Properties::Railroad(_)))
+                .count() as u8
+        } else {
+            0
+        }
+    }
     // old logic for get_owner()
     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
