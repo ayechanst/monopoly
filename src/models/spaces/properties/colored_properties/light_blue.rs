@@ -4,7 +4,7 @@ use super::colored_properties::ColoredProperties;
 use crate::models::{
     board::{Board, PlayerRef},
     spaces::{
-        properties::properties::Properties,
+        properties::{self, properties::Properties},
         space::{HouseCount, PropertyState, Space},
     },
 };
@@ -74,11 +74,32 @@ impl LightBlueProperty {
 
     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
-        match self {
-            LightBlueProperty::OrientalAve { state } => {
-                for player in players.iter() {
-                    let properties = &player.borrow().properties;
-                    for property in properties.iter() {
+        for player in players.iter() {
+            let player_ref = player.borrow();
+            let properties = player_ref.properties.clone();
+            for property in properties.iter() {
+                match self {
+                    LightBlueProperty::OrientalAve { state } => {
+                        if let Properties::ColoredProperty(ColoredProperties::LightBlue(
+                            light_blue_property,
+                        )) = property
+                        {
+                            if light_blue_property == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                    LightBlueProperty::VermontAve { state } => {
+                        if let Properties::ColoredProperty(ColoredProperties::LightBlue(
+                            light_blue_property,
+                        )) = property
+                        {
+                            if light_blue_property == self {
+                                return Some(player.clone());
+                            }
+                        }
+                    }
+                    LightBlueProperty::ConnecticutAve { state } => {
                         if let Properties::ColoredProperty(ColoredProperties::LightBlue(
                             light_blue_property,
                         )) = property
@@ -89,42 +110,65 @@ impl LightBlueProperty {
                         }
                     }
                 }
-                None
-            }
-            LightBlueProperty::VermontAve { state } => {
-                for player in players.iter() {
-                    let properties = &player.borrow().properties;
-                    for property in properties.iter() {
-                        if let Properties::ColoredProperty(ColoredProperties::LightBlue(
-                            light_blue_property,
-                        )) = property
-                        {
-                            if light_blue_property == self {
-                                return Some(player.clone());
-                            }
-                        }
-                    }
-                }
-                None
-            }
-            LightBlueProperty::ConnecticutAve { state } => {
-                for player in players.iter() {
-                    let properties = &player.borrow().properties;
-                    for property in properties.iter() {
-                        if let Properties::ColoredProperty(ColoredProperties::LightBlue(
-                            light_blue_property,
-                        )) = property
-                        {
-                            if light_blue_property == self {
-                                return Some(player.clone());
-                            }
-                        }
-                    }
-                }
-                None
             }
         }
+        None
     }
+    // match self {
+    //     LightBlueProperty::OrientalAve { state } => todo!(),
+    //     LightBlueProperty::VermontAve { state } => todo!(),
+    //     LightBlueProperty::ConnecticutAve { state } => todo!(),
+
+    //     LightBlueProperty::OrientalAve { state } => {
+    //         for player in players.iter() {
+    //             let properties = &player.borrow().properties;
+    //             for property in properties.iter() {
+    //                 if let Properties::ColoredProperty(ColoredProperties::LightBlue(
+    //                     light_blue_property,
+    //                 )) = property
+    //                 {
+    //                     if light_blue_property == self {
+    //                         return Some(player.clone());
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         None
+    //     }
+    //     LightBlueProperty::VermontAve { state } => {
+    //         for player in players.iter() {
+    //             let properties = &player.borrow().properties;
+    //             for property in properties.iter() {
+    //                 if let Properties::ColoredProperty(ColoredProperties::LightBlue(
+    //                     light_blue_property,
+    //                 )) = property
+    //                 {
+    //                     if light_blue_property == self {
+    //                         return Some(player.clone());
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         None
+    //     }
+    //     LightBlueProperty::ConnecticutAve { state } => {
+    //         for player in players.iter() {
+    //             let properties = &player.borrow().properties;
+    //             for property in properties.iter() {
+    //                 if let Properties::ColoredProperty(ColoredProperties::LightBlue(
+    //                     light_blue_property,
+    //                 )) = property
+    //                 {
+    //                     if light_blue_property == self {
+    //                         return Some(player.clone());
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         None
+    //     }
+    // }
+    // }
 
     pub fn for_sale(&self) -> bool {
         match self {
@@ -144,18 +188,16 @@ impl LightBlueProperty {
             LightBlueProperty::ConnecticutAve { .. } => 120,
             _ => 100,
         };
-        // Mutably borrow the player and update their state.
         let mut player = player_ref.borrow_mut();
         player.money -= cost;
-        player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
-            *self,
-        )));
-        // Update the property state after releasing the mutable borrow on the player.
         match self {
             LightBlueProperty::OrientalAve { state }
             | LightBlueProperty::VermontAve { state }
             | LightBlueProperty::ConnecticutAve { state } => *state = PropertyState::Owned,
         }
+        player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
+            *self,
+        )));
     }
     // pub fn buy_property(&mut self, player: PlayerRef) {
     //     match self {

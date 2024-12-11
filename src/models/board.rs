@@ -181,10 +181,6 @@ impl Board {
                     if let Some(owner) = properties.get_owner(self) {
                         let owner_initial_balance = owner.borrow().money;
                         properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
-
-                        // let owner = properties.get_owner(self).unwrap();
-                        // let owner_initial_balance = owner.borrow().money;
-                        // properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
                         println!(
                             "BOOM! Player {:?} landed on {:?}'s property",
                             player_ref.borrow().player_number,
