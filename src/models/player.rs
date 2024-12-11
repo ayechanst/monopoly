@@ -4,7 +4,7 @@ use rand::Rng;
 #[derive(Debug, PartialEq, Clone)]
 pub struct Player {
     pub player_number: u8,
-    pub money: i64,
+    pub money: i32,
     pub properties: Vec<Properties>,
     pub get_out_of_jail_cards: u8,
     pub player_state: PlayerState,
@@ -49,7 +49,6 @@ impl Player {
     }
 
     // updates the player's true position
-    // pub fn roll_dice(&mut self) {
     pub fn roll_dice(&mut self) {
         let dice_roll = Self::dice_logic();
         // let doubles = Self::check_doubles(dice_roll);

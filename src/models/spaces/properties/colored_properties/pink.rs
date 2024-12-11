@@ -62,6 +62,15 @@ impl PinkProperty {
         }
     }
 
+    pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
+        let owner_ref = self.get_owner(board).unwrap();
+        let mut owner = owner_ref.borrow_mut();
+        let mut renter = renter_ref.borrow_mut();
+        let rent_price = self.rent_price();
+        owner.money += rent_price;
+        renter.money -= rent_price;
+    }
+
     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
         match self {

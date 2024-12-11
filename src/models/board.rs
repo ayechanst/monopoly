@@ -177,11 +177,26 @@ impl Board {
                         player_ref.borrow().money
                     );
                 } else {
-                    println!(
-                        "BOOOM! Player {:?} landed on {:?} (an owned property bitch)",
-                        player_ref.borrow().player_number,
-                        player_ref.borrow().position
-                    );
+                    let renter_initial_balance = player_ref.borrow().money;
+                    if let Some(owner) = properties.get_owner(self) {
+                        let owner_initial_balance = owner.borrow().money;
+                        properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
+
+                        // let owner = properties.get_owner(self).unwrap();
+                        // let owner_initial_balance = owner.borrow().money;
+                        // properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
+                        println!(
+                            "BOOM! Player {:?} landed on {:?}'s property",
+                            player_ref.borrow().player_number,
+                            owner.borrow().player_number,
+                        );
+                        println!("renter og balance: {:?}", renter_initial_balance);
+                        println!("renter balance after rent: {:?}", player_ref.borrow().money);
+                        println!("owner og balance: {:?}", owner_initial_balance);
+                        println!("owner balance after rent: {:?}", owner.borrow().money);
+                    } else {
+                        println!("owner not found");
+                    }
                 }
             }
             Space::Chance => {
