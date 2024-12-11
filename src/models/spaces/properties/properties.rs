@@ -2,10 +2,7 @@ use super::{
     colored_properties::colored_properties::ColoredProperties, railroad::Railroads,
     utility::Utilities,
 };
-use crate::models::{
-    board::{Board, PlayerRef},
-    player::Player,
-};
+use crate::models::board::{Board, PlayerRef};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Properties {
@@ -23,7 +20,6 @@ impl Properties {
         }
     }
     pub fn buy_property(&mut self, player: PlayerRef) {
-        // pub fn buy_property(&mut self, player: Player) {
         match self {
             Properties::ColoredProperty(colored_properties) => {
                 colored_properties.buy_property(player)
@@ -32,7 +28,6 @@ impl Properties {
             Properties::Railroad(railroads) => railroads.buy_property(player),
         }
     }
-    // pub fn get_owner(&self, board: Board) -> Option<Player> {
     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         match self {
             Properties::ColoredProperty(colored_properties) => colored_properties.get_owner(board),
@@ -45,8 +40,8 @@ impl Properties {
             Properties::ColoredProperty(colored_properties) => {
                 colored_properties.pay_rent(renter_ref, board)
             }
-            Properties::Utility(utilities) => todo!(),
-            Properties::Railroad(railroads) => todo!(),
+            Properties::Utility(utilities) => utilities.pay_rent(renter_ref, board),
+            Properties::Railroad(railroads) => railroads.pay_rent(renter_ref, board),
         }
     }
 }

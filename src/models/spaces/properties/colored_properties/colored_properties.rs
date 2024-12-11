@@ -20,10 +20,10 @@ pub enum ColoredProperties {
 }
 
 impl ColoredProperties {
-    pub fn rent_price(&self) -> i32 {
+    pub fn rent_price(&self, board: &Board) -> i32 {
         match self {
             ColoredProperties::Brown(prop) => prop.rent_price(),
-            ColoredProperties::LightBlue(prop) => prop.rent_price(),
+            ColoredProperties::LightBlue(prop) => prop.rent_price(board),
             ColoredProperties::Pink(prop) => prop.rent_price(),
             ColoredProperties::Orange(prop) => prop.rent_price(),
             ColoredProperties::Red(prop) => prop.rent_price(),

@@ -26,6 +26,17 @@ impl Utilities {
             }
         }
     }
+
+    pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
+        let owner_ref = self.get_owner(board).unwrap();
+        let mut owner = owner_ref.borrow_mut();
+        let mut renter = renter_ref.borrow_mut();
+        let rent_price = self.rent_price();
+        owner.money += rent_price;
+        renter.money -= rent_price;
+    }
+
+    // TODO: get_owner uses the old logic, update later
     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
         match self {
@@ -57,27 +68,36 @@ impl Utilities {
             }
         }
     }
-    pub fn buy_property(&mut self, player: PlayerRef) {
+    pub fn buy_property(&mut self, player_ref: PlayerRef) {
+        let cost = 200;
+        let mut player = player_ref.borrow_mut();
+        player.money -= cost;
         match self {
-            Utilities::ElectricCompany { state } => {
-                if *state == PropertyState::ForSale {
-                    player.borrow_mut().money -= 150;
-                    let bought_property = Properties::Utility(Utilities::ElectricCompany {
-                        state: PropertyState::Owned,
-                    });
-                    player.borrow_mut().add_property(bought_property);
-                }
-            }
-            Utilities::WaterWorks { state } => {
-                if *state == PropertyState::ForSale {
-                    player.borrow_mut().money -= 150;
-                    let bought_property = Properties::Utility(Utilities::WaterWorks {
-                        state: PropertyState::Owned,
-                    });
-                    player.borrow_mut().add_property(bought_property);
-                }
+            Utilities::ElectricCompany { state } | Utilities::WaterWorks { state } => {
+                *state = PropertyState::Owned
             }
         }
+        player.add_property(Properties::Utility(*self));
+        // match self {
+        //     Utilities::ElectricCompany { state } => {
+        //         if *state == PropertyState::ForSale {
+        //             player.borrow_mut().money -= 150;
+        //             let bought_property = Properties::Utility(Utilities::ElectricCompany {
+        //                 state: PropertyState::Owned,
+        //             });
+        //             player.borrow_mut().add_property(bought_property);
+        //         }
+        //     }
+        //     Utilities::WaterWorks { state } => {
+        //         if *state == PropertyState::ForSale {
+        //             player.borrow_mut().money -= 150;
+        //             let bought_property = Properties::Utility(Utilities::WaterWorks {
+        //                 state: PropertyState::Owned,
+        //             });
+        //             player.borrow_mut().add_property(bought_property);
+        //         }
+        //     }
+        // }
     }
     pub fn electric_company() -> Self {
         Utilities::ElectricCompany {
