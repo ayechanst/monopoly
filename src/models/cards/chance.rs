@@ -2,6 +2,7 @@ use rand::Rng;
 
 use crate::models::board::{Board, PlayerRef};
 
+#[derive(Debug)]
 pub enum Chance {
     One,
     Two,

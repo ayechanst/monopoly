@@ -14,6 +14,73 @@ pub enum LightBlueProperty {
 }
 
 impl LightBlueProperty {
+    pub fn buy_property(&mut self, player_ref: PlayerRef) {
+        let cost = match self {
+            LightBlueProperty::ConnecticutAve { .. } => 120,
+            _ => 100,
+        };
+        let mut player = player_ref.borrow_mut();
+        player.money -= cost;
+        match self {
+            LightBlueProperty::OrientalAve { state }
+            | LightBlueProperty::VermontAve { state }
+            | LightBlueProperty::ConnecticutAve { state } => *state = PropertyState::Owned,
+        }
+        player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
+            *self,
+        )));
+    }
+    pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
+        let owner_ref = self.get_owner(board).unwrap();
+        let mut owner = owner_ref.borrow_mut();
+        let mut renter = renter_ref.borrow_mut();
+        let rent_price = self.rent_price(board);
+        owner.money += rent_price;
+        renter.money -= rent_price;
+    }
+    // pub fn mortgage(&mut self, player_ref: PlayerRef) {
+    //     let mortgage_value = match self {
+    //         LightBlueProperty::ConnecticutAve { .. } => 60,
+    //         _ => 50,
+    //     };
+    //     let mut player = player_ref.borrow_mut();
+    //     player.money += mortgage_value;
+    //     match self {
+    //         LightBlueProperty::OrientalAve { state }
+    //         | LightBlueProperty::VermontAve { state }
+    //         | LightBlueProperty::ConnecticutAve { state } => *state = PropertyState::Mortgaged,
+    //     }
+    //     player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
+    //         *self,
+    //     )));
+    // }
+    pub fn has_monopoly(&self, board: &Board) -> bool {
+        if let Some(owner_ref) = self.get_owner(board) {
+            let owner = owner_ref.borrow();
+            let monopoly = vec![
+                Properties::ColoredProperty(ColoredProperties::LightBlue(
+                    LightBlueProperty::OrientalAve {
+                        state: PropertyState::Owned,
+                    },
+                )),
+                Properties::ColoredProperty(ColoredProperties::LightBlue(
+                    LightBlueProperty::VermontAve {
+                        state: PropertyState::Owned,
+                    },
+                )),
+                Properties::ColoredProperty(ColoredProperties::LightBlue(
+                    LightBlueProperty::ConnecticutAve {
+                        state: PropertyState::Owned,
+                    },
+                )),
+            ];
+            monopoly
+                .iter()
+                .all(|property| owner.properties.contains(property))
+        } else {
+            false
+        }
+    }
     pub fn rent_price(&self, board: &Board) -> i32 {
         let rent = 6;
         match self {
@@ -70,41 +137,6 @@ impl LightBlueProperty {
             },
         }
     }
-    pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
-        let owner_ref = self.get_owner(board).unwrap();
-        let mut owner = owner_ref.borrow_mut();
-        let mut renter = renter_ref.borrow_mut();
-        let rent_price = self.rent_price(board);
-        owner.money += rent_price;
-        renter.money -= rent_price;
-    }
-    pub fn has_monopoly(&self, board: &Board) -> bool {
-        if let Some(owner_ref) = self.get_owner(board) {
-            let owner = owner_ref.borrow();
-            let monopoly = vec![
-                Properties::ColoredProperty(ColoredProperties::LightBlue(
-                    LightBlueProperty::OrientalAve {
-                        state: PropertyState::Owned,
-                    },
-                )),
-                Properties::ColoredProperty(ColoredProperties::LightBlue(
-                    LightBlueProperty::VermontAve {
-                        state: PropertyState::Owned,
-                    },
-                )),
-                Properties::ColoredProperty(ColoredProperties::LightBlue(
-                    LightBlueProperty::ConnecticutAve {
-                        state: PropertyState::Owned,
-                    },
-                )),
-            ];
-            monopoly
-                .iter()
-                .all(|property| owner.properties.contains(property))
-        } else {
-            false
-        }
-    }
     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         let players = &board.players;
         for player in players.iter() {
@@ -143,22 +175,6 @@ impl LightBlueProperty {
             }
         }
         None
-    }
-    pub fn buy_property(&mut self, player_ref: PlayerRef) {
-        let cost = match self {
-            LightBlueProperty::ConnecticutAve { .. } => 120,
-            _ => 100,
-        };
-        let mut player = player_ref.borrow_mut();
-        player.money -= cost;
-        match self {
-            LightBlueProperty::OrientalAve { state }
-            | LightBlueProperty::VermontAve { state }
-            | LightBlueProperty::ConnecticutAve { state } => *state = PropertyState::Owned,
-        }
-        player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
-            *self,
-        )));
     }
     pub fn for_sale(&self) -> bool {
         match self {

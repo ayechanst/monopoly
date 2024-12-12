@@ -198,12 +198,17 @@ impl Board {
                 }
             }
             Space::Chance => {
+                let player_og_balance = player_ref.borrow().money;
                 let chance_card = Chance::random_card();
                 chance_card.execute_card(player_ref.clone(), self);
+                let player_new_balance = player_ref.borrow().money;
                 println!(
-                    "Player {:?} has landed on Chance!",
-                    player_ref.borrow().player_number
-                )
+                    "Player {:?} has landed on Chance variant:{:?}.",
+                    player_ref.borrow().player_number,
+                    chance_card
+                );
+                println!("OG balance: {:?}", player_og_balance);
+                println!("New balance: {:?}", player_new_balance);
             }
             Space::CommunityChest => {
                 println!(
