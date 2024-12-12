@@ -8,8 +8,8 @@ use crate::models::{
 };
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum PinkProperty {
-    OrientalAve { state: PropertyState },
-    VermontAve { state: PropertyState },
+    StCharlesPlace { state: PropertyState },
+    StatesAve { state: PropertyState },
     VirginiaAve { state: PropertyState },
 }
 
@@ -17,7 +17,7 @@ impl PinkProperty {
     pub fn rent_price(&self, board: &Board) -> i32 {
         let rent = 10;
         match self {
-            PinkProperty::OrientalAve { state } => match state {
+            PinkProperty::StCharlesPlace { state } => match state {
                 PropertyState::Houses(house_count) => match house_count {
                     HouseCount::Zero => {
                         if self.has_monopoly(board) {
@@ -34,7 +34,7 @@ impl PinkProperty {
                 },
                 _ => rent,
             },
-            PinkProperty::VermontAve { state } => match state {
+            PinkProperty::StatesAve { state } => match state {
                 PropertyState::Houses(house_count) => match house_count {
                     HouseCount::Zero => {
                         if self.has_monopoly(board) {
@@ -82,10 +82,12 @@ impl PinkProperty {
         if let Some(owner_ref) = self.get_owner(board) {
             let owner = owner_ref.borrow();
             let monopoly = vec![
-                Properties::ColoredProperty(ColoredProperties::Pink(PinkProperty::OrientalAve {
-                    state: PropertyState::Owned,
-                })),
-                Properties::ColoredProperty(ColoredProperties::Pink(PinkProperty::VermontAve {
+                Properties::ColoredProperty(ColoredProperties::Pink(
+                    PinkProperty::StCharlesPlace {
+                        state: PropertyState::Owned,
+                    },
+                )),
+                Properties::ColoredProperty(ColoredProperties::Pink(PinkProperty::StatesAve {
                     state: PropertyState::Owned,
                 })),
                 Properties::ColoredProperty(ColoredProperties::Pink(PinkProperty::VirginiaAve {
@@ -106,7 +108,7 @@ impl PinkProperty {
             let properties = player_ref.properties.clone();
             for property in properties.iter() {
                 match self {
-                    PinkProperty::OrientalAve { state } => {
+                    PinkProperty::StCharlesPlace { state } => {
                         if let Properties::ColoredProperty(ColoredProperties::Pink(prop)) = property
                         {
                             if prop == self {
@@ -114,7 +116,7 @@ impl PinkProperty {
                             }
                         }
                     }
-                    PinkProperty::VermontAve { state } => {
+                    PinkProperty::StatesAve { state } => {
                         if let Properties::ColoredProperty(ColoredProperties::Pink(prop)) = property
                         {
                             if prop == self {
@@ -143,18 +145,18 @@ impl PinkProperty {
         let mut player = player_ref.borrow_mut();
         player.money -= cost;
         match self {
-            PinkProperty::OrientalAve { state }
-            | PinkProperty::VermontAve { state }
+            PinkProperty::StCharlesPlace { state }
+            | PinkProperty::StatesAve { state }
             | PinkProperty::VirginiaAve { state } => *state = PropertyState::Owned,
         }
         player.add_property(Properties::ColoredProperty(ColoredProperties::Pink(*self)));
     }
     pub fn for_sale(&self) -> bool {
         match self {
-            PinkProperty::OrientalAve { state } => {
+            PinkProperty::StCharlesPlace { state } => {
                 matches!(state, PropertyState::ForSale)
             }
-            PinkProperty::VermontAve { state } => {
+            PinkProperty::StatesAve { state } => {
                 matches!(state, PropertyState::ForSale)
             }
             PinkProperty::VirginiaAve { state } => {
@@ -163,12 +165,12 @@ impl PinkProperty {
         }
     }
     pub fn st_charles_place() -> Self {
-        PinkProperty::OrientalAve {
+        PinkProperty::StCharlesPlace {
             state: PropertyState::ForSale,
         }
     }
     pub fn states_ave() -> Self {
-        PinkProperty::VermontAve {
+        PinkProperty::StatesAve {
             state: PropertyState::ForSale,
         }
     }
