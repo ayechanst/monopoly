@@ -1,10 +1,13 @@
 use super::colored_properties::ColoredProperties;
-use crate::models::{
-    board::{Board, PlayerRef},
-    spaces::{
-        properties::properties::Properties,
-        space::{HouseCount, PropertyState},
+use crate::{
+    models::{
+        board::{Board, PlayerRef},
+        spaces::{
+            properties::properties::Properties,
+            space::{HouseCount, PropertyState},
+        },
     },
+    utils::prompts::bid,
 };
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum LightBlueProperty {
@@ -38,11 +41,35 @@ impl LightBlueProperty {
         owner.money += rent_price;
         renter.money -= rent_price;
     }
-    pub fn auction(&self, player_ref: PlayerRef, board: &Board) {
+    pub fn auction(&mut self, player_ref: PlayerRef, board: &Board) {
         let player_refs = &board.players;
-        // 1. start auction
-        // 2. bid war (implement timer)
-        // 3. make highest bidder the owner
+        let mut bid_price = 10;
+        let mut highest_bidder = player_ref.borrow_mut();
+        let mut current_bidder_index = player_ref.borrow_mut().player_number;
+        loop {
+            let player_ref = &player_refs[current_bidder_index as usize];
+            let choice = bid(player_ref.borrow(), bid_price);
+            match choice.trim().to_lowercase().as_str() {
+                "y" => {
+                    bid_price += 10;
+                    highest_bidder = player_ref.borrow_mut();
+                }
+                _ => {
+                    highest_bidder.money -= bid_price;
+                    match self {
+                        LightBlueProperty::OrientalAve { state }
+                        | LightBlueProperty::VermontAve { state }
+                        | LightBlueProperty::ConnecticutAve { state } => {
+                            *state = PropertyState::Owned
+                        }
+                    }
+                    highest_bidder.add_property(Properties::ColoredProperty(
+                        ColoredProperties::LightBlue(*self),
+                    ));
+                }
+            }
+            current_bidder_index = (current_bidder_index + 1) % player_refs.len() as u8;
+        }
     }
 
     // pub fn mortgage(&mut self, player_ref: PlayerRef) {

@@ -84,7 +84,20 @@ impl ColoredProperties {
             // ColoredProperties::Blue(blue_property) => blue_property.get_owner(board),
         }
     }
-
+    pub fn auction(&mut self, player_ref: PlayerRef, board: &Board) {
+        match self {
+            ColoredProperties::Brown(brown_property) => todo!(),
+            ColoredProperties::LightBlue(light_blue_property) => {
+                light_blue_property.auction(player_ref, board)
+            }
+            ColoredProperties::Pink(pink_property) => todo!(),
+            ColoredProperties::Orange(orange_property) => todo!(),
+            ColoredProperties::Red(red_property) => todo!(),
+            ColoredProperties::Yellow(yellow_property) => todo!(),
+            ColoredProperties::Green(green_property) => todo!(),
+            ColoredProperties::Blue(blue_property) => todo!(),
+        }
+    }
     pub fn pay_rent(&mut self, renter_ref: PlayerRef, board: &Board) {
         match self {
             ColoredProperties::Brown(brown_property) => brown_property.pay_rent(renter_ref, board),

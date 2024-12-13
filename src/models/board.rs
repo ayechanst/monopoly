@@ -58,6 +58,7 @@ impl Board {
                         }
                         "auction" => {
                             println!("{:?} will be put up for auction.", properties);
+                            properties.auction(player_ref, self);
                         }
                         _ => println!("Invalid choice buddy"),
                     }

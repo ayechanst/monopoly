@@ -28,6 +28,15 @@ impl Properties {
             Properties::Railroad(railroads) => railroads.buy_property(player),
         }
     }
+    pub fn auction(&mut self, player_ref: PlayerRef, board: &Board) {
+        match self {
+            Properties::ColoredProperty(colored_properties) => {
+                colored_properties.auction(player_ref, board)
+            }
+            Properties::Utility(utilities) => todo!(),
+            Properties::Railroad(railroads) => todo!(),
+        }
+    }
     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         match self {
             Properties::ColoredProperty(colored_properties) => colored_properties.get_owner(board),
