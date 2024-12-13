@@ -1,15 +1,20 @@
 mod models;
-use std::{cell::RefCell, rc::Rc};
-
 use models::board::Board;
+use std::io::{self, Write};
+mod utils;
+
 fn main() {
     let mut board = Board::new();
-    board.player_turn(0);
-    board.player_turn(1);
-    board.player_turn(2);
-    board.player_turn(3);
+    for i in 0..4 {
+        println!("It's player {}'s turn!", i);
+        board.player_turn(i);
+        wait_for_player();
+    }
+}
 
-    // let boi = String::from("Garcon");
-    // let shared_string = Rc::new(RefCell::new(boi));
-    // let string_ref = shared_string.borrow_mut();
+fn wait_for_player() {
+    print!("Press Enter to pass the turn... ");
+    io::stdout().flush().unwrap(); // Ensures the message is displayed immediately
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).unwrap(); // Waits for player input
 }

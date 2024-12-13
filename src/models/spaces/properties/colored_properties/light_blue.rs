@@ -38,6 +38,13 @@ impl LightBlueProperty {
         owner.money += rent_price;
         renter.money -= rent_price;
     }
+    pub fn auction(&self, player_ref: PlayerRef, board: &Board) {
+        let player_refs = &board.players;
+        // 1. start auction
+        // 2. bid war (implement timer)
+        // 3. make highest bidder the owner
+    }
+
     // pub fn mortgage(&mut self, player_ref: PlayerRef) {
     //     let mortgage_value = match self {
     //         LightBlueProperty::ConnecticutAve { .. } => 60,

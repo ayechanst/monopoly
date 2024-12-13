@@ -1,5 +1,3 @@
-use crate::models::cards::chance::Chance;
-
 use super::{
     player::Player,
     spaces::{
@@ -15,6 +13,7 @@ use super::{
         space::Space,
     },
 };
+use crate::{models::cards::chance::Chance, utils::prompts::prompt_player};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -28,6 +27,122 @@ pub struct Board {
 }
 
 impl Board {
+    pub fn roll_player_dice(&self, index: usize) {
+        let mut player = self.players[index].borrow_mut();
+        player.roll_dice();
+    }
+    pub fn get_position(&self, index: usize) -> usize {
+        (self.players[index].borrow().position) as usize
+    }
+    pub fn player_turn(&mut self, index: usize) {
+        self.roll_player_dice(index);
+        let position = self.get_position(index);
+        let player_ref = self.players[index].clone();
+        let mut space_landed_on = self.spaces[position].borrow_mut();
+
+        match &mut *space_landed_on {
+            Space::Property(properties) => {
+                if properties.is_for_sale() {
+                    println!(
+                        "Player {:?} landed on {:?}",
+                        player_ref.borrow().player_number,
+                        properties
+                    );
+                    let choice = prompt_player("Buy or auction this property? (buy/auction)");
+                    match choice.trim().to_lowercase().as_str() {
+                        "buy" => {
+                            properties.buy_property(player_ref.clone());
+                            println!(
+                                "Player {:?} bought: {:?}, and has {:?} money left",
+                                player_ref.borrow().player_number,
+                                properties,
+                                player_ref.borrow().money
+                            );
+                        }
+                        "auction" => {
+                            println!("{:?} will be put up for auction.", properties);
+                        }
+                        _ => println!("Invalid choice buddy"),
+                    }
+                } else {
+                    let renter_initial_balance = player_ref.borrow().money;
+                    if let Some(owner) = properties.get_owner(self) {
+                        let owner_initial_balance = owner.borrow().money;
+                        properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
+                        println!(
+                            "BOOM! Player {:?} landed on {:?}'s property",
+                            player_ref.borrow().player_number,
+                            owner.borrow().player_number,
+                        );
+                        println!("renter og balance: {:?}", renter_initial_balance);
+                        println!("renter balance after rent: {:?}", player_ref.borrow().money);
+                        println!("owner og balance: {:?}", owner_initial_balance);
+                        println!("owner balance after rent: {:?}", owner.borrow().money);
+                    } else {
+                        println!("owner not found");
+                    }
+                }
+            }
+            Space::Chance => {
+                let player_og_balance = player_ref.borrow().money;
+                let chance_card = Chance::random_card();
+                chance_card.execute_card(player_ref.clone(), self);
+                let player_new_balance = player_ref.borrow().money;
+                println!(
+                    "Player {:?} has landed on Chance variant:{:?}.",
+                    player_ref.borrow().player_number,
+                    chance_card
+                );
+                println!("OG balance: {:?}", player_og_balance);
+                println!("New balance: {:?}", player_new_balance);
+            }
+            Space::CommunityChest => {
+                println!(
+                    "Player {:?} has landed on Community Chest!",
+                    player_ref.borrow().player_number
+                )
+            }
+            Space::IncomeTax => {
+                println!(
+                    "Player {:?} landed on Income Tax!",
+                    player_ref.borrow().player_number
+                );
+                let player_og_balance = player_ref.borrow().money;
+                player_ref.borrow_mut().money -= 200;
+                let player_new_balance = player_ref.borrow().money;
+                println!("OG balance: {:?}", player_og_balance);
+                println!("New balance: {:?}", player_new_balance);
+            }
+            Space::LuxuryTax => {
+                println!(
+                    "Player {:?} landed on Luxury Tax!",
+                    player_ref.borrow().player_number
+                );
+                player_ref.borrow_mut().money -= 100;
+            }
+            Space::Go => {
+                println!("Player {:?} has  pooped", player_ref.borrow().player_number)
+            }
+            Space::GoToJail => {
+                println!(
+                    "Player {:?} has landed on Go To Jail Bitch!",
+                    player_ref.borrow().player_number
+                )
+            }
+            Space::Jail => {
+                println!(
+                    "Player {:?} has landed on Jail (just passing)",
+                    player_ref.borrow().player_number
+                )
+            }
+            Space::FreeParking => {
+                println!(
+                    "Player {:?} has landed on Free Parking",
+                    player_ref.borrow().player_number
+                )
+            }
+        }
+    }
     pub fn new() -> Self {
         let mut spaces = Vec::new();
         // Bottom 0-9
@@ -155,98 +270,6 @@ impl Board {
         ];
 
         Board { spaces, players }
-    }
-    pub fn roll_player_dice(&self, index: usize) {
-        let mut player = self.players[index].borrow_mut();
-        player.roll_dice();
-    }
-    pub fn get_position(&self, index: usize) -> usize {
-        (self.players[index].borrow().position) as usize
-    }
-    pub fn player_turn(&mut self, index: usize) {
-        self.roll_player_dice(index);
-        let position = self.get_position(index);
-        let mut space_landed_on = self.spaces[position].borrow_mut();
-        let player_ref = self.players[index].clone();
-        match &mut *space_landed_on {
-            Space::Property(properties) => {
-                if properties.is_for_sale() {
-                    properties.buy_property(player_ref.clone());
-                    println!(
-                        "Player {:?} bought: {:?}, and has {:?} money left",
-                        player_ref.borrow().player_number,
-                        properties,
-                        player_ref.borrow().money
-                    );
-                } else {
-                    let renter_initial_balance = player_ref.borrow().money;
-                    if let Some(owner) = properties.get_owner(self) {
-                        let owner_initial_balance = owner.borrow().money;
-                        properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
-                        println!(
-                            "BOOM! Player {:?} landed on {:?}'s property",
-                            player_ref.borrow().player_number,
-                            owner.borrow().player_number,
-                        );
-                        println!("renter og balance: {:?}", renter_initial_balance);
-                        println!("renter balance after rent: {:?}", player_ref.borrow().money);
-                        println!("owner og balance: {:?}", owner_initial_balance);
-                        println!("owner balance after rent: {:?}", owner.borrow().money);
-                    } else {
-                        println!("owner not found");
-                    }
-                }
-            }
-            Space::Chance => {
-                let player_og_balance = player_ref.borrow().money;
-                let chance_card = Chance::random_card();
-                chance_card.execute_card(player_ref.clone(), self);
-                let player_new_balance = player_ref.borrow().money;
-                println!(
-                    "Player {:?} has landed on Chance variant:{:?}.",
-                    player_ref.borrow().player_number,
-                    chance_card
-                );
-                println!("OG balance: {:?}", player_og_balance);
-                println!("New balance: {:?}", player_new_balance);
-            }
-            Space::CommunityChest => {
-                println!(
-                    "Player {:?} has landed on Community Chest!",
-                    player_ref.borrow().player_number
-                )
-            }
-            Space::IncomeTax => {
-                println!(
-                    "Player {:?} has landed on IncomeTax!",
-                    player_ref.borrow().player_number
-                )
-            }
-            Space::LuxuryTax => {
-                println!("Player {:?} has farted", player_ref.borrow().player_number)
-            }
-            Space::Go => {
-                println!("Player {:?} has  pooped", player_ref.borrow().player_number)
-            }
-            Space::GoToJail => {
-                println!(
-                    "Player {:?} has landed on Go To Jail Bitch!",
-                    player_ref.borrow().player_number
-                )
-            }
-            Space::Jail => {
-                println!(
-                    "Player {:?} has landed on Jail (just passing)",
-                    player_ref.borrow().player_number
-                )
-            }
-            Space::FreeParking => {
-                println!(
-                    "Player {:?} has landed on Free Parking",
-                    player_ref.borrow().player_number
-                )
-            }
-        }
     }
 }
 
