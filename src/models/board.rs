@@ -13,7 +13,13 @@ use super::{
         space::Space,
     },
 };
-use crate::{models::cards::chance::Chance, utils::prompts::prompt_player};
+use crate::{
+    models::cards::chance::Chance,
+    utils::{
+        debug_helpers::{debug_buy_property, debug_property, debug_rent},
+        prompts::prompt_player,
+    },
+};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -43,21 +49,12 @@ impl Board {
         match &mut *space_landed_on {
             Space::Property(properties) => {
                 if properties.is_for_sale() {
-                    println!(
-                        "Player {:?} landed on {:?}",
-                        player_ref.borrow().player_number,
-                        properties
-                    );
+                    debug_property(player_ref.borrow(), *properties);
                     let choice = prompt_player("Buy or auction this property? (buy/auction)");
                     match choice.trim().to_lowercase().as_str() {
                         "buy" => {
                             properties.buy_property(player_ref.clone());
-                            println!(
-                                "Player {:?} bought: {:?}, and has {:?} money left",
-                                player_ref.borrow().player_number,
-                                properties,
-                                player_ref.borrow().money
-                            );
+                            debug_buy_property(player_ref.borrow(), *properties);
                         }
                         "auction" => {
                             println!("{:?} will be put up for auction.", properties);
@@ -65,19 +62,9 @@ impl Board {
                         _ => println!("Invalid choice buddy"),
                     }
                 } else {
-                    let renter_initial_balance = player_ref.borrow().money;
                     if let Some(owner) = properties.get_owner(self) {
-                        let owner_initial_balance = owner.borrow().money;
                         properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
-                        println!(
-                            "BOOM! Player {:?} landed on {:?}'s property",
-                            player_ref.borrow().player_number,
-                            owner.borrow().player_number,
-                        );
-                        println!("renter og balance: {:?}", renter_initial_balance);
-                        println!("renter balance after rent: {:?}", player_ref.borrow().money);
-                        println!("owner og balance: {:?}", owner_initial_balance);
-                        println!("owner balance after rent: {:?}", owner.borrow().money);
+                        debug_rent(owner.borrow(), player_ref.borrow());
                     } else {
                         println!("owner not found");
                     }
