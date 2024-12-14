@@ -41,36 +41,95 @@ impl LightBlueProperty {
         owner.money += rent_price;
         renter.money -= rent_price;
     }
-    pub fn auction(&mut self, player_ref: PlayerRef, board: &Board) {
+    // pub fn auction(&mut self, player_ref: PlayerRef, board: &Board) {
+    pub fn auction(&mut self, board: &Board) {
         let player_refs = &board.players;
-        let mut bid_price = 10;
-        let mut highest_bidder = player_ref.borrow_mut();
-        let mut current_bidder_index = player_ref.borrow_mut().player_number;
+        let mut bid_price = 10; // Starting bid
+        let mut round_bids = vec![false; player_refs.len()]; // Track if each player has bid "y"
+        let mut current_bidder_index = 0;
+        let mut highest_bidder_index = current_bidder_index;
+        let mut highest_bid = 0;
+        let mut round_count = 0;
+        // Loop until only one player remains
         loop {
-            let player_ref = &player_refs[current_bidder_index as usize];
+            // Get the current player
+            let player_ref = player_refs[current_bidder_index].clone();
             let choice = bid(player_ref.borrow(), bid_price);
-            match choice.trim().to_lowercase().as_str() {
-                "y" => {
-                    bid_price += 10;
-                    highest_bidder = player_ref.borrow_mut();
+            // If player bids "y"
+            if choice.trim().to_lowercase() == "y" {
+                // Check if this is the highest bid so far
+                if bid_price > highest_bid {
+                    highest_bid = bid_price;
+                    highest_bidder_index = current_bidder_index;
                 }
-                _ => {
-                    highest_bidder.money -= bid_price;
-                    match self {
-                        LightBlueProperty::OrientalAve { state }
-                        | LightBlueProperty::VermontAve { state }
-                        | LightBlueProperty::ConnecticutAve { state } => {
-                            *state = PropertyState::Owned
-                        }
-                    }
-                    highest_bidder.add_property(Properties::ColoredProperty(
-                        ColoredProperties::LightBlue(*self),
-                    ));
-                }
+            } else {
+                // Mark player as having passed
+                round_bids[current_bidder_index] = true;
             }
-            current_bidder_index = (current_bidder_index + 1) % player_refs.len() as u8;
+            // Check if all players have either passed or bid
+            if round_bids.iter().all(|&b| b) {
+                // End the auction and assign the property
+                let mut winner = player_refs[highest_bidder_index].borrow_mut();
+                winner.money -= highest_bid - 10;
+                match self {
+                    LightBlueProperty::OrientalAve { state }
+                    | LightBlueProperty::VermontAve { state }
+                    | LightBlueProperty::ConnecticutAve { state } => {
+                        *state = PropertyState::Owned;
+                    }
+                }
+                winner.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
+                    *self,
+                )));
+                println!(
+                    "Player {:?} has aquired {:?} for ${:?}",
+                    winner.player_number,
+                    ColoredProperties::LightBlue(*self),
+                    bid_price - 10
+                );
+                break;
+            }
+            current_bidder_index = (current_bidder_index + 1) % player_refs.len();
+            round_count += 1;
+            if round_count % 4 == 0 {
+                bid_price += 10;
+            }
         }
     }
+    // pub fn auction(&mut self, player_ref: PlayerRef, board: &Board) {
+    //     let player_refs = &board.players;
+    //     let mut bid_price = 10;
+    //     let mut current_bidder_index = 0;
+    //     let mut highest_bidder_index = current_bidder_index;
+    //     loop {
+    //         let player_ref = player_refs[current_bidder_index as usize].clone();
+    //         let choice = bid(player_ref.borrow(), bid_price);
+    //         match choice.trim().to_lowercase().as_str() {
+    //             "y" => {
+    //                 // bid_price += 10;
+    //                 highest_bidder_index = player_ref.borrow().player_number;
+    //             }
+    //             _ => {
+    //                 let mut auction_winner =
+    //                     player_refs[highest_bidder_index as usize].borrow_mut();
+    //                 auction_winner.money -= bid_price;
+    //                 match self {
+    //                     LightBlueProperty::OrientalAve { state }
+    //                     | LightBlueProperty::VermontAve { state }
+    //                     | LightBlueProperty::ConnecticutAve { state } => {
+    //                         *state = PropertyState::Owned
+    //                     }
+    //                 }
+    //                 auction_winner.add_property(Properties::ColoredProperty(
+    //                     ColoredProperties::LightBlue(*self),
+    //                 ));
+    //                 break;
+    //             }
+    //         }
+    //         bid_price += 10;
+    //         current_bidder_index = (current_bidder_index + 1) % player_refs.len() as u8;
+    //     }
+    // }
 
     // pub fn mortgage(&mut self, player_ref: PlayerRef) {
     //     let mortgage_value = match self {

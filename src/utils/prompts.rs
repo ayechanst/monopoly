@@ -20,7 +20,7 @@ pub fn bid(player: Ref<'_, Player>, bid: i32) -> String {
         let choice = prompt_player(&prompt);
         let _ = tx.send(choice);
     });
-    match rx.recv_timeout(Duration::from_secs(5)) {
+    match rx.recv_timeout(Duration::from_secs(3)) {
         Ok(choice) => match choice.trim().to_lowercase().as_str() {
             "y" => "y".to_string(),
             "n" => "n".to_string(),
