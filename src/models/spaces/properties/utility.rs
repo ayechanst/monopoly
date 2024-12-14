@@ -1,8 +1,11 @@
 use super::properties::Properties;
-use crate::models::{
-    board::{Board, PlayerRef},
-    player::Player,
-    spaces::space::{PropertyState, Space},
+use crate::{
+    models::{
+        board::{Board, PlayerRef},
+        player::Player,
+        spaces::space::{PropertyState, Space},
+    },
+    utils::prompts::bid,
 };
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -78,26 +81,49 @@ impl Utilities {
             }
         }
         player.add_property(Properties::Utility(*self));
-        // match self {
-        //     Utilities::ElectricCompany { state } => {
-        //         if *state == PropertyState::ForSale {
-        //             player.borrow_mut().money -= 150;
-        //             let bought_property = Properties::Utility(Utilities::ElectricCompany {
-        //                 state: PropertyState::Owned,
-        //             });
-        //             player.borrow_mut().add_property(bought_property);
-        //         }
-        //     }
-        //     Utilities::WaterWorks { state } => {
-        //         if *state == PropertyState::ForSale {
-        //             player.borrow_mut().money -= 150;
-        //             let bought_property = Properties::Utility(Utilities::WaterWorks {
-        //                 state: PropertyState::Owned,
-        //             });
-        //             player.borrow_mut().add_property(bought_property);
-        //         }
-        //     }
-        // }
+    }
+    pub fn auction(&mut self, board: &Board) {
+        let player_refs = &board.players;
+        let mut bid_price = 10; // Starting bid
+        let mut round_bids = vec![false; player_refs.len()];
+        let mut current_bidder_index = 0;
+        let mut highest_bidder_index = current_bidder_index;
+        let mut highest_bid = 0;
+        let mut round_count = 0;
+        loop {
+            let player_ref = player_refs[current_bidder_index].clone();
+            let choice = bid(player_ref.borrow(), bid_price);
+            if choice.trim().to_lowercase() == "y" {
+                if bid_price > highest_bid {
+                    highest_bid = bid_price;
+                    highest_bidder_index = current_bidder_index;
+                }
+            } else {
+                round_bids[current_bidder_index] = true;
+            }
+            if round_bids.iter().all(|&b| b) {
+                let mut winner = player_refs[highest_bidder_index].borrow_mut();
+                winner.money -= highest_bid - 10;
+                match self {
+                    Utilities::ElectricCompany { state } | Utilities::WaterWorks { state } => {
+                        *state = PropertyState::Owned;
+                    }
+                }
+                winner.add_property(Properties::Utility(*self));
+                println!(
+                    "Player {:?} has aquired {:?} for ${:?}",
+                    winner.player_number,
+                    Properties::Utility(*self),
+                    bid_price - 10
+                );
+                break;
+            }
+            current_bidder_index = (current_bidder_index + 1) % player_refs.len();
+            round_count += 1;
+            if round_count % 4 == 0 {
+                bid_price += 10;
+            }
+        }
     }
     pub fn electric_company() -> Self {
         Utilities::ElectricCompany {

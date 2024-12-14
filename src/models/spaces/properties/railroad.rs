@@ -1,6 +1,9 @@
-use crate::models::{
-    board::{Board, PlayerRef},
-    spaces::space::{PropertyState, Space},
+use crate::{
+    models::{
+        board::{Board, PlayerRef},
+        spaces::space::{PropertyState, Space},
+    },
+    utils::prompts::bid,
 };
 
 use super::properties::Properties;
@@ -159,6 +162,50 @@ impl Railroads {
     //         }
     //     }
     // }
+    pub fn auction(&mut self, board: &Board) {
+        let player_refs = &board.players;
+        let mut bid_price = 10; // Starting bid
+        let mut round_bids = vec![false; player_refs.len()];
+        let mut current_bidder_index = 0;
+        let mut highest_bidder_index = current_bidder_index;
+        let mut highest_bid = 0;
+        let mut round_count = 0;
+        loop {
+            let player_ref = player_refs[current_bidder_index].clone();
+            let choice = bid(player_ref.borrow(), bid_price);
+            if choice.trim().to_lowercase() == "y" {
+                if bid_price > highest_bid {
+                    highest_bid = bid_price;
+                    highest_bidder_index = current_bidder_index;
+                }
+            } else {
+                round_bids[current_bidder_index] = true;
+            }
+            if round_bids.iter().all(|&b| b) {
+                let mut winner = player_refs[highest_bidder_index].borrow_mut();
+                winner.money -= highest_bid - 10;
+                match self {
+                    Railroads::Reading { state }
+                    | Railroads::Pennsylvania { state }
+                    | Railroads::Bo { state }
+                    | Railroads::ShortLine { state } => *state = PropertyState::Owned,
+                }
+                winner.add_property(Properties::Railroad(*self));
+                println!(
+                    "Player {:?} has aquired {:?} for ${:?}",
+                    winner.player_number,
+                    Properties::Railroad(*self),
+                    bid_price - 10
+                );
+                break;
+            }
+            current_bidder_index = (current_bidder_index + 1) % player_refs.len();
+            round_count += 1;
+            if round_count % 4 == 0 {
+                bid_price += 10;
+            }
+        }
+    }
 
     pub fn for_sale(&self) -> bool {
         match self {

@@ -41,34 +41,26 @@ impl LightBlueProperty {
         owner.money += rent_price;
         renter.money -= rent_price;
     }
-    // pub fn auction(&mut self, player_ref: PlayerRef, board: &Board) {
     pub fn auction(&mut self, board: &Board) {
         let player_refs = &board.players;
         let mut bid_price = 10; // Starting bid
-        let mut round_bids = vec![false; player_refs.len()]; // Track if each player has bid "y"
+        let mut round_bids = vec![false; player_refs.len()];
         let mut current_bidder_index = 0;
         let mut highest_bidder_index = current_bidder_index;
         let mut highest_bid = 0;
         let mut round_count = 0;
-        // Loop until only one player remains
         loop {
-            // Get the current player
             let player_ref = player_refs[current_bidder_index].clone();
             let choice = bid(player_ref.borrow(), bid_price);
-            // If player bids "y"
             if choice.trim().to_lowercase() == "y" {
-                // Check if this is the highest bid so far
                 if bid_price > highest_bid {
                     highest_bid = bid_price;
                     highest_bidder_index = current_bidder_index;
                 }
             } else {
-                // Mark player as having passed
                 round_bids[current_bidder_index] = true;
             }
-            // Check if all players have either passed or bid
             if round_bids.iter().all(|&b| b) {
-                // End the auction and assign the property
                 let mut winner = player_refs[highest_bidder_index].borrow_mut();
                 winner.money -= highest_bid - 10;
                 match self {
