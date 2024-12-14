@@ -5,9 +5,12 @@ mod utils;
 
 fn main() {
     let mut board = Board::new();
-    for i in 0..4 {
-        println!("It's player {}'s turn!", i);
-        board.player_turn(i);
+    let mut round_count = 0;
+    let num_of_players = 4;
+    loop {
+        let current_player = round_count % num_of_players;
+        board.first_main_phase(current_player);
+        round_count += 1;
         wait_for_player();
     }
 }

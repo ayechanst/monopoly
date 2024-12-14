@@ -88,57 +88,24 @@ impl LightBlueProperty {
             }
         }
     }
-    // pub fn auction(&mut self, player_ref: PlayerRef, board: &Board) {
-    //     let player_refs = &board.players;
-    //     let mut bid_price = 10;
-    //     let mut current_bidder_index = 0;
-    //     let mut highest_bidder_index = current_bidder_index;
-    //     loop {
-    //         let player_ref = player_refs[current_bidder_index as usize].clone();
-    //         let choice = bid(player_ref.borrow(), bid_price);
-    //         match choice.trim().to_lowercase().as_str() {
-    //             "y" => {
-    //                 // bid_price += 10;
-    //                 highest_bidder_index = player_ref.borrow().player_number;
-    //             }
-    //             _ => {
-    //                 let mut auction_winner =
-    //                     player_refs[highest_bidder_index as usize].borrow_mut();
-    //                 auction_winner.money -= bid_price;
-    //                 match self {
-    //                     LightBlueProperty::OrientalAve { state }
-    //                     | LightBlueProperty::VermontAve { state }
-    //                     | LightBlueProperty::ConnecticutAve { state } => {
-    //                         *state = PropertyState::Owned
-    //                     }
-    //                 }
-    //                 auction_winner.add_property(Properties::ColoredProperty(
-    //                     ColoredProperties::LightBlue(*self),
-    //                 ));
-    //                 break;
-    //             }
-    //         }
-    //         bid_price += 10;
-    //         current_bidder_index = (current_bidder_index + 1) % player_refs.len() as u8;
-    //     }
-    // }
 
-    // pub fn mortgage(&mut self, player_ref: PlayerRef) {
-    //     let mortgage_value = match self {
-    //         LightBlueProperty::ConnecticutAve { .. } => 60,
-    //         _ => 50,
-    //     };
-    //     let mut player = player_ref.borrow_mut();
-    //     player.money += mortgage_value;
-    //     match self {
-    //         LightBlueProperty::OrientalAve { state }
-    //         | LightBlueProperty::VermontAve { state }
-    //         | LightBlueProperty::ConnecticutAve { state } => *state = PropertyState::Mortgaged,
-    //     }
-    //     player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
-    //         *self,
-    //     )));
-    // }
+    pub fn mortgage(&mut self, player_ref: PlayerRef) {
+        let mortgage_value = match self {
+            LightBlueProperty::ConnecticutAve { .. } => 60,
+            _ => 50,
+        };
+        let mut player = player_ref.borrow_mut();
+        player.money += mortgage_value;
+        match self {
+            LightBlueProperty::OrientalAve { state }
+            | LightBlueProperty::VermontAve { state }
+            | LightBlueProperty::ConnecticutAve { state } => *state = PropertyState::Mortgaged,
+        }
+        player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
+            *self,
+        ))); // make this update the property as mortgaged instead of adding a new mortgaged property
+    }
+
     pub fn has_monopoly(&self, board: &Board) -> bool {
         if let Some(owner_ref) = self.get_owner(board) {
             let owner = owner_ref.borrow();
