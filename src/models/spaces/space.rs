@@ -21,14 +21,6 @@ pub enum PropertyState {
     Mortgaged,
 }
 
-// #[derive(Debug, PartialEq, Clone, Copy)]
-// pub enum OwnedState {
-//     JustOwned,
-//     Houses(HouseCount),
-//     Hotel,
-//     Mortgaged,
-// }
-
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum HouseCount {
     Zero,

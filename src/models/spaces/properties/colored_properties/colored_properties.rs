@@ -1,11 +1,8 @@
 use super::{
-    red, BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty,
-    PinkProperty, RedProperty, YellowProperty,
+    BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty, PinkProperty,
+    RedProperty, YellowProperty,
 };
-use crate::models::{
-    board::{Board, PlayerRef},
-    player::Player,
-};
+use crate::models::board::{Board, PlayerRef};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ColoredProperties {

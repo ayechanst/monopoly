@@ -81,7 +81,7 @@ impl LightBlueProperty {
                 );
                 break;
             }
-            current_bidder_index = (current_bidder_index + 1) % player_refs.len();
+            current_bidder_index = (current_bidder_index + 1) % player_refs.len(); // Fix the bid_price increasing at the end
             round_count += 1;
             if round_count % 4 == 0 {
                 bid_price += 10;
@@ -90,6 +90,7 @@ impl LightBlueProperty {
     }
 
     pub fn mortgage(&mut self, player_ref: PlayerRef) {
+        // TODO: cant mortgage if a property has houses on it
         let mortgage_value = match self {
             LightBlueProperty::ConnecticutAve { .. } => 60,
             _ => 50,
@@ -116,6 +117,22 @@ impl LightBlueProperty {
             }
         }
     }
+    pub fn buy_house(&self, board: &Board) {
+        if self.has_monopoly(board) {
+        } else {
+            println!("You need all 3 color sets before you can buy houses!");
+        }
+        // 1. check monopoly
+        // 2. check equal application of houses...
+        // 3. increment house count
+    }
+    // pub fn legal_house_purchase(&self, board: &Board) -> bool {
+    //     // 1. either there are no houses at all
+    //     // 2. or no property has more than 2 more houses than another.
+    //     //
+    //     // 3. there cannot be a property that is mortgaged
+    // }
+    // pub fn count_houses(&self, board: &Board) -> (u8, u8, u8) {}
 
     pub fn has_monopoly(&self, board: &Board) -> bool {
         if let Some(owner_ref) = self.get_owner(board) {
@@ -137,9 +154,24 @@ impl LightBlueProperty {
                     },
                 )),
             ];
-            monopoly
-                .iter()
-                .all(|property| owner.properties.contains(property))
+            monopoly.iter().all(|property| {
+                if owner.properties.contains(property) {
+                    match property {
+                        Properties::ColoredProperty(ColoredProperties::LightBlue(prop)) => {
+                            match prop {
+                                LightBlueProperty::OrientalAve { state }
+                                | LightBlueProperty::VermontAve { state }
+                                | LightBlueProperty::ConnecticutAve { state } => {
+                                    *state != PropertyState::ForSale
+                                }
+                            }
+                        }
+                        _ => true,
+                    }
+                } else {
+                    false
+                }
+            })
         } else {
             false
         }
