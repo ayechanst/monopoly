@@ -30,11 +30,20 @@ impl Player {
     }
     pub fn mortgage(self_ref: Rc<RefCell<Self>>) {
         let mut properties = self_ref.borrow_mut().properties.clone();
+        let balance_before_mortgage = self_ref.borrow().money;
         for property in properties.iter_mut() {
             let prompt = format!("Would you like to mortgage {:?}? (y/n)", property);
             let choice = prompt_player(&prompt);
             match choice.trim().to_lowercase().as_str() {
-                "y" => property.mortgage(self_ref.clone()), // property.mortgage()
+                "y" => {
+                    property.mortgage(self_ref.clone());
+                    let balance_after_mortgage = self_ref.borrow().money;
+                    println!(
+                        "Money before mortgage: {:?}, and money after: {:?}",
+                        balance_before_mortgage, balance_after_mortgage
+                    );
+                }
+
                 "n" => println!("{:?} will not be mortgaged.", property),
                 _ => println!("Not valid input"),
             }
