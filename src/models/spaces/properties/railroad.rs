@@ -122,46 +122,30 @@ impl Railroads {
         }
         player.add_property(Properties::Railroad(*self));
     }
-    // pub fn buy_property(&mut self, player: PlayerRef) {
-    //     match self {
-    //         Railroads::Reading { state } => {
-    //             if *state == PropertyState::ForSale {
-    //                 player.borrow_mut().money -= 200;
-    //                 let bought_property = Properties::Railroad(Railroads::Reading {
-    //                     state: PropertyState::Owned,
-    //                 });
-    //                 player.borrow_mut().add_property(bought_property);
-    //             }
-    //         }
-    //         Railroads::Pennsylvania { state } => {
-    //             if *state == PropertyState::ForSale {
-    //                 player.borrow_mut().money -= 200;
-    //                 let bought_property = Properties::Railroad(Railroads::Pennsylvania {
-    //                     state: PropertyState::Owned,
-    //                 });
-    //                 player.borrow_mut().add_property(bought_property);
-    //             }
-    //         }
-    //         Railroads::Bo { state } => {
-    //             if *state == PropertyState::ForSale {
-    //                 player.borrow_mut().money -= 200;
-    //                 let bought_property = Properties::Railroad(Railroads::Bo {
-    //                     state: PropertyState::Owned,
-    //                 });
-    //                 player.borrow_mut().add_property(bought_property);
-    //             }
-    //         }
-    //         Railroads::ShortLine { state } => {
-    //             if *state == PropertyState::ForSale {
-    //                 player.borrow_mut().money -= 200;
-    //                 let bought_property = Properties::Railroad(Railroads::ShortLine {
-    //                     state: PropertyState::Owned,
-    //                 });
-    //                 player.borrow_mut().add_property(bought_property);
-    //             }
-    //         }
-    //     }
-    // }
+    pub fn mortgage(&mut self, player_ref: PlayerRef) {
+        let mortgage_value = 75;
+        let mut player = player_ref.borrow_mut();
+        player.money += mortgage_value;
+        match self {
+            Railroads::Reading { state }
+            | Railroads::Pennsylvania { state }
+            | Railroads::Bo { state }
+            | Railroads::ShortLine { state } => *state = PropertyState::Mortgaged,
+        }
+        if let Some(property) = player.properties.iter_mut().find(|p| match p {
+            Properties::Railroad(inner) => inner == self,
+            _ => false,
+        }) {
+            if let Properties::Railroad(inner) = property {
+                match inner {
+                    Railroads::Reading { state }
+                    | Railroads::Pennsylvania { state }
+                    | Railroads::Bo { state }
+                    | Railroads::ShortLine { state } => *state = PropertyState::Mortgaged,
+                }
+            }
+        }
+    }
     pub fn auction(&mut self, board: &Board) {
         let player_refs = &board.players;
         let mut bid_price = 10; // Starting bid

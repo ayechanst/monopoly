@@ -42,17 +42,19 @@ impl Board {
     }
     pub fn first_main_phase(&mut self, index: usize) {
         let choice =
-            prompt_player("(trade/mortgage/buy houses/sell houses/roll dice? (t/m/bh/sh/rd)");
+            prompt_player("(trade/mortgage/buy-houses/sell-houses/roll-dice? (t/m/bh/sh/rd)");
         match choice.trim().to_lowercase().as_str() {
             "t" => todo!(),
-            "m" => todo!(),
+            "m" => {
+                let player_ref = self.players[index].clone();
+                Player::mortgage(player_ref);
+            }
             "bh" => todo!(),
             "sh" => todo!(),
             "rd" => self.player_turn(index),
             _ => println!("Invalid Choice buddy"),
         }
     }
-
     pub fn player_turn(&mut self, index: usize) {
         self.roll_player_dice(index);
         let position = self.get_position(index);

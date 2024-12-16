@@ -125,6 +125,28 @@ impl Utilities {
             }
         }
     }
+    pub fn mortgage(&mut self, player_ref: PlayerRef) {
+        let mortgage_value = 75;
+        let mut player = player_ref.borrow_mut();
+        player.money += mortgage_value;
+        match self {
+            Utilities::ElectricCompany { state } | Utilities::WaterWorks { state } => {
+                *state = PropertyState::Mortgaged
+            }
+        }
+        if let Some(property) = player.properties.iter_mut().find(|p| match p {
+            Properties::Utility(inner) => inner == self,
+            _ => false,
+        }) {
+            if let Properties::Utility(inner) = property {
+                match inner {
+                    Utilities::ElectricCompany { state } | Utilities::WaterWorks { state } => {
+                        *state = PropertyState::Mortgaged
+                    }
+                }
+            }
+        }
+    }
     pub fn electric_company() -> Self {
         Utilities::ElectricCompany {
             state: PropertyState::ForSale,

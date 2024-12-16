@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use crate::{models::spaces::properties::properties::Properties, utils::prompts::prompt_player};
 use rand::Rng;
 
@@ -26,20 +28,18 @@ impl Player {
     pub fn add_property(&mut self, bought_property: Properties) {
         self.properties.push(bought_property);
     }
-    pub fn mortgage(&mut self) {
-        // property cannot have houses if they want to mortgage
-        let properties = self.properties.clone();
-        for property in properties.iter() {
+    pub fn mortgage(self_ref: Rc<RefCell<Self>>) {
+        let mut properties = self_ref.borrow_mut().properties.clone();
+        for property in properties.iter_mut() {
             let prompt = format!("Would you like to mortgage {:?}? (y/n)", property);
             let choice = prompt_player(&prompt);
             match choice.trim().to_lowercase().as_str() {
-                "y" => todo!(), // property.mortgage()
+                "y" => property.mortgage(self_ref.clone()), // property.mortgage()
                 "n" => println!("{:?} will not be mortgaged.", property),
                 _ => println!("Not valid input"),
             }
         }
     }
-
     pub fn dice_logic() -> (i32, i32) {
         let mut rng = rand::thread_rng();
         (rng.gen_range(1..=6), rng.gen_range(1..=6))

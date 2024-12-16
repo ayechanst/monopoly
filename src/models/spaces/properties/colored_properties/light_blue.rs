@@ -101,9 +101,20 @@ impl LightBlueProperty {
             | LightBlueProperty::VermontAve { state }
             | LightBlueProperty::ConnecticutAve { state } => *state = PropertyState::Mortgaged,
         }
-        player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
-            *self,
-        ))); // make this update the property as mortgaged instead of adding a new mortgaged property
+        if let Some(property) = player.properties.iter_mut().find(|p| match p {
+            Properties::ColoredProperty(ColoredProperties::LightBlue(inner)) => inner == self,
+            _ => false,
+        }) {
+            if let Properties::ColoredProperty(ColoredProperties::LightBlue(inner)) = property {
+                match inner {
+                    LightBlueProperty::OrientalAve { state }
+                    | LightBlueProperty::VermontAve { state }
+                    | LightBlueProperty::ConnecticutAve { state } => {
+                        *state = PropertyState::Mortgaged
+                    }
+                }
+            }
+        }
     }
 
     pub fn has_monopoly(&self, board: &Board) -> bool {

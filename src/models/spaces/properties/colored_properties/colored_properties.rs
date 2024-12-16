@@ -100,4 +100,18 @@ impl ColoredProperties {
             ColoredProperties::Blue(blue_property) => todo!(),
         }
     }
+    pub fn mortgage(&mut self, player_ref: PlayerRef) {
+        match self {
+            ColoredProperties::Brown(brown_property) => todo!(),
+            ColoredProperties::LightBlue(light_blue_property) => {
+                light_blue_property.mortgage(player_ref)
+            }
+            ColoredProperties::Pink(pink_property) => todo!(),
+            ColoredProperties::Orange(orange_property) => todo!(),
+            ColoredProperties::Red(red_property) => todo!(),
+            ColoredProperties::Yellow(yellow_property) => todo!(),
+            ColoredProperties::Green(green_property) => todo!(),
+            ColoredProperties::Blue(blue_property) => todo!(),
+        }
+    }
 }
