@@ -49,7 +49,10 @@ impl Board {
                 let player_ref = self.players[index].clone();
                 Player::mortgage(player_ref);
             }
-            "bh" => todo!(),
+            "bh" => {
+                let player_ref = self.players[index].clone();
+                Player::buy_house(player_ref, self);
+            }
             "sh" => todo!(),
             "rd" => self.player_turn(index),
             _ => println!("Invalid Choice buddy"),

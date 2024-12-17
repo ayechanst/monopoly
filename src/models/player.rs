@@ -3,6 +3,8 @@ use std::{cell::RefCell, rc::Rc};
 use crate::{models::spaces::properties::properties::Properties, utils::prompts::prompt_player};
 use rand::Rng;
 
+use super::board::Board;
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct Player {
     pub player_number: u8,
@@ -43,7 +45,27 @@ impl Player {
                         balance_before_mortgage, balance_after_mortgage
                     );
                 }
-
+                "n" => println!("{:?} will not be mortgaged.", property),
+                _ => println!("Not valid input"),
+            }
+        }
+    }
+    pub fn buy_house(self_ref: Rc<RefCell<Self>>, board: &Board) {
+        let mut properties = self_ref.borrow_mut().properties.clone();
+        let balance_before_mortgage = self_ref.borrow().money;
+        for property in properties.iter_mut() {
+            let prompt = format!("Would you like to mortgage {:?}? (y/n)", property);
+            let choice = prompt_player(&prompt);
+            match choice.trim().to_lowercase().as_str() {
+                "y" => {
+                    // property.mortgage(self_ref.clone());
+                    property.buy_house(self_ref.clone(), board);
+                    let balance_after_mortgage = self_ref.borrow().money;
+                    println!(
+                        "Money before mortgage: {:?}, and money after: {:?}",
+                        balance_before_mortgage, balance_after_mortgage
+                    );
+                }
                 "n" => println!("{:?} will not be mortgaged.", property),
                 _ => println!("Not valid input"),
             }
