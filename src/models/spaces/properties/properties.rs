@@ -60,4 +60,14 @@ impl Properties {
             Properties::Railroad(railroads) => railroads.mortgage(player_ref),
         }
     }
+
+    pub fn buy_house(&mut self, player_ref: PlayerRef, board: &Board) {
+        match self {
+            Properties::ColoredProperty(colored_properties) => {
+                colored_properties.buy_house(player_ref, board)
+            }
+            Properties::Utility(utilities) => todo!(),
+            Properties::Railroad(railroads) => todo!(),
+        }
+    }
 }

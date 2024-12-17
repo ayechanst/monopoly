@@ -1,7 +1,10 @@
+use std::cell::RefMut;
+
 use super::colored_properties::ColoredProperties;
 use crate::{
     models::{
         board::{Board, PlayerRef},
+        player::Player,
         spaces::{
             properties::properties::Properties,
             space::{HouseCount, PropertyState},
@@ -88,7 +91,6 @@ impl LightBlueProperty {
             }
         }
     }
-
     pub fn mortgage(&mut self, player_ref: PlayerRef) {
         // TODO: cant mortgage if a property has houses on it
         let mortgage_value = match self {
@@ -97,10 +99,51 @@ impl LightBlueProperty {
         };
         let mut player = player_ref.borrow_mut();
         player.money += mortgage_value;
+        self.update_property_state(player, PropertyState::Mortgaged);
+    }
+    pub fn buy_house(&mut self, player_ref: PlayerRef, board: &Board) {
+        let house_cost = 50;
+        let mut player = player_ref.borrow_mut();
+        player.money -= house_cost;
+        if !self.legal_house_purchase(board) {
+            println!("You can't buy a house here yet");
+        } else {
+            return;
+        }
+        let new_state = match self {
+            LightBlueProperty::OrientalAve { state }
+            | LightBlueProperty::VermontAve { state }
+            | LightBlueProperty::ConnecticutAve { state } => match state {
+                PropertyState::Houses(house_count) => match house_count {
+                    HouseCount::Zero => PropertyState::Houses(HouseCount::One),
+                    HouseCount::One => PropertyState::Houses(HouseCount::Two),
+                    HouseCount::Two => PropertyState::Houses(HouseCount::Three),
+                    HouseCount::Three => PropertyState::Houses(HouseCount::Four),
+                    HouseCount::Four => PropertyState::Houses(HouseCount::Hotel),
+                    HouseCount::Hotel => {
+                        println!("Your property is already developed to the max!");
+                        return;
+                    }
+                },
+                _ => {
+                    println!("You need to spread your houses out better to buy!");
+                    return;
+                }
+            },
+        };
+        self.update_property_state(player, new_state);
+    }
+    pub fn update_property_state(
+        &mut self,
+        mut player: RefMut<'_, Player>,
+        new_state: PropertyState,
+    ) {
         match self {
             LightBlueProperty::OrientalAve { state }
             | LightBlueProperty::VermontAve { state }
-            | LightBlueProperty::ConnecticutAve { state } => *state = PropertyState::Mortgaged,
+            | LightBlueProperty::ConnecticutAve { state } => {
+                *state = new_state;
+            }
         }
         if let Some(property) = player.properties.iter_mut().find(|p| match p {
             Properties::ColoredProperty(ColoredProperties::LightBlue(inner)) => inner == self,
@@ -111,29 +154,83 @@ impl LightBlueProperty {
                     LightBlueProperty::OrientalAve { state }
                     | LightBlueProperty::VermontAve { state }
                     | LightBlueProperty::ConnecticutAve { state } => {
-                        *state = PropertyState::Mortgaged
+                        *state = new_state;
                     }
                 }
             }
         }
     }
-    pub fn buy_house(&self, board: &Board) {
-        if self.has_monopoly(board) {
+    pub fn legal_house_purchase(&self, board: &Board) -> bool {
+        let (oriental_ave, vermont_ave, connecticut_ave) = self.house_count(board);
+        if vec![oriental_ave, vermont_ave, connecticut_ave]
+            .windows(2)
+            .all(|window| (window[0] as i8 - window[1] as i8).abs() <= 1)
+        {
+            match self {
+                LightBlueProperty::OrientalAve { state } => {
+                    oriental_ave > vermont_ave && oriental_ave > connecticut_ave
+                }
+                LightBlueProperty::VermontAve { state } => {
+                    vermont_ave > oriental_ave && vermont_ave > connecticut_ave
+                }
+                LightBlueProperty::ConnecticutAve { state } => {
+                    connecticut_ave > oriental_ave && connecticut_ave > vermont_ave
+                }
+            }
         } else {
-            println!("You need all 3 color sets before you can buy houses!");
+            false
         }
-        // 1. check monopoly
-        // 2. check equal application of houses...
-        // 3. increment house count
     }
-    // pub fn legal_house_purchase(&self, board: &Board) -> bool {
-    //     // 1. either there are no houses at all
-    //     // 2. or no property has more than 2 more houses than another.
-    //     //
-    //     // 3. there cannot be a property that is mortgaged
-    // }
-    // pub fn count_houses(&self, board: &Board) -> (u8, u8, u8) {}
 
+    pub fn house_count(&self, board: &Board) -> (u8, u8, u8) {
+        if self.has_monopoly(board) {
+            let oriental_ave = match self {
+                LightBlueProperty::OrientalAve { state } => match state {
+                    PropertyState::Houses(house_count) => match house_count {
+                        HouseCount::Zero => 0,
+                        HouseCount::One => 1,
+                        HouseCount::Two => 2,
+                        HouseCount::Three => 3,
+                        HouseCount::Four => 4,
+                        HouseCount::Hotel => 5,
+                    },
+                    _ => 0,
+                },
+                _ => 0,
+            };
+            let vermont_ave = match self {
+                LightBlueProperty::VermontAve { state } => match state {
+                    PropertyState::Houses(house_count) => match house_count {
+                        HouseCount::Zero => 0,
+                        HouseCount::One => 1,
+                        HouseCount::Two => 2,
+                        HouseCount::Three => 3,
+                        HouseCount::Four => 4,
+                        HouseCount::Hotel => 5,
+                    },
+                    _ => 0,
+                },
+                _ => 0,
+            };
+            let connecticut_ave = match self {
+                LightBlueProperty::ConnecticutAve { state } => match state {
+                    PropertyState::Houses(house_count) => match house_count {
+                        HouseCount::Zero => 0,
+                        HouseCount::One => 1,
+                        HouseCount::Two => 2,
+                        HouseCount::Three => 3,
+                        HouseCount::Four => 4,
+                        HouseCount::Hotel => 5,
+                    },
+                    _ => 0,
+                },
+                _ => 0,
+            };
+            (oriental_ave, vermont_ave, connecticut_ave)
+        } else {
+            (0, 0, 0)
+        }
+    }
     pub fn has_monopoly(&self, board: &Board) -> bool {
         if let Some(owner_ref) = self.get_owner(board) {
             let owner = owner_ref.borrow();
