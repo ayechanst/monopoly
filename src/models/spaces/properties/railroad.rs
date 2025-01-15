@@ -207,6 +207,7 @@ impl Railroads {
             }
         }
     }
+
     pub fn reading() -> Self {
         Railroads::Reading {
             state: PropertyState::ForSale,

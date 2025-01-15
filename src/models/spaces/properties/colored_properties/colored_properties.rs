@@ -1,6 +1,6 @@
 use super::{
-    green, yellow, BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty,
-    PinkProperty, RedProperty, YellowProperty,
+    BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty, PinkProperty,
+    RedProperty, YellowProperty,
 };
 use crate::models::board::{Board, PlayerRef};
 
@@ -19,14 +19,14 @@ pub enum ColoredProperties {
 impl ColoredProperties {
     pub fn rent_price(&self, board: &Board) -> i32 {
         match self {
-            ColoredProperties::Brown(prop) => prop.rent_price(),
+            ColoredProperties::Brown(prop) => prop.rent_price(board),
             ColoredProperties::LightBlue(prop) => prop.rent_price(board),
             ColoredProperties::Pink(prop) => prop.rent_price(board),
             ColoredProperties::Orange(prop) => prop.rent_price(board),
             ColoredProperties::Red(prop) => prop.rent_price(board),
             ColoredProperties::Yellow(prop) => prop.rent_price(board),
             ColoredProperties::Green(prop) => prop.rent_price(board),
-            ColoredProperties::Blue(prop) => prop.rent_price(),
+            ColoredProperties::Blue(prop) => prop.rent_price(board),
         }
     }
     pub fn for_sale(&self) -> bool {
@@ -42,7 +42,6 @@ impl ColoredProperties {
         }
     }
     pub fn buy_property(&mut self, player: PlayerRef) {
-        // pub fn buy_property(&mut self, player: Player) {
         match self {
             ColoredProperties::Brown(brown_property) => brown_property.buy_property(player),
             ColoredProperties::LightBlue(light_blue_property) => {
@@ -56,7 +55,6 @@ impl ColoredProperties {
             ColoredProperties::Blue(blue_property) => blue_property.buy_property(player),
         }
     }
-    // pub fn get_owner(&self, board: Board) -> Option<PlayerRef> {
     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
         match self {
             ColoredProperties::Brown(brown_property) => brown_property.get_owner(board),
@@ -73,14 +71,14 @@ impl ColoredProperties {
     }
     pub fn auction(&mut self, board: &Board) {
         match self {
-            ColoredProperties::Brown(brown_property) => todo!(),
+            ColoredProperties::Brown(brown_property) => brown_property.auction(board),
             ColoredProperties::LightBlue(light_blue_property) => light_blue_property.auction(board),
             ColoredProperties::Pink(pink_property) => pink_property.auction(board),
             ColoredProperties::Orange(orange_property) => orange_property.auction(board),
             ColoredProperties::Red(red_property) => red_property.auction(board),
             ColoredProperties::Yellow(yellow_property) => yellow_property.auction(board),
             ColoredProperties::Green(green_property) => green_property.auction(board),
-            ColoredProperties::Blue(blue_property) => todo!(),
+            ColoredProperties::Blue(blue_property) => blue_property.auction(board),
         }
     }
     pub fn pay_rent(&mut self, renter_ref: PlayerRef, board: &Board) {
@@ -98,12 +96,12 @@ impl ColoredProperties {
                 yellow_property.pay_rent(renter_ref, board)
             }
             ColoredProperties::Green(green_property) => green_property.pay_rent(renter_ref, board),
-            ColoredProperties::Blue(blue_property) => todo!(),
+            ColoredProperties::Blue(blue_property) => blue_property.pay_rent(renter_ref, board),
         }
     }
     pub fn mortgage(&mut self, player_ref: PlayerRef) {
         match self {
-            ColoredProperties::Brown(brown_property) => todo!(),
+            ColoredProperties::Brown(brown_property) => brown_property.mortgage(player_ref),
             ColoredProperties::LightBlue(light_blue_property) => {
                 light_blue_property.mortgage(player_ref)
             }
@@ -112,12 +110,12 @@ impl ColoredProperties {
             ColoredProperties::Red(red_property) => red_property.mortgage(player_ref),
             ColoredProperties::Yellow(yellow_property) => yellow_property.mortgage(player_ref),
             ColoredProperties::Green(green_property) => green_property.mortgage(player_ref),
-            ColoredProperties::Blue(blue_property) => todo!(),
+            ColoredProperties::Blue(blue_property) => blue_property.mortgage(player_ref),
         }
     }
     pub fn buy_house(&mut self, player_ref: PlayerRef, board: &Board) {
         match self {
-            ColoredProperties::Brown(brown_property) => todo!(),
+            ColoredProperties::Brown(brown_property) => brown_property.buy_house(player_ref, board),
             ColoredProperties::LightBlue(light_blue_property) => {
                 light_blue_property.buy_house(player_ref, board)
             }
@@ -130,7 +128,7 @@ impl ColoredProperties {
                 yellow_property.buy_house(player_ref, board)
             }
             ColoredProperties::Green(green_property) => green_property.buy_house(player_ref, board),
-            ColoredProperties::Blue(blue_property) => todo!(),
+            ColoredProperties::Blue(blue_property) => blue_property.buy_house(player_ref, board),
         }
     }
 }

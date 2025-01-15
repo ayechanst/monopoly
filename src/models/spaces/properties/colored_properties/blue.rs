@@ -307,10 +307,12 @@ impl BlueProperty {
         {
             match self {
                 BlueProperty::ParkPlace { state } => {
-                    park_place > boardwalk && park_place > illinois_ave
+                    // park_place > boardwalk && park_place > illinois_ave
+                    park_place > boardwalk
                 }
                 BlueProperty::Boardwalk { state } => {
-                    boardwalk > park_place && boardwalk > illinois_ave
+                    // boardwalk > park_place && boardwalk > illinois_ave
+                    boardwalk > park_place
                 }
             }
         } else {
