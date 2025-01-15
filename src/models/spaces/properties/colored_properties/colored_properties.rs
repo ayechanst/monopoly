@@ -1,6 +1,6 @@
 use super::{
-    BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty, PinkProperty,
-    RedProperty, YellowProperty,
+    green, yellow, BlueProperty, BrownProperty, GreenProperty, LightBlueProperty, OrangeProperty,
+    PinkProperty, RedProperty, YellowProperty,
 };
 use crate::models::board::{Board, PlayerRef};
 
@@ -22,10 +22,10 @@ impl ColoredProperties {
             ColoredProperties::Brown(prop) => prop.rent_price(),
             ColoredProperties::LightBlue(prop) => prop.rent_price(board),
             ColoredProperties::Pink(prop) => prop.rent_price(board),
-            ColoredProperties::Orange(prop) => prop.rent_price(),
-            ColoredProperties::Red(prop) => prop.rent_price(),
-            ColoredProperties::Yellow(prop) => prop.rent_price(),
-            ColoredProperties::Green(prop) => prop.rent_price(),
+            ColoredProperties::Orange(prop) => prop.rent_price(board),
+            ColoredProperties::Red(prop) => prop.rent_price(board),
+            ColoredProperties::Yellow(prop) => prop.rent_price(board),
+            ColoredProperties::Green(prop) => prop.rent_price(board),
             ColoredProperties::Blue(prop) => prop.rent_price(),
         }
     }
@@ -75,11 +75,11 @@ impl ColoredProperties {
         match self {
             ColoredProperties::Brown(brown_property) => todo!(),
             ColoredProperties::LightBlue(light_blue_property) => light_blue_property.auction(board),
-            ColoredProperties::Pink(pink_property) => todo!(),
-            ColoredProperties::Orange(orange_property) => todo!(),
-            ColoredProperties::Red(red_property) => todo!(),
-            ColoredProperties::Yellow(yellow_property) => todo!(),
-            ColoredProperties::Green(green_property) => todo!(),
+            ColoredProperties::Pink(pink_property) => pink_property.auction(board),
+            ColoredProperties::Orange(orange_property) => orange_property.auction(board),
+            ColoredProperties::Red(red_property) => red_property.auction(board),
+            ColoredProperties::Yellow(yellow_property) => yellow_property.auction(board),
+            ColoredProperties::Green(green_property) => green_property.auction(board),
             ColoredProperties::Blue(blue_property) => todo!(),
         }
     }
@@ -90,10 +90,14 @@ impl ColoredProperties {
                 light_blue_property.pay_rent(renter_ref, board)
             }
             ColoredProperties::Pink(pink_property) => pink_property.pay_rent(renter_ref, board),
-            ColoredProperties::Orange(orange_property) => todo!(),
-            ColoredProperties::Red(red_property) => todo!(),
-            ColoredProperties::Yellow(yellow_property) => todo!(),
-            ColoredProperties::Green(green_property) => todo!(),
+            ColoredProperties::Orange(orange_property) => {
+                orange_property.pay_rent(renter_ref, board)
+            }
+            ColoredProperties::Red(red_property) => red_property.pay_rent(renter_ref, board),
+            ColoredProperties::Yellow(yellow_property) => {
+                yellow_property.pay_rent(renter_ref, board)
+            }
+            ColoredProperties::Green(green_property) => green_property.pay_rent(renter_ref, board),
             ColoredProperties::Blue(blue_property) => todo!(),
         }
     }
@@ -103,11 +107,11 @@ impl ColoredProperties {
             ColoredProperties::LightBlue(light_blue_property) => {
                 light_blue_property.mortgage(player_ref)
             }
-            ColoredProperties::Pink(pink_property) => todo!(),
-            ColoredProperties::Orange(orange_property) => todo!(),
-            ColoredProperties::Red(red_property) => todo!(),
-            ColoredProperties::Yellow(yellow_property) => todo!(),
-            ColoredProperties::Green(green_property) => todo!(),
+            ColoredProperties::Pink(pink_property) => pink_property.mortgage(player_ref),
+            ColoredProperties::Orange(orange_property) => orange_property.mortgage(player_ref),
+            ColoredProperties::Red(red_property) => red_property.mortgage(player_ref),
+            ColoredProperties::Yellow(yellow_property) => yellow_property.mortgage(player_ref),
+            ColoredProperties::Green(green_property) => green_property.mortgage(player_ref),
             ColoredProperties::Blue(blue_property) => todo!(),
         }
     }
@@ -117,11 +121,15 @@ impl ColoredProperties {
             ColoredProperties::LightBlue(light_blue_property) => {
                 light_blue_property.buy_house(player_ref, board)
             }
-            ColoredProperties::Pink(pink_property) => todo!(),
-            ColoredProperties::Orange(orange_property) => todo!(),
-            ColoredProperties::Red(red_property) => todo!(),
-            ColoredProperties::Yellow(yellow_property) => todo!(),
-            ColoredProperties::Green(green_property) => todo!(),
+            ColoredProperties::Pink(pink_property) => pink_property.buy_house(player_ref, board),
+            ColoredProperties::Orange(orange_property) => {
+                orange_property.buy_house(player_ref, board)
+            }
+            ColoredProperties::Red(red_property) => red_property.buy_house(player_ref, board),
+            ColoredProperties::Yellow(yellow_property) => {
+                yellow_property.buy_house(player_ref, board)
+            }
+            ColoredProperties::Green(green_property) => green_property.buy_house(player_ref, board),
             ColoredProperties::Blue(blue_property) => todo!(),
         }
     }

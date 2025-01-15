@@ -181,7 +181,6 @@ impl LightBlueProperty {
             false
         }
     }
-
     pub fn house_count(&self, board: &Board) -> (u8, u8, u8) {
         if self.has_monopoly(board) {
             let oriental_ave = match self {

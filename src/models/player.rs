@@ -54,7 +54,7 @@ impl Player {
         let mut properties = self_ref.borrow_mut().properties.clone();
         let balance_before_mortgage = self_ref.borrow().money;
         for property in properties.iter_mut() {
-            let prompt = format!("Would you like to mortgage {:?}? (y/n)", property);
+            let prompt = format!("Would you like to buy a house for {:?}? (y/n)", property);
             let choice = prompt_player(&prompt);
             match choice.trim().to_lowercase().as_str() {
                 "y" => {
@@ -62,11 +62,11 @@ impl Player {
                     property.buy_house(self_ref.clone(), board);
                     let balance_after_mortgage = self_ref.borrow().money;
                     println!(
-                        "Money before mortgage: {:?}, and money after: {:?}",
+                        "Money before house: {:?}, and money after: {:?}",
                         balance_before_mortgage, balance_after_mortgage
                     );
                 }
-                "n" => println!("{:?} will not be mortgaged.", property),
+                "n" => println!("No houses will be bought for {:?}.", property),
                 _ => println!("Not valid input"),
             }
         }
