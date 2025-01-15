@@ -1,7 +1,7 @@
 use crate::models::spaces::space::Space;
 use bevy::prelude::*;
 
-pub fn make_space(
+pub fn make_material(
     space: &Space,
     materials: &mut ResMut<Assets<StandardMaterial>>,
 ) -> Handle<StandardMaterial> {
