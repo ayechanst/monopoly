@@ -20,13 +20,30 @@ fn spawn_board(
 ) {
     let mut board = Board::new();
     let spaces = board.spaces;
-    for (i, space_ref) in spaces.iter().enumerate() {
+    let grid_size = 2.0;
+    for (index, space_ref) in spaces.iter().enumerate() {
+        let i = index as f32;
         let space = space_ref.borrow_mut();
         let material = make_material(&space, &mut materials);
+
+        let (x, z) = if i < 10.0 {
+            // (5.0, -(i * grid_size))
+            (-5.0, -(i * grid_size))
+        } else if i < 20.0 {
+            ((i - 10.0) * grid_size, -5.0)
+            // (-5.0, -(i - 10.0) * grid_size)
+        } else if i < 30.0 {
+            // (-5.0, (i - 20.0) * grid_size)
+            (5.0, (i - 20.0) * grid_size)
+        } else {
+            (-(i - 30.0) * grid_size, 5.0)
+            // (-5.0, (i - 30.0) * grid_size)
+        };
+
         commands.spawn(PbrBundle {
             mesh: meshes.add(Plane3d::new(Vec3::Y, Vec2::splat(1.0))),
             material,
-            transform: Transform::from_xyz(i as f32 * 2.0, 0.0, 0.0),
+            transform: Transform::from_xyz(x, 0.0, z),
             ..default()
         });
     }
@@ -43,7 +60,7 @@ fn spawn_floor(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>) {
 
 fn spawn_camera(mut commands: Commands) {
     let camera = Camera3dBundle {
-        transform: Transform::from_xyz(0.0, 80.5, 20.0).looking_at(Vec3::ZERO, Vec3::X),
+        transform: Transform::from_xyz(0.0, 80.5, 0.0).looking_at(Vec3::ZERO, Vec3::X),
         ..default()
     };
     commands.spawn(camera);
