@@ -8,7 +8,6 @@ pub struct WorldPlugin;
 
 impl Plugin for WorldPlugin {
     fn build(&self, app: &mut App) {
-        // app.add_systems(Startup, (spawn_light, spawn_camera, spawn_floor));
         app.add_systems(Startup, (spawn_light, spawn_camera, spawn_board));
     }
 }
@@ -18,7 +17,7 @@ fn spawn_board(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let mut board = Board::new();
+    let board = Board::new();
     let spaces = board.spaces;
     let grid_size = 2.0;
     for (index, space_ref) in spaces.iter().enumerate() {
@@ -27,17 +26,13 @@ fn spawn_board(
         let material = make_material(&space, &mut materials);
 
         let (x, z) = if i < 10.0 {
-            // (5.0, -(i * grid_size))
             (-5.0, -(i * grid_size))
         } else if i < 20.0 {
-            ((i - 10.0) * grid_size, -5.0)
-            // (-5.0, -(i - 10.0) * grid_size)
+            ((i - 10.0) * grid_size, -10.0)
         } else if i < 30.0 {
-            // (-5.0, (i - 20.0) * grid_size)
             (5.0, (i - 20.0) * grid_size)
         } else {
             (-(i - 30.0) * grid_size, 5.0)
-            // (-5.0, (i - 30.0) * grid_size)
         };
 
         commands.spawn(PbrBundle {
@@ -47,15 +42,6 @@ fn spawn_board(
             ..default()
         });
     }
-}
-// all same mesh, but different materials
-
-fn spawn_floor(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>) {
-    let floor = PbrBundle {
-        mesh: meshes.add(Plane3d::new(Vec3::Y, Vec2::splat(10.0))),
-        ..default()
-    };
-    commands.spawn(floor);
 }
 
 fn spawn_camera(mut commands: Commands) {
