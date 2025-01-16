@@ -25,7 +25,12 @@ pub fn make_material(
     // space_mesh
 }
 
-pub fn make_sprite(space: &Space, commands: &mut Commands, grid_size: f32) {
+pub fn make_sprite(
+    space: &Space,
+    commands: &mut Commands,
+    grid_size: f32,
+    scale_factor: f32,
+) -> Entity {
     let fill_color = match space {
         Space::Property(properties) => Color::srgb(0.0, 1.0, 0.0),
         Space::Chance | Space::CommunityChest | Space::IncomeTax | Space::LuxuryTax => {
@@ -35,20 +40,26 @@ pub fn make_sprite(space: &Space, commands: &mut Commands, grid_size: f32) {
             Color::srgb(0.0, 0.0, 1.0)
         }
     };
+    let border_size = Vec2::splat(grid_size * scale_factor);
+    let inner_size = border_size * 0.9;
+    // border color
     commands.spawn(SpriteBundle {
         sprite: Sprite {
-            color: Color::srgb(1.0, 1.0, 1.0),
-            custom_size: Some(Vec2::splat(grid_size)),
+            color: Color::srgb(0.0, 0.0, 0.0),
+            custom_size: Some(border_size),
             ..default()
         },
         ..default()
     });
-    commands.spawn(SpriteBundle {
-        sprite: Sprite {
-            color: fill_color,
-            custom_size: Some(Vec2::splat(grid_size * 0.9)),
+    // fill color
+    commands
+        .spawn(SpriteBundle {
+            sprite: Sprite {
+                color: fill_color,
+                custom_size: Some(inner_size),
+                ..default()
+            },
             ..default()
-        },
-        ..default()
-    });
+        })
+        .id()
 }
