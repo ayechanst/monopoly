@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::models::board::Board;
 
-use super::helpers::{make_material, make_sprite};
+use super::helpers::make_sprite;
 
 pub struct WorldPlugin;
 
@@ -16,7 +16,7 @@ fn spawn_board(mut commands: Commands) {
     let board = Board::new();
     let grid_size = 5.0;
     let scale_factor = 1.0;
-    for (index, space_ref) in board.spaces.iter().enumerate() {
+    for (index, space) in board.spaces.iter().enumerate() {
         let i = index as f32;
         let (x, y) = if i < 10.0 {
             (5.0 - i, -5.0)
@@ -27,8 +27,9 @@ fn spawn_board(mut commands: Commands) {
         } else {
             (5.0, -(i - 35.0))
         };
-        let space = space_ref.borrow();
-        let entity = make_sprite(&space, &mut commands, grid_size, scale_factor);
+        // let space = space_ref.borrow_mut();
+        let space_ref = space.clone();
+        let entity = make_sprite(space_ref, &mut commands, grid_size, scale_factor);
         commands
             .entity(entity)
             .insert(Transform::from_xyz(x * grid_size, y * grid_size, 0.0));
@@ -38,7 +39,7 @@ fn spawn_board(mut commands: Commands) {
 fn spawn_camera(mut commands: Commands) {
     commands.spawn(Camera2dBundle {
         transform: Transform {
-            scale: Vec3::splat(0.5),
+            scale: Vec3::splat(0.10),
             ..default()
         },
         ..default()
