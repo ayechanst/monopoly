@@ -25,7 +25,7 @@ pub fn make_color(space: &Space) -> Color {
             }
         },
         Space::Chance | Space::CommunityChest | Space::IncomeTax | Space::LuxuryTax => {
-            Color::srgb(1.0, 1.0, 1.0)
+            Color::srgb(0.77, 0.68, 0.63)
         }
         Space::Go | Space::GoToJail | Space::Jail | Space::FreeParking => {
             Color::srgb(0.0, 0.0, 0.0)

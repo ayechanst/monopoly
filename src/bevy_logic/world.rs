@@ -12,7 +12,8 @@ impl Plugin for WorldPlugin {
 
 fn spawn_board(mut commands: Commands) {
     let board = Board::new();
-    let grid_size = 300.0;
+    // let grid_size = 300.0;
+    let grid_size = 600.0;
     let scale_factor = 1.0;
     for (index, space_ref) in board.spaces.iter().cloned().enumerate() {
         let i = index as f32;
@@ -37,7 +38,8 @@ fn spawn_board(mut commands: Commands) {
 fn spawn_camera(mut commands: Commands) {
     commands.spawn(Camera2dBundle {
         transform: Transform {
-            scale: Vec3::splat(6.0),
+            // scale: Vec3::splat(6.0),
+            scale: Vec3::splat(12.0),
             ..default()
         },
         ..default()
