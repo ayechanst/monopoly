@@ -15,7 +15,6 @@ pub fn make_sprite(
     let borrowed_space = space_ref.borrow();
     let fill_color = make_color(&borrowed_space);
     let text = make_text(&borrowed_space);
-
     let border_size = Vec2::splat(grid_size * scale_factor);
     let inner_size = border_size * 0.9;
     // border
@@ -28,7 +27,6 @@ pub fn make_sprite(
         ..default()
     });
     // text
-
     commands.spawn(Text2dBundle {
         text: Text::from_section(
             text,
@@ -41,7 +39,6 @@ pub fn make_sprite(
         ),
         ..default()
     });
-
     // fill color
     commands
         .spawn(SpriteBundle {
