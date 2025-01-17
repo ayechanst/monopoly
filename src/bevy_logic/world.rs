@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 
 use crate::models::board::Board;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 use super::helpers::make_sprite;
 
@@ -16,7 +18,8 @@ fn spawn_board(mut commands: Commands) {
     let board = Board::new();
     let grid_size = 5.0;
     let scale_factor = 1.0;
-    for (index, space) in board.spaces.iter().enumerate() {
+    // for (index, space_ref) in board.spaces.iter().enumerate() {
+    for (index, space_ref) in board.spaces.iter().cloned().enumerate() {
         let i = index as f32;
         let (x, y) = if i < 10.0 {
             (5.0 - i, -5.0)
@@ -27,9 +30,8 @@ fn spawn_board(mut commands: Commands) {
         } else {
             (5.0, -(i - 35.0))
         };
-        // let space = space_ref.borrow_mut();
-        let space_ref = space.clone();
-        let entity = make_sprite(space_ref, &mut commands, grid_size, scale_factor);
+        let space_ref_cloned = space_ref.clone();
+        let entity = make_sprite(space_ref_cloned, &mut commands, grid_size, scale_factor);
         commands
             .entity(entity)
             .insert(Transform::from_xyz(x * grid_size, y * grid_size, 0.0));

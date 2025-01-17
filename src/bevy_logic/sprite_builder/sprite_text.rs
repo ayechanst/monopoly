@@ -1,17 +1,23 @@
 use crate::models::spaces::space::Space;
-use bevy::prelude::*;
+use std::cell::RefCell;
+use std::rc::Rc;
 
+pub type SpaceRef = Rc<RefCell<Space>>;
+
+// pub fn make_text(space: Ref<'_, Space>) -> &str {
+// pub fn make_text(space: std::cell::Ref<'_, Space>) -> &str {
 pub fn make_text(space: &Space) -> &str {
-    let text = match space {
-        Space::Property(properties) => todo!(),
+    // let space = space.borrow();
+    let text = match *space {
+        Space::Property(properties) => "Property",
         Space::Chance => "Chance",
-        Space::CommunityChest => todo!(),
-        Space::IncomeTax => todo!(),
-        Space::LuxuryTax => todo!(),
+        Space::CommunityChest => "Chest",
+        Space::IncomeTax => "Tax",
+        Space::LuxuryTax => "Tax",
         Space::Go => "Go",
-        Space::GoToJail => todo!(),
-        Space::Jail => todo!(),
-        Space::FreeParking => todo!(),
+        Space::GoToJail => "Go to Jail",
+        Space::Jail => "Jail",
+        Space::FreeParking => "Free Parking",
     };
     text
 }

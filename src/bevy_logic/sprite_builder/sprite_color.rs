@@ -1,9 +1,14 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use crate::models::spaces::properties::colored_properties::colored_properties::ColoredProperties;
 use crate::models::spaces::space::Space;
 use bevy::prelude::*;
+pub type SpaceRef = Rc<RefCell<Space>>;
 
 pub fn make_color(space: &Space) -> Color {
-    let fill_color = match space {
+    // let space = space_ref.borrow();
+    let fill_color = match *space {
         Space::Property(properties) => match properties {
             crate::models::spaces::properties::properties::Properties::ColoredProperty(
                 colored_properties,
