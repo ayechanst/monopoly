@@ -2,11 +2,12 @@ use crate::models::spaces::space::Space;
 use bevy::prelude::*;
 use std::cell::RefCell;
 use std::rc::Rc;
-pub type SpaceRef = Rc<RefCell<Space>>;
-use super::sprite_builder::sprite_color::make_color;
-use super::sprite_builder::sprite_text::make_text;
 
-pub fn make_sprite(
+use super::space_color::make_color;
+use super::space_text::make_text;
+pub type SpaceRef = Rc<RefCell<Space>>;
+
+pub fn make_space(
     space_ref: SpaceRef,
     commands: &mut Commands,
     grid_size: f32,

@@ -1,6 +1,7 @@
 mod bevy_logic;
 mod models;
 use bevy_logic::world::WorldPlugin;
+// use bevy_logic::{game::GamePlugin, world::WorldPlugin};
 use models::board::Board;
 use std::io::{self, Write};
 mod utils;
@@ -8,8 +9,26 @@ mod utils;
 use bevy::prelude::*;
 
 fn main() {
-    App::new().add_plugins((DefaultPlugins, WorldPlugin)).run();
+    // App::new().add_plugins((DefaultPlugins, WorldPlugin)).run();
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_plugins(WorldPlugin)
+        // .add_plugins(GamePlugin)
+        // .add_systems(Update, game_system)
+        .run();
 }
+
+// pub fn game_system() {
+//     let mut board = Board::new();
+//     let mut round_count = 0;
+//     let num_of_players = 4;
+//     loop {
+//         let current_player = round_count % num_of_players;
+//         board.first_main_phase(current_player);
+//         round_count += 1;
+//         // wait_for_player();
+//     }
+// }
 
 // fn main() {
 //     let mut board = Board::new();

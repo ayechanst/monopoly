@@ -1,18 +1,23 @@
-use super::helpers::make_sprite;
-use crate::models::board::Board;
+use crate::{
+    bevy_logic::sprite_builder::make_space::{self, make_space},
+    models::board::Board,
+};
 use bevy::prelude::*;
-
+use bevy_egui::{egui, EguiContext, EguiPlugin};
 pub struct WorldPlugin;
 
 impl Plugin for WorldPlugin {
     fn build(&self, app: &mut App) {
+        // app.add_systems(Startup, (spawn_light, spawn_camera, spawn_board));
         app.add_systems(Startup, (spawn_light, spawn_camera, spawn_board));
     }
 }
 
-fn spawn_board(mut commands: Commands) {
+fn spawn_board_button(mut commands: Commands, mut egui_ctx: EguiContext, mut spawned: Local<bool>) {
+}
+
+pub fn spawn_board(mut commands: Commands) {
     let board = Board::new();
-    // let grid_size = 300.0;
     let grid_size = 600.0;
     let scale_factor = 1.0;
     for (index, space_ref) in board.spaces.iter().cloned().enumerate() {
@@ -26,19 +31,19 @@ fn spawn_board(mut commands: Commands) {
         } else {
             (5.0, -(i - 35.0))
         };
-        let space_ref_cloned = space_ref.clone();
-        let entity = make_sprite(space_ref_cloned, &mut commands, grid_size, scale_factor);
-        println!("Entity: {:?} number: {:?}", entity, i);
-        commands
-            .entity(entity)
-            .insert(Transform::from_xyz(x * grid_size, y * grid_size, 0.0));
+        let space_entity = make_space(space_ref, &mut commands, grid_size, scale_factor);
+        println!("Entity: {:?} number: {:?}", space_entity, i);
+        commands.entity(space_entity).insert(Transform::from_xyz(
+            x * grid_size,
+            y * grid_size,
+            0.0,
+        ));
     }
 }
 
-fn spawn_camera(mut commands: Commands) {
+pub fn spawn_camera(mut commands: Commands) {
     commands.spawn(Camera2dBundle {
         transform: Transform {
-            // scale: Vec3::splat(6.0),
             scale: Vec3::splat(12.0),
             ..default()
         },
@@ -46,7 +51,7 @@ fn spawn_camera(mut commands: Commands) {
     });
 }
 
-fn spawn_light(mut commands: Commands) {
+pub fn spawn_light(mut commands: Commands) {
     let light = PointLightBundle {
         point_light: PointLight {
             intensity: 3500.0,

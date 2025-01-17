@@ -1,2 +1,3 @@
-pub mod sprite_color;
-pub mod sprite_text;
+pub mod make_space;
+pub mod space_color;
+pub mod space_text;

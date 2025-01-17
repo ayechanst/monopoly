@@ -20,6 +20,7 @@ use crate::{
         prompts::prompt_player,
     },
 };
+use bevy::prelude::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -58,6 +59,7 @@ impl Board {
             _ => println!("Invalid Choice buddy"),
         }
     }
+
     pub fn player_turn(&mut self, index: usize) {
         self.roll_player_dice(index);
         let position = self.get_position(index);
