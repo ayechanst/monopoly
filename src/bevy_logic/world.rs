@@ -27,6 +27,7 @@ fn spawn_board(mut commands: Commands) {
         };
         let space_ref_cloned = space_ref.clone();
         let entity = make_sprite(space_ref_cloned, &mut commands, grid_size, scale_factor);
+        println!("Entity: {:?} number: {:?}", entity, i);
         commands
             .entity(entity)
             .insert(Transform::from_xyz(x * grid_size, y * grid_size, 0.0));
