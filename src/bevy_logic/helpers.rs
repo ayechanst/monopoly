@@ -14,7 +14,7 @@ pub fn make_sprite(
 ) -> Entity {
     let borrowed_space = space_ref.borrow();
     let fill_color = make_color(&borrowed_space);
-    let text = make_text(&borrowed_space);
+    let text_and_size = make_text(&borrowed_space);
     let border_size = Vec2::splat(grid_size * scale_factor);
     let inner_size = border_size * 0.92;
     let entity = commands.spawn_empty().id();
@@ -22,10 +22,11 @@ pub fn make_sprite(
         .entity(entity)
         .insert(Transform::default())
         .insert(GlobalTransform::default())
+        .insert(InheritedVisibility::default())
         .with_children(|parent| {
             parent.spawn(make_border_bundle(border_size));
             parent.spawn(make_color_bundle(inner_size, fill_color));
-            parent.spawn(make_text_bundle(grid_size, text.to_string()));
+            parent.spawn(make_text_bundle(grid_size, text_and_size));
         });
     entity
 }
@@ -52,13 +53,14 @@ pub fn make_color_bundle(inner_size: Vec2, fill_color: Color) -> SpriteBundle {
     }
 }
 
-pub fn make_text_bundle(grid_size: f32, text: String) -> Text2dBundle {
+pub fn make_text_bundle(grid_size: f32, text_and_size: (&str, f32)) -> Text2dBundle {
+    let (text, size) = text_and_size;
     Text2dBundle {
         text: Text::from_section(
             text,
             TextStyle {
                 font: Default::default(),
-                font_size: grid_size * 0.25,
+                font_size: grid_size * size,
                 color: Color::srgb(1.0, 1.0, 1.0),
                 ..default()
             },
