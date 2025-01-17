@@ -1,4 +1,4 @@
-use crate::models::spaces::space::{self, Space};
+use crate::models::spaces::space::Space;
 use bevy::prelude::*;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -16,40 +16,53 @@ pub fn make_sprite(
     let fill_color = make_color(&borrowed_space);
     let text = make_text(&borrowed_space);
     let border_size = Vec2::splat(grid_size * scale_factor);
-    let inner_size = border_size * 0.9;
-    // border
-    commands.spawn(SpriteBundle {
+    let inner_size = border_size * 0.92;
+    let entity = commands.spawn_empty().id();
+    commands
+        .entity(entity)
+        .insert(Transform::default())
+        .insert(GlobalTransform::default())
+        .with_children(|parent| {
+            parent.spawn(make_border_bundle(border_size));
+            parent.spawn(make_color_bundle(inner_size, fill_color));
+            parent.spawn(make_text_bundle(grid_size, text.to_string()));
+        });
+    entity
+}
+
+pub fn make_border_bundle(border_size: Vec2) -> SpriteBundle {
+    SpriteBundle {
         sprite: Sprite {
             color: Color::srgb(0.0, 0.0, 0.0),
             custom_size: Some(border_size),
             ..default()
         },
         ..default()
-    });
-    // text
-    commands.spawn(Text2dBundle {
+    }
+}
+
+pub fn make_color_bundle(inner_size: Vec2, fill_color: Color) -> SpriteBundle {
+    SpriteBundle {
+        sprite: Sprite {
+            color: fill_color,
+            custom_size: Some(inner_size),
+            ..default()
+        },
+        ..default()
+    }
+}
+
+pub fn make_text_bundle(grid_size: f32, text: String) -> Text2dBundle {
+    Text2dBundle {
         text: Text::from_section(
             text,
             TextStyle {
                 font: Default::default(),
-                font_size: grid_size * 0.5,
+                font_size: grid_size * 0.25,
                 color: Color::srgb(1.0, 1.0, 1.0),
                 ..default()
             },
         ),
         ..default()
-    });
-    // fill color
-    commands
-        .spawn(SpriteBundle {
-            sprite: Sprite {
-                color: fill_color,
-                // color: fill_color.clone(),
-                // color: fill_color.borrow(),
-                custom_size: Some(inner_size),
-                ..default()
-            },
-            ..default()
-        })
-        .id()
+    }
 }
