@@ -1,5 +1,6 @@
 mod bevy_logic;
 mod models;
+use bevy_egui::EguiPlugin;
 use bevy_logic::world::WorldPlugin;
 // use bevy_logic::{game::GamePlugin, world::WorldPlugin};
 use models::board::Board;
@@ -12,9 +13,8 @@ fn main() {
     // App::new().add_plugins((DefaultPlugins, WorldPlugin)).run();
     App::new()
         .add_plugins(DefaultPlugins)
+        // .add_plugins(EguiPlugin)
         .add_plugins(WorldPlugin)
-        // .add_plugins(GamePlugin)
-        // .add_systems(Update, game_system)
         .run();
 }
 
