@@ -4,16 +4,27 @@ use bevy_egui::EguiPlugin;
 use bevy_logic::world::WorldPlugin;
 // use bevy_logic::{game::GamePlugin, world::WorldPlugin};
 use models::board::Board;
-use std::io::{self, Write};
+use std::{
+    io::{self, Write},
+    sync::mpsc,
+};
 mod utils;
 
 use bevy::prelude::*;
+pub enum Command {
+    SpawnBoard,
+    RollDice,
+    Mortgage,
+    Trade,
+    BuyHouse,
+    SellHouse,
+}
 
 fn main() {
-    // App::new().add_plugins((DefaultPlugins, WorldPlugin)).run();
+    let (command_tx, command_rx) = mpsc::channel::<Command>();
+
     App::new()
         .add_plugins(DefaultPlugins)
-        // .add_plugins(EguiPlugin)
         .add_plugins(WorldPlugin)
         .run();
 }

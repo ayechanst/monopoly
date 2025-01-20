@@ -1,28 +1,17 @@
-use crate::{
-    bevy_logic::sprite_builder::make_space::{self, make_space},
-    models::board::Board,
-};
+use crate::{bevy_logic::sprite_builder::make_space::make_space, models::board::Board};
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContext, EguiContexts, EguiPlugin};
+use bevy_egui::EguiPlugin;
+
+use super::buttons::buttons;
 pub struct WorldPlugin;
 
 impl Plugin for WorldPlugin {
     fn build(&self, app: &mut App) {
-        // app.add_systems(Startup, (spawn_light, spawn_camera, spawn_board));
         app.add_plugins(EguiPlugin)
             .add_systems(Startup, (spawn_camera, spawn_light))
-            // .add_systems(Startup, (spawn_light, spawn_board))
-            .add_systems(Update, spawn_board_button);
+            .add_systems(Update, buttons);
+        // .add_systems(Update, buttons);
     }
-}
-
-fn spawn_board_button(commands: Commands, mut egui_ctx: EguiContexts, mut spawned: Local<bool>) {
-    egui::Window::new("Spawn Board").show(egui_ctx.ctx_mut(), |ui| {
-        if ui.button("Spawn Board").clicked() && !*spawned {
-            *spawned = true;
-            spawn_board(commands);
-        }
-    });
 }
 
 pub fn spawn_board(mut commands: Commands) {
