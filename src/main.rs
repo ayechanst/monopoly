@@ -1,16 +1,18 @@
 mod bevy_logic;
 mod models;
-use bevy_egui::EguiPlugin;
 use bevy_logic::world::WorldPlugin;
-// use bevy_logic::{game::GamePlugin, world::WorldPlugin};
 use models::board::Board;
 use std::{
     io::{self, Write},
     sync::mpsc,
 };
-use utils::cmd_consumer::backend_loop;
+use utils::backend_loop::backend_loop;
 mod utils;
 use bevy::prelude::*;
+use std::sync::mpsc::Sender;
+
+#[derive(Resource)]
+pub struct CommandSender(pub Sender<Command>);
 pub enum Command {
     SpawnBoard,
     RollDice,
@@ -21,12 +23,10 @@ pub enum Command {
 }
 
 fn main() {
-    // creates a channel for front end to communicate with backend
-    // commands received from front-end
+    // channel: frontend => backend (sends commands)
     let (command_tx, command_rx) = mpsc::channel::<Command>();
-    // creates a channel for back end to communicate with frontend
-    // data being sent back to front-end
-    let (update_tx, update_rx) = mpsc::channel::<Command>();
+    // channel: backend => frontend (sends board)
+    let (update_tx, update_rx) = mpsc::channel::<Board>();
 
     std::thread::spawn(move || {
         let mut board = Board::new();
@@ -35,7 +35,7 @@ fn main() {
 
     App::new()
         .add_plugins(DefaultPlugins)
-        // .add_plugins(WorldPlugin)
+        .add_plugins(WorldPlugin)
         .run();
 }
 

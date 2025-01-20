@@ -16,7 +16,7 @@ impl Plugin for WorldPlugin {
 
 // this should take in board from the front-end receiver
 pub fn spawn_board(mut commands: Commands) {
-    // let board = Board::new();
+    let board = Board::new();
     let grid_size = 600.0;
     let scale_factor = 1.0;
     for (index, space_ref) in board.spaces.iter().cloned().enumerate() {

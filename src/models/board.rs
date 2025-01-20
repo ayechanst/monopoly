@@ -27,7 +27,7 @@ use std::rc::Rc;
 pub type PlayerRef = Rc<RefCell<Player>>;
 pub type SpaceRef = Rc<RefCell<Space>>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Board {
     pub spaces: Vec<SpaceRef>,
     pub players: Vec<PlayerRef>,
