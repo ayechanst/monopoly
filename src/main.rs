@@ -1,36 +1,27 @@
 mod bevy_logic;
 mod models;
-use bevy_logic::world::WorldPlugin;
+use bevy_logic::{buttons::Command, world::WorldPlugin};
 use models::board::Board;
 use std::{
     io::{self, Write},
     sync::mpsc,
 };
-use utils::backend_loop::backend_loop;
+use utils::backend_loop::{backend_loop, UpdateMessage};
 mod utils;
 use bevy::prelude::*;
-use std::sync::mpsc::Sender;
-
-#[derive(Resource)]
-pub struct CommandSender(pub Sender<Command>);
-pub enum Command {
-    SpawnBoard,
-    RollDice,
-    Mortgage,
-    Trade,
-    BuyHouse,
-    SellHouse,
-}
 
 fn main() {
     // channel: frontend => backend (sends commands)
     let (command_tx, command_rx) = mpsc::channel::<Command>();
     // channel: backend => frontend (sends board)
-    let (update_tx, update_rx) = mpsc::channel::<Board>();
+    let (update_tx, update_rx) = mpsc::channel::<UpdateMessage>();
 
+    // std::thread::spawn(move || {
+    //     let mut board = Board::new();
+    //     backend_loop(&mut board, command_rx, update_tx);
+    // });
     std::thread::spawn(move || {
-        let mut board = Board::new();
-        backend_loop(&mut board, command_rx, update_tx);
+        backend_loop(command_rx, update_tx);
     });
 
     App::new()
