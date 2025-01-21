@@ -14,23 +14,41 @@ pub enum Change {
 // 2. Takes in a `Sender<Change>` to send back to frontend
 // Receiver<T> & Sender<T> allows messages to be passed between threads
 pub fn backend_loop(command_receiver: Receiver<Command>, update_transmitter: Sender<Change>) {
-    println!("backend_loop about to Board::new()");
+    println!("backend_loop has started");
     let mut board = Board::new();
     println!("Board::new() success");
     // while let Ok(command) = command_receiver.try_recv() {
-    while let Ok(command) = command_receiver.recv() {
+    for command in command_receiver {
+        println!("Received command: {:?}", command);
         match command {
-            // Command::SpawnBoard => println!("boom"),
             Command::SpawnBoard => {
                 println!("about to send Change::InitGame in backend_loop");
-                update_transmitter.send(Change::InitGame).unwrap();
-                println!("backend loop success");
+                if let Err(err) = update_transmitter.send(Change::InitGame) {
+                    println!("Failed to send Change::InitGame: {:?}", err);
+                } else {
+                    println!("Change::InitGame sent successfully");
+                }
             }
-            Command::RollDice => println!("boom"),
-            Command::Mortgage => println!("boom"),
-            Command::Trade => println!("boom"),
-            Command::BuyHouse => println!("boom"),
-            Command::SellHouse => println!("boom"),
+            _ => println!("Unhandled command"),
         }
     }
+    println!("Backend loop exiting");
+    // while let Ok(command) = command_receiver.recv() {
+    //     match command {
+    //         // Command::SpawnBoard => println!("boom"),
+    //         Command::SpawnBoard => {
+    //             println!("about to send Change::InitGame in backend_loop");
+    //             if let Err(err) = update_transmitter.send(Change::InitGame) {
+    //                 println!("Failed to send Change::InitGame: {:?}", err);
+    //             } else {
+    //                 println!("Change::InitGame sent successfully");
+    //             }
+    //         }
+    //         Command::RollDice => println!("boom"),
+    //         Command::Mortgage => println!("boom"),
+    //         Command::Trade => println!("boom"),
+    //         Command::BuyHouse => println!("boom"),
+    //         Command::SellHouse => println!("boom"),
+    //     }
+    // }
 }

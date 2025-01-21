@@ -20,7 +20,9 @@ fn main() {
     let (update_transmitter, update_receiver) = mpsc::channel::<Change>();
 
     std::thread::spawn(move || {
+        println!("Backend thread initialized");
         backend_loop(command_receiver, update_transmitter);
+        println!("Backend thread exiting");
     });
 
     App::new()
@@ -28,7 +30,6 @@ fn main() {
         .add_plugins(WorldPlugin)
         .insert_resource(CommandSender(command_transmitter))
         .insert_resource(ChangeReceiver(Arc::new(Mutex::new(update_receiver))))
-        .add_systems(Update, buttons)
         .run();
 }
 

@@ -8,6 +8,7 @@ use super::game::ChangeReceiver;
 #[derive(Resource)]
 pub struct CommandSender(pub Sender<Command>);
 // Sender<Command> allows systems to send commands, as seen in the match statements
+#[derive(Debug)]
 pub enum Command {
     SpawnBoard,
     RollDice,
