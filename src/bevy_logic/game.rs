@@ -26,13 +26,19 @@ pub fn frontend_receiver(
     // update_receiver: Receiver<Change>,
     mut query: Query<&mut Transform>,
     mut commands: Commands,
+    mut processed: Local<bool>,
 ) {
+    println!("frontend_reciever is about to trigger");
     if let Ok(change) = update_receiver.0.lock().unwrap().try_recv() {
-        // if let Ok(change) = update_receiver.try_recv() {
+        if *processed {
+            return;
+        }
+        // if let Ok(change) = update_receiver.0.lock().unwrap().recv() {
         match change {
             Change::InitGame => {
-                spawn_board(commands);
                 println!("frontend reciever success");
+                spawn_board(commands);
+                println!("board should have spawned");
             }
             Change::PositionChange => todo!(),
             Change::BalanceChange => todo!(),

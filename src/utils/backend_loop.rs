@@ -2,9 +2,7 @@ use crate::{models::board::Board, Command};
 use bevy::prelude::Resource;
 use std::sync::mpsc::{Receiver, Sender};
 
-// #[derive(Resource)]
-// // Wrap Change in a Sender (to send it)
-// pub struct ChangeSender(pub Sender<Change>);
+#[derive(Debug)]
 pub enum Change {
     InitGame,
     PositionChange,
@@ -19,7 +17,8 @@ pub fn backend_loop(command_receiver: Receiver<Command>, update_transmitter: Sen
     println!("backend_loop about to Board::new()");
     let mut board = Board::new();
     println!("Board::new() success");
-    while let Ok(command) = command_receiver.try_recv() {
+    // while let Ok(command) = command_receiver.try_recv() {
+    while let Ok(command) = command_receiver.recv() {
         match command {
             // Command::SpawnBoard => println!("boom"),
             Command::SpawnBoard => {
