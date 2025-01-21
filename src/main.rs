@@ -1,10 +1,14 @@
 mod bevy_logic;
 mod models;
-use bevy_logic::{buttons::Command, world::WorldPlugin};
+use bevy_logic::{
+    buttons::{buttons, Command, CommandSender},
+    game::ChangeReceiver,
+    world::WorldPlugin,
+};
 use models::board::Board;
 use std::{
     io::{self, Write},
-    sync::mpsc,
+    sync::{mpsc, Arc, Mutex},
 };
 use utils::backend_loop::{backend_loop, Change};
 mod utils;
@@ -25,6 +29,9 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugins(WorldPlugin)
+        .insert_resource(CommandSender(command_transmitter))
+        .insert_resource(ChangeReceiver(Arc::new(Mutex::new(update_receiver))))
+        .add_systems(Update, buttons)
         .run();
 }
 

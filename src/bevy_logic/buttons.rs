@@ -16,6 +16,7 @@ pub enum Command {
 }
 
 // Res<T> is a type of `Resource`
+// pub fn buttons(commands: Res<CommandSender>, mut contexts: EguiContexts, mut spawned: Local<bool>) {
 pub fn buttons(commands: Res<CommandSender>, mut contexts: EguiContexts, mut spawned: Local<bool>) {
     egui::Window::new("Game Controls").show(contexts.ctx_mut(), |ui| {
         if ui.button("Initialize Game").clicked() && !*spawned {

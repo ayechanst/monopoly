@@ -2,9 +2,9 @@ use crate::{models::board::Board, Command};
 use bevy::prelude::Resource;
 use std::sync::mpsc::{Receiver, Sender};
 
-#[derive(Resource)]
-// Wrap Change in a Sender (to send it)
-pub struct ChangeSender(pub Sender<Change>);
+// #[derive(Resource)]
+// // Wrap Change in a Sender (to send it)
+// pub struct ChangeSender(pub Sender<Change>);
 pub enum Change {
     InitGame,
     PositionChange,

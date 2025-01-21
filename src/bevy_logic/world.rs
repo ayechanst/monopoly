@@ -1,4 +1,4 @@
-use super::buttons::buttons;
+use super::{buttons::buttons, game::frontend_receiver};
 use crate::{bevy_logic::sprite_builder::make_space::make_space, models::board::Board};
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
@@ -8,13 +8,12 @@ pub struct WorldPlugin;
 impl Plugin for WorldPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(EguiPlugin)
-            .add_systems(Startup, (spawn_camera, spawn_light, spawn_board))
-            .add_systems(Update, buttons);
+            .add_systems(Startup, (spawn_camera, spawn_light))
+            .add_systems(Update, (buttons, frontend_receiver));
         // .add_systems(Update, buttons);
     }
 }
 
-// this should take in board from the front-end receiver
 pub fn spawn_board(mut commands: Commands) {
     let board = Board::new();
     let grid_size = 600.0;
