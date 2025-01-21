@@ -5,7 +5,6 @@ use bevy_logic::{
     game::ChangeReceiver,
     world::WorldPlugin,
 };
-use models::board::Board;
 use std::{
     io::{self, Write},
     sync::{mpsc, Arc, Mutex},
@@ -17,9 +16,7 @@ use bevy::prelude::*;
 // Res<T> is a type of `Resource`
 
 fn main() {
-    // channel: frontend => backend (sends commands)
     let (command_transmitter, command_receiver) = mpsc::channel::<Command>();
-    // channel: backend => frontend (sends board)
     let (update_transmitter, update_receiver) = mpsc::channel::<Change>();
 
     std::thread::spawn(move || {

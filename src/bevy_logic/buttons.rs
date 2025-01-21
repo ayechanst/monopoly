@@ -15,19 +15,31 @@ pub enum Command {
     SellHouse,
 }
 
-// Res<T> is a type of `Resource`
-// pub fn buttons(commands: Res<CommandSender>, mut contexts: EguiContexts, mut spawned: Local<bool>) {
 pub fn buttons(commands: Res<CommandSender>, mut contexts: EguiContexts, mut spawned: Local<bool>) {
     egui::Window::new("Game Controls").show(contexts.ctx_mut(), |ui| {
-        if ui.button("Initialize Game").clicked() && !*spawned {
-            *spawned = true;
-            // sending command through Command::SpawnBoard because the `Command` enum
-            // is inside of `CommandSender`
-            commands.0.send(Command::SpawnBoard).unwrap();
+        if !*spawned {
+            if ui.button("Initialize Game").clicked() {
+                *spawned = true;
+                commands
+                    .0
+                    .send(Command::SpawnBoard)
+                    .unwrap_or_else(|_| println!("failed Command::SpawnBoard"));
+                println!("init game success");
+            }
+        } else {
+            ui.label("Game initialized");
         }
-        if ui.button("Roll Dice").clicked() {
-            commands.0.send(Command::RollDice).unwrap();
-            println!("Roll Dice was clicked");
-        }
+        // if ui.button("Initialize Game").clicked() && !*spawned {
+        //     *spawned = true;
+        //     commands
+        //         .0
+        //         .send(Command::SpawnBoard)
+        //         .unwrap_or_else(|_| println!("failed to send Command::SpawnBoard"));
+        //     println!("init game button success");
+        // }
+        // if ui.button("Roll Dice").clicked() {
+        //     commands.0.send(Command::RollDice).unwrap();
+        //     println!("Roll Dice was clicked");
+        // }
     });
 }
