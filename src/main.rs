@@ -6,22 +6,20 @@ use std::{
     io::{self, Write},
     sync::mpsc,
 };
-use utils::backend_loop::{backend_loop, UpdateMessage};
+use utils::backend_loop::{backend_loop, Change};
 mod utils;
 use bevy::prelude::*;
+// TERMINOLOGY
+// Res<T> is a type of `Resource`
 
 fn main() {
     // channel: frontend => backend (sends commands)
-    let (command_tx, command_rx) = mpsc::channel::<Command>();
+    let (command_transmitter, command_receiver) = mpsc::channel::<Command>();
     // channel: backend => frontend (sends board)
-    let (update_tx, update_rx) = mpsc::channel::<UpdateMessage>();
+    let (update_transmitter, update_receiver) = mpsc::channel::<Change>();
 
-    // std::thread::spawn(move || {
-    //     let mut board = Board::new();
-    //     backend_loop(&mut board, command_rx, update_tx);
-    // });
     std::thread::spawn(move || {
-        backend_loop(command_rx, update_tx);
+        backend_loop(command_receiver, update_transmitter);
     });
 
     App::new()

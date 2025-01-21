@@ -8,8 +8,8 @@ pub struct WorldPlugin;
 impl Plugin for WorldPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(EguiPlugin)
-            .add_systems(Startup, (spawn_camera, spawn_light, spawn_board));
-        // .add_systems(Update, buttons);
+            .add_systems(Startup, (spawn_camera, spawn_light, spawn_board))
+            .add_systems(Update, buttons);
         // .add_systems(Update, buttons);
     }
 }
