@@ -19,14 +19,14 @@ pub fn backend_loop(command_receiver: Receiver<Command>, update_transmitter: Sen
     println!("Board::new() success");
     // while let Ok(command) = command_receiver.try_recv() {
     for command in command_receiver {
-        println!("Received command: {:?}", command);
+        println!("(backend)-----------------Received command: {:?}", command);
         match command {
             Command::SpawnBoard => {
-                println!("about to send Change::InitGame in backend_loop");
+                // println!("about to send Change::InitGame in backend_loop");
                 if let Err(err) = update_transmitter.send(Change::InitGame) {
                     println!("Failed to send Change::InitGame: {:?}", err);
                 } else {
-                    println!("Change::InitGame sent successfully");
+                    println!("(backend)-----------Change::InitGame sent successfully");
                 }
             }
             _ => println!("Unhandled command"),

@@ -2,7 +2,7 @@ mod bevy_logic;
 mod models;
 use bevy_logic::{
     buttons::{buttons, Command, CommandSender},
-    game::ChangeReceiver,
+    game::{frontend_receiver, ChangeReceiver},
     world::WorldPlugin,
 };
 use std::{
@@ -30,6 +30,7 @@ fn main() {
         .add_plugins(WorldPlugin)
         .insert_resource(CommandSender(command_transmitter))
         .insert_resource(ChangeReceiver(Arc::new(Mutex::new(update_receiver))))
+        .add_systems(Update, frontend_receiver)
         .run();
 }
 

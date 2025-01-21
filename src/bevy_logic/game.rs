@@ -13,20 +13,21 @@ pub fn frontend_receiver(
     mut commands: Commands,
     // mut processed: Local<bool>,
 ) {
-    println!("frontend_reciever is about to trigger");
+    println!("-frontend_receiver trying to receive message...");
     if let Ok(receiver) = update_receiver.0.try_lock() {
+        // println!("-frontend (receiver): {:?}", receiver);
         if let Ok(change) = receiver.try_recv() {
-            println!("ok before match statement");
+            println!("---------frontend message received (change): {:?}", change);
             match change {
                 Change::InitGame => {
-                    println!("about to spawn board");
+                    println!("-about to spawn board");
                     spawn_board(commands);
-                    println!("board should have spawned");
+                    println!("-board should have spawned");
                 }
                 _ => {}
             }
         } else {
-            println!("no message available in channel");
+            println!("-no message available in channel");
         }
     } else {
         println!("Failed to acquire lock on channel");
