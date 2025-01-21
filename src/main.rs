@@ -1,36 +1,23 @@
 mod bevy_logic;
 mod models;
+use bevy_egui::EguiPlugin;
 use bevy_logic::{
-    buttons::{buttons, Command, CommandSender},
-    game::{frontend_receiver, ChangeReceiver},
+    buttons::{buttons, Command},
+    frontend_plugin::FrontEndPlugin,
     world::WorldPlugin,
 };
-use std::{
-    io::{self, Write},
-    sync::{mpsc, Arc, Mutex},
-};
-use utils::backend_loop::{backend_loop, Change};
+use std::io::{self, Write};
 mod utils;
 use bevy::prelude::*;
-// TERMINOLOGY
-// Res<T> is a type of `Resource`
 
 fn main() {
-    let (command_transmitter, command_receiver) = mpsc::channel::<Command>();
-    let (update_transmitter, update_receiver) = mpsc::channel::<Change>();
-
-    std::thread::spawn(move || {
-        println!("Backend thread initialized");
-        backend_loop(command_receiver, update_transmitter);
-        println!("Backend thread exiting");
-    });
-
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_plugins(EguiPlugin)
         .add_plugins(WorldPlugin)
-        .insert_resource(CommandSender(command_transmitter))
-        .insert_resource(ChangeReceiver(Arc::new(Mutex::new(update_receiver))))
-        .add_systems(Update, frontend_receiver)
+        .add_systems(Update, buttons)
+        .add_plugins(FrontEndPlugin)
+        // .add_plugins(PlayerPlugin)
         .run();
 }
 
