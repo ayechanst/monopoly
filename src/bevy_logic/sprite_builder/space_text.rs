@@ -14,3 +14,9 @@ pub fn make_text(space: &Space) -> (&str, f32) {
     };
     text
 }
+
+pub fn make_coordinates_text(coordinates: (f32, f32)) -> String {
+    let (x, y) = coordinates;
+    let text = format!("{}, {}", x, y);
+    text
+}

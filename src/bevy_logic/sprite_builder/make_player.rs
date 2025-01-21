@@ -4,16 +4,16 @@ use bevy::prelude::*;
 use super::make_space::make_text_bundle;
 
 pub fn make_player(
-    player: Res<Player>,
+    // player: Res<Player>,
+    player: &Player,
     commands: &mut Commands,
     grid_size: f32,
     scale_factor: f32,
 ) -> Entity {
-    // let entity = commands.spawn_empty().id();
     let entity = commands
         .spawn(SpriteBundle {
             sprite: Sprite {
-                color: Color::srgb(1.0, 1.0, 1.0),
+                color: Color::srgb(0.0, 0.0, 0.0),
                 custom_size: Some(Vec2::new(
                     grid_size * scale_factor,
                     grid_size * scale_factor,

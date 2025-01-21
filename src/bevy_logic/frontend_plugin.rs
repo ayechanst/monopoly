@@ -3,7 +3,7 @@ use super::{
     // world::spawn_board,
 };
 use crate::{
-    bevy_logic::board_and_player::spawn_board,
+    bevy_logic::board_and_player::{player_position, spawn_board},
     utils::backend_loop::{backend_loop, Change},
 };
 use bevy::prelude::*;
@@ -35,15 +35,16 @@ impl Plugin for FrontEndPlugin {
 pub fn frontend_receiver(
     update_receiver: Res<ChangeReceiver>,
     mut query: Query<&mut Transform>,
-    mut commands: Commands,
+    // mut commands: Commands,
+    commands: Commands,
 ) {
     if let Ok(receiver) = update_receiver.0.try_lock() {
         if let Ok(change) = receiver.try_recv() {
             println!("---------frontend message received (change): {:?}", change);
             match change {
                 Change::InitGame => {
-                    spawn_board(commands);
-                    // spawn_player(commands);
+                    // spawn_board(commands);
+                    player_position(commands);
                 }
                 Change::PositionChange => println!("beem"),
                 Change::BalanceChange => println!("beem"),
