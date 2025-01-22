@@ -43,10 +43,10 @@ pub fn frontend_receiver(
             println!("---------frontend message received (change): {:?}", change);
             match change {
                 Change::InitGame => {
-                    // spawn_board(commands);
-                    player_position(commands);
+                    spawn_board(commands);
+                    // player_position(commands);
                 }
-                Change::PositionChange => println!("beem"),
+                Change::PositionChange => player_position(commands),
                 Change::BalanceChange => println!("beem"),
                 Change::PropertyStateChange => println!("beem"),
             }

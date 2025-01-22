@@ -18,11 +18,8 @@ pub fn backend_loop(command_receiver: Receiver<Command>, update_transmitter: Sen
         println!("(backend)-----------------Received command: {:?}", command);
         match command {
             Command::SpawnBoard => {
-                if let Err(err) = update_transmitter.send(Change::InitGame) {
-                    println!("Failed to send Change::InitGame: {:?}", err);
-                } else {
-                    println!("(backend)-----------Change::InitGame sent successfully");
-                }
+                update_transmitter.send(Change::InitGame).unwrap();
+                update_transmitter.send(Change::PositionChange).unwrap();
             }
             Command::RollDice => println!("boom"),
             Command::Mortgage => println!("boom"),

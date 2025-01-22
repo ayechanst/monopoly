@@ -21,16 +21,15 @@ pub fn player_position(mut commands: Commands) {
     let scale_factor = 1.0;
     let mut players = Vec::new();
     for i in 1..=4 {
-        // let mut offset: (f32, f32) = (0.0, 0.0);
         let mut offset;
         if i == 1 {
-            offset = (0.5, 0.5);
+            offset = (0.25, 0.25)
         } else if i == 2 {
-            offset = (-0.5, 0.5)
+            offset = (-0.25, 0.25)
         } else if i == 3 {
-            offset = (-0.5, -0.5)
+            offset = (-0.25, -0.25)
         } else {
-            offset = (0.5, -0.5)
+            offset = (0.25, -0.25)
         }
         players.push(Player {
             number: i,

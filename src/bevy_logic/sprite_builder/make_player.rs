@@ -10,13 +10,16 @@ pub fn make_player(
     grid_size: f32,
     scale_factor: f32,
 ) -> Entity {
+    // let player_size = grid_size / 4.0;
     let entity = commands
         .spawn(SpriteBundle {
             sprite: Sprite {
                 color: Color::srgb(0.0, 0.0, 0.0),
                 custom_size: Some(Vec2::new(
-                    grid_size * scale_factor,
-                    grid_size * scale_factor,
+                    (grid_size * scale_factor) / 2.0,
+                    (grid_size * scale_factor) / 2.0,
+                    // player_size * scale_factor,
+                    // player_size * scale_factor,
                 )),
                 ..Default::default()
             },
