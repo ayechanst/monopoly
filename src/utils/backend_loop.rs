@@ -21,7 +21,7 @@ pub fn backend_loop(command_receiver: Receiver<Command>, update_transmitter: Sen
                 update_transmitter.send(Change::InitGame).unwrap();
                 update_transmitter.send(Change::PositionChange).unwrap();
             }
-            Command::RollDice => println!("boom"),
+            Command::RollDice => println!("we're fucked"),
             Command::Mortgage => println!("boom"),
             Command::Trade => println!("boom"),
             Command::BuyHouse => println!("boom"),

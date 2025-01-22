@@ -17,7 +17,6 @@ pub struct Player {
 
 pub fn player_position(mut commands: Commands) {
     let grid_size = 600.0;
-    // let scale_factor = 1.0 / 4.0;
     let scale_factor = 1.0;
     let mut players = Vec::new();
     for i in 1..=4 {

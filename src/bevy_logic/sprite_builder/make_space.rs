@@ -17,7 +17,7 @@ pub fn make_space(
     let borrowed_space = space_ref.borrow();
     let fill_color = make_color(&borrowed_space);
     let text_and_size = make_text(&borrowed_space);
-    // coordinates
+    // coordinates logic
     let text_coordinates = make_coordinates_text(coordinates);
     let size: f32 = 0.3;
     let coordinate_text_and_size = (text_coordinates.as_str(), size);
