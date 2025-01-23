@@ -11,7 +11,7 @@ impl Plugin for PlayerPlugin {
 }
 
 // this will be displayed from inside player_position?
-pub fn player_info(mut contexts: EguiContexts, balances: Res<Player>) {
+pub fn player_info(mut contexts: EguiContexts) {
     egui::Window::new("Balances").show(contexts.ctx_mut(), |ui| {
         // for (player, balances) in  {
         //     ui.label(format!("{}: ${}", player, balances));

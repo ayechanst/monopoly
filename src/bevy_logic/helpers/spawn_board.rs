@@ -2,7 +2,7 @@ use crate::{
     bevy_logic::{
         player_components::{Balance, Offset, Player, PlayerNumber, Position, Properties},
         plugins::frontend_plugin::{GridSize, ScaleFactor},
-        sprite_builder::make_space::make_space,
+        sprite_builder::{make_player::make_player, make_space::make_space},
     },
     models::board::Board,
 };
@@ -39,6 +39,7 @@ pub fn spawn_board(
             0.0,
         ));
     }
+    println!("about to spawn player");
     // player spawn
     let player_offset = [(0.25, 0.25), (-0.25, 0.25), (-0.25, -0.25), (0.25, -0.25)];
     for (i, &offset) in player_offset.iter().enumerate() {
@@ -49,6 +50,9 @@ pub fn spawn_board(
             Position((5.0, -5.0)),
             Offset(offset),
             Properties(Vec::new()),
+            make_player(i, grid_size.0, scale_factor.0),
         ));
+        println!("done spawning player: {:?} ", i);
     }
+    println!("done spawning players");
 }

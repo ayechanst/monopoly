@@ -1,32 +1,34 @@
+use super::make_space::make_text_bundle;
+use crate::bevy_logic::plugins::frontend_plugin::{GridSize, ScaleFactor};
 use bevy::prelude::*;
 
-use crate::bevy_logic::{
-    player_components::Player,
-    plugins::frontend_plugin::{GridSize, ScaleFactor},
-};
-
-use super::make_space::make_text_bundle;
+#[derive(Bundle)]
+pub struct PlayerBundle {
+    sprite: Sprite,
+    // transform: Transform,
+    // global_transform: GlobalTransform,
+    text: Text2dBundle,
+    // text_transform: Transform,
+}
 
 pub fn make_player(
-    player: &Player,
-    commands: &mut Commands,
-    grid_size: Res<GridSize>,
-    scale_factor: Res<ScaleFactor>,
-    // we want this to just return a sprite bundle
-) -> Entity {
-    let text_and_size = (&*player.number.to_string(), 0.2);
-    let entity = commands.spawn_empty().id();
-    // let text_and_size = make_text_bundle(grid_size, )
-    commands
-        .entity(entity)
-        .insert(Transform::default())
-        .insert(GlobalTransform::default())
-        .insert(InheritedVisibility::default())
-        .with_children(|parent| {
-            parent.spawn(make_text_bundle(grid_size.0, text_and_size));
-            parent.spawn(make_shape_and_color_bundle(grid_size.0, scale_factor.0));
-        });
-    entity
+    player_number: usize,
+    // grid_size: Res<GridSize>,
+    // scale_factor: Res<ScaleFactor>,
+    grid_size: f32,
+    scale_factor: f32,
+) -> PlayerBundle {
+    let text_and_size = (&*player_number.to_string(), 0.2);
+    let sprite = make_shape_and_color_bundle(grid_size, scale_factor);
+    let text = make_text_bundle(grid_size, text_and_size);
+    PlayerBundle {
+        sprite: sprite.sprite,
+        // transform: sprite.transform,
+        // global_transform: GlobalTransform::default(),
+        text,
+        // text_transform: Transform::default(),
+        // text_transform: Transform::default(),
+    }
 }
 
 pub fn make_shape_and_color_bundle(grid_size: f32, scale_factor: f32) -> SpriteBundle {
