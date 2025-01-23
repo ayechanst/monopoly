@@ -26,7 +26,8 @@ pub fn buttons(commands: Res<CommandSender>, mut contexts: EguiContexts, mut spa
                 commands
                     .0
                     .send(Command::SpawnBoard)
-                    .unwrap_or_else(|_| println!("failed Command::SpawnBoard"));
+                    // .unwrap_or_else(|_| println!("failed Command::SpawnBoard"));
+                    .unwrap();
                 println!("(buttons)----------- Command::SpawnBoard success");
             }
         } else {

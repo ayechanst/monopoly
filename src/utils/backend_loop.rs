@@ -19,7 +19,7 @@ pub fn backend_loop(command_receiver: Receiver<Command>, update_transmitter: Sen
         match command {
             Command::SpawnBoard => {
                 update_transmitter.send(Change::InitGame).unwrap();
-                update_transmitter.send(Change::PositionChange).unwrap();
+                // update_transmitter.send(Change::PositionChange).unwrap();
             }
             Command::RollDice => println!("we're fucked"),
             Command::Mortgage => println!("boom"),

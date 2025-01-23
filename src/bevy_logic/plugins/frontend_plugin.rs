@@ -5,7 +5,7 @@ use crate::{
             buttons::{Command, CommandSender},
             spawn_board::spawn_board,
         },
-        player_components::Position,
+        player_components::{Offset, Position},
         systems::player_position::player_position,
     },
     utils::backend_loop::{backend_loop, Change},
@@ -46,7 +46,7 @@ impl Plugin for FrontEndPlugin {
 
 pub fn frontend_receiver(
     update_receiver: Res<ChangeReceiver>,
-    mut query: Query<(&mut Transform, &Position)>,
+    mut query: Query<(&mut Transform, &Position, &Offset)>,
     commands: Commands,
     grid_size: Res<GridSize>,
     scale_factor: Res<ScaleFactor>,
@@ -57,7 +57,7 @@ pub fn frontend_receiver(
             match change {
                 Change::InitGame => spawn_board(commands, grid_size, scale_factor),
                 Change::PositionChange => {
-                    player_position(query, grid_size);
+                    player_position(query, grid_size, scale_factor);
                     println!("---------------------------player_position ran");
                 }
                 Change::BalanceChange => println!("beem"),

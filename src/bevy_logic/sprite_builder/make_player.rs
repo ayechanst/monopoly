@@ -8,14 +8,9 @@ pub struct PlayerBundle {
     text: Text2dBundle,
 }
 
-pub fn make_player(
-    player_number: usize,
-    grid_size: f32,
-    scale_factor: f32,
-    offset: (f32, f32),
-) -> PlayerBundle {
-    let text_and_size = (&*player_number.to_string(), 0.2);
-    let sprite = make_shape_and_color_bundle(grid_size, scale_factor, offset);
+pub fn make_player(player_number: usize, grid_size: f32, scale_factor: f32) -> PlayerBundle {
+    let text_and_size = (&*player_number.to_string(), 0.3);
+    let sprite = make_shape_and_color_bundle(grid_size, scale_factor);
     let text = make_text_bundle(grid_size, text_and_size);
     PlayerBundle {
         sprite: sprite.sprite,
@@ -23,11 +18,7 @@ pub fn make_player(
     }
 }
 
-pub fn make_shape_and_color_bundle(
-    grid_size: f32,
-    scale_factor: f32,
-    offset: (f32, f32),
-) -> SpriteBundle {
+pub fn make_shape_and_color_bundle(grid_size: f32, scale_factor: f32) -> SpriteBundle {
     SpriteBundle {
         sprite: Sprite {
             color: Color::srgb(0.0, 0.0, 0.0),
@@ -37,12 +28,7 @@ pub fn make_shape_and_color_bundle(
             )),
             ..default()
         },
-        // transform: Transform::default(),
-        transform: Transform::from_xyz(
-            (offset.0 + 5.0) * grid_size,
-            (offset.1 - 5.0) * grid_size,
-            0.5,
-        ),
+        transform: Transform::default(),
         ..default()
     }
 }
