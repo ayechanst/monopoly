@@ -3,8 +3,7 @@ mod models;
 use bevy_egui::EguiPlugin;
 use bevy_logic::{
     buttons::{buttons, Command},
-    frontend_plugin::FrontEndPlugin,
-    world::WorldPlugin,
+    plugins::{frontend_plugin::FrontEndPlugin, world::WorldPlugin},
 };
 use std::io::{self, Write};
 mod utils;

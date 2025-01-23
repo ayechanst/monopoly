@@ -1,7 +1,10 @@
 use crate::{bevy_logic::sprite_builder::make_space::make_space, models::board::Board};
 use bevy::prelude::*;
 
-use super::sprite_builder::make_player::make_player;
+use super::{
+    player_components::{Balance, Offset, PlayerNumber, Position, Properties},
+    sprite_builder::make_player::make_player,
+};
 // put spawn_board and spawn_player in another file
 // a player Resource (that can be updated) struct will be the data structure that
 // moves/spawns the player and what the ui will read from
@@ -18,33 +21,28 @@ pub struct Player {
 pub fn player_position(mut commands: Commands) {
     let grid_size = 600.0;
     let scale_factor = 1.0;
-    let mut players = Vec::new();
-    for i in 1..=4 {
-        let mut offset;
-        if i == 1 {
-            offset = (0.25, 0.25)
-        } else if i == 2 {
-            offset = (-0.25, 0.25)
-        } else if i == 3 {
-            offset = (-0.25, -0.25)
-        } else {
-            offset = (0.25, -0.25)
-        }
-        players.push(Player {
-            number: i,
+    let player_offset = [(0.25, 0.25), (-0.25, 0.25), (-0.25, -0.25), (0.25, -0.25)];
+    for (i, &offset) in player_offset.iter().enumerate() {
+        let player = Player {
+            number: i as u32 + 1,
             balance: 1500,
             position: (5.0, -5.0),
-            offset: offset,
+            offset,
             properties: Vec::new(),
-        })
-    }
-    for player in players {
+        };
         let player_entity = make_player(&player, &mut commands, grid_size, scale_factor);
-        let (x_offset, y_offset) = player.offset;
-        commands.entity(player_entity).insert(Transform::from_xyz(
-            (5.0 + x_offset) * grid_size,
-            (-5.0 + y_offset) * grid_size,
-            0.5,
+        commands.entity(player_entity).insert((
+            PlayerNumber(i as u32 + 1),
+            Balance(1500),
+            Position((5.0, -5.0)),
+            Offset(offset),
+            Properties(Vec::new()),
+            Transform::from_xyz(
+                (offset.0 + 5.0) * grid_size,
+                (offset.1 - 5.0) * grid_size,
+                0.5,
+            ),
+            GlobalTransform::default(),
         ));
     }
 }

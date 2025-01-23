@@ -16,6 +16,8 @@ pub enum Command {
     SellHouse,
 }
 
+// could send structs or tuples instead of enums
+
 pub fn buttons(commands: Res<CommandSender>, mut contexts: EguiContexts, mut spawned: Local<bool>) {
     egui::Window::new("Game Controls").show(contexts.ctx_mut(), |ui| {
         if !*spawned {
