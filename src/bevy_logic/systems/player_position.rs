@@ -1,5 +1,4 @@
-use super::frontend_plugin::GridSize;
-use crate::bevy_logic::player_components::Position;
+use crate::bevy_logic::{player_components::Position, plugins::frontend_plugin::GridSize};
 use bevy::prelude::*;
 
 pub fn player_position(mut query: Query<(&mut Transform, &Position)>, grid_size: Res<GridSize>) {
@@ -9,3 +8,6 @@ pub fn player_position(mut query: Query<(&mut Transform, &Position)>, grid_size:
             Vec3::new(x * grid_size.0, y * grid_size.0, transform.translation.z);
     }
 }
+
+// Now just need something that will render these sprites. the system should read
+// player_position function, and so will the ui

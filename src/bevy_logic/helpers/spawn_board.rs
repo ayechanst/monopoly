@@ -1,10 +1,14 @@
 use crate::{
-    bevy_logic::{player_components::Player, sprite_builder::make_space::make_space},
+    bevy_logic::{
+        player_components::Player,
+        plugins::frontend_plugin::{GridSize, ScaleFactor},
+        sprite_builder::make_space::make_space,
+    },
     models::board::Board,
 };
 use bevy::prelude::*;
 
-use super::frontend_plugin::{GridSize, ScaleFactor};
+// use super::frontend_plugin::{GridSize, ScaleFactor};
 
 pub fn spawn_board(
     mut commands: Commands,
@@ -12,8 +16,6 @@ pub fn spawn_board(
     scale_factor: Res<ScaleFactor>,
 ) {
     let board = Board::new();
-    // let grid_size = 600.0;
-    // let scale_factor = 1.0;
     for (index, space_ref) in board.spaces.iter().cloned().enumerate() {
         let i = index as f32;
         let (x, y) = if i < 10.0 {
@@ -48,5 +50,6 @@ pub fn spawn_board(
             offset,
             properties: Vec::new(),
         };
+        println!("Player entity {:?} created", player);
     }
 }

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-#[derive(Default, Resource)]
+#[derive(Default, Resource, Debug)]
 pub struct Player {
     pub number: u32,
     pub balance: u32,

@@ -1,4 +1,4 @@
-use crate::{models::board::Board, Command};
+use crate::{bevy_logic::helpers::buttons::Command, models::board::Board};
 use std::sync::mpsc::{Receiver, Sender};
 
 #[derive(Debug)]

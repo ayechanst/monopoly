@@ -1,9 +1,12 @@
 use crate::{
     bevy_logic::{
-        // board_and_player::player_position,
-        buttons::{Command, CommandSender},
+        // buttons::{Command, CommandSender},
+        helpers::{
+            buttons::{Command, CommandSender},
+            spawn_board::spawn_board,
+        },
         player_components::Position,
-        plugins::frontend::{player_position::player_position, spawn_board::spawn_board},
+        systems::player_position::player_position,
     },
     utils::backend_loop::{backend_loop, Change},
 };
@@ -53,7 +56,10 @@ pub fn frontend_receiver(
             println!("---------frontend message received (change): {:?}", change);
             match change {
                 Change::InitGame => spawn_board(commands, grid_size, scale_factor),
-                Change::PositionChange => player_position(query, grid_size),
+                Change::PositionChange => {
+                    player_position(query, grid_size);
+                    println!("---------------------------player_position ran");
+                }
                 Change::BalanceChange => println!("beem"),
                 Change::PropertyStateChange => println!("beem"),
             }
