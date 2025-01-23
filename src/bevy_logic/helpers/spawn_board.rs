@@ -1,14 +1,12 @@
 use crate::{
     bevy_logic::{
-        player_components::Player,
+        player_components::{Balance, Offset, Player, PlayerNumber, Position, Properties},
         plugins::frontend_plugin::{GridSize, ScaleFactor},
         sprite_builder::make_space::make_space,
     },
     models::board::Board,
 };
 use bevy::prelude::*;
-
-// use super::frontend_plugin::{GridSize, ScaleFactor};
 
 pub fn spawn_board(
     mut commands: Commands,
@@ -41,15 +39,16 @@ pub fn spawn_board(
             0.0,
         ));
     }
+    // player spawn
     let player_offset = [(0.25, 0.25), (-0.25, 0.25), (-0.25, -0.25), (0.25, -0.25)];
     for (i, &offset) in player_offset.iter().enumerate() {
-        let player = Player {
-            number: i as u32 + 1,
-            balance: 1500,
-            position: (5.0, -5.0),
-            offset,
-            properties: Vec::new(),
-        };
-        println!("Player entity {:?} created", player);
+        commands.spawn((
+            Player,
+            PlayerNumber(i as u32 + 1),
+            Balance(1500),
+            Position((5.0, -5.0)),
+            Offset(offset),
+            Properties(Vec::new()),
+        ));
     }
 }
