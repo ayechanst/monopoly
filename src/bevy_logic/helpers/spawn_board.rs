@@ -39,20 +39,20 @@ pub fn spawn_board(
             0.0,
         ));
     }
-    println!("about to spawn player");
-    // player spawn
     let player_offset = [(0.25, 0.25), (-0.25, 0.25), (-0.25, -0.25), (0.25, -0.25)];
     for (i, &offset) in player_offset.iter().enumerate() {
         commands.spawn((
+            // let player_entity = commands.spawn((
             Player,
             PlayerNumber(i as u32 + 1),
             Balance(1500),
             Position((5.0, -5.0)),
             Offset(offset),
             Properties(Vec::new()),
-            make_player(i, grid_size.0, scale_factor.0),
+            make_player(i, grid_size.0, scale_factor.0, offset),
         ));
         println!("done spawning player: {:?} ", i);
+        // println!("done spawning player: {:?} ", player_entity);
     }
     println!("done spawning players");
 }
