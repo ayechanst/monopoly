@@ -1,11 +1,9 @@
-// use super::{
-//     buttons::{Command, CommandSender},
-//     // world::spawn_board,
-// };
 use crate::{
     bevy_logic::{
-        board_and_player::{player_position, spawn_board},
+        // board_and_player::player_position,
         buttons::{Command, CommandSender},
+        player_components::Position,
+        plugins::frontend::{player_position::player_position, spawn_board::spawn_board},
     },
     utils::backend_loop::{backend_loop, Change},
 };
@@ -17,6 +15,12 @@ use std::sync::{
 
 #[derive(Resource)]
 pub struct ChangeReceiver(pub Arc<Mutex<Receiver<Change>>>);
+
+#[derive(Resource)]
+pub struct GridSize(pub f32);
+
+#[derive(Resource)]
+pub struct ScaleFactor(pub f32);
 
 pub struct FrontEndPlugin;
 
@@ -31,21 +35,25 @@ impl Plugin for FrontEndPlugin {
         });
         app.insert_resource(CommandSender(command_transmitter))
             .insert_resource(ChangeReceiver(Arc::new(Mutex::new(update_receiver))))
+            .insert_resource(GridSize(600.0))
+            .insert_resource(ScaleFactor(1.0))
             .add_systems(Update, frontend_receiver);
     }
 }
 
 pub fn frontend_receiver(
     update_receiver: Res<ChangeReceiver>,
-    mut query: Query<&mut Transform>,
+    mut query: Query<(&mut Transform, &Position)>,
     commands: Commands,
+    grid_size: Res<GridSize>,
+    scale_factor: Res<ScaleFactor>,
 ) {
     if let Ok(receiver) = update_receiver.0.try_lock() {
         if let Ok(change) = receiver.try_recv() {
             println!("---------frontend message received (change): {:?}", change);
             match change {
-                Change::InitGame => spawn_board(commands),
-                Change::PositionChange => player_position(commands),
+                Change::InitGame => spawn_board(commands, grid_size, scale_factor),
+                Change::PositionChange => player_position(query, grid_size),
                 Change::BalanceChange => println!("beem"),
                 Change::PropertyStateChange => println!("beem"),
             }

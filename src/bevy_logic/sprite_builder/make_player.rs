@@ -1,6 +1,8 @@
-use crate::bevy_logic::board_and_player::Player;
+// use crate::bevy_logic::board_and_player::Player;
 use bevy::{gizmos::grid, prelude::*};
 use bevy_prototype_lyon::shapes;
+
+use crate::bevy_logic::player_components::Player;
 
 use super::make_space::make_text_bundle;
 

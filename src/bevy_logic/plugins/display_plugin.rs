@@ -1,4 +1,4 @@
-use crate::bevy_logic::board_and_player::Player;
+use crate::bevy_logic::player_components::Player;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 
