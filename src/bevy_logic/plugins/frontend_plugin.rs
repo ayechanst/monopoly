@@ -13,6 +13,7 @@ use crate::{
     utils::backend_loop::{backend_loop, Change},
 };
 use bevy::prelude::*;
+use bevy_egui::{egui, EguiContexts};
 use std::sync::{
     mpsc::{self, Receiver},
     Arc, Mutex,
@@ -52,6 +53,7 @@ pub fn frontend_receiver(
     update_receiver: Res<ChangeReceiver>,
     mut query: Query<(&mut Transform, &Position, &Offset)>,
     commands: Commands,
+    mut contexts: EguiContexts,
     grid_size: Res<GridSize>,
     scale_factor: Res<ScaleFactor>,
 ) {
@@ -59,13 +61,26 @@ pub fn frontend_receiver(
         if let Ok(change) = receiver.try_recv() {
             let Change {
                 init_game,
-                buy_property,
+                landed_on_property,
                 new_position,
                 balance_change,
             } = change;
+
             println!("---------frontend message received (change): {:?}", change);
+
             if change.init_game == true {
                 spawn_board(commands, grid_size, scale_factor);
+            }
+
+            if change.landed_on_property == true {
+                egui::Window::new("Buy or Auction?").show(contexts.ctx_mut(), |ui| {
+                    if ui.button("Buy").clicked() {
+                        println!("player chose to buy");
+                    } else if ui.button("Auction").clicked() {
+                        println!("player chose to auction");
+                    }
+                });
+                // update ui
             }
 
             // match change {

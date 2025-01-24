@@ -16,12 +16,13 @@ use super::{
 use crate::{
     models::cards::chance::Chance,
     utils::{
+        backend_loop::Change,
         debug_helpers::{debug_buy_property, debug_property, debug_rent},
         prompts::prompt_player,
     },
 };
-use std::cell::RefCell;
 use std::rc::Rc;
+use std::{cell::RefCell, sync::mpsc::Sender};
 
 pub type PlayerRef = Rc<RefCell<Player>>;
 pub type SpaceRef = Rc<RefCell<Space>>;
@@ -54,12 +55,13 @@ impl Board {
                 Player::buy_house(player_ref, self);
             }
             "sh" => todo!(),
-            "rd" => self.player_turn(index),
+            // "rd" => self.player_turn(index),
             _ => println!("Invalid Choice buddy"),
         }
     }
 
-    pub fn player_turn(&mut self, index: usize) {
+    // pub fn player_turn(&mut self, index: usize) {
+    pub fn player_turn(&mut self, index: usize, update_transmitter: Sender<Change>) {
         self.roll_player_dice(index);
         let position = self.get_position(index);
         let player_ref = self.players[index].clone();
@@ -69,6 +71,15 @@ impl Board {
             Space::Property(properties) => {
                 if properties.is_for_sale() {
                     debug_property(player_ref.borrow(), *properties);
+
+                    update_transmitter.send(Change {
+                        init_game: false,
+                        landed_on_property: true,
+                        // new_position: position_converter(),
+                        new_position: Some((-2.0, 5.0)),
+                        balance_change: 0,
+                    });
+
                     let choice = prompt_player("Buy or auction this property? (buy/auction)");
                     match choice.trim().to_lowercase().as_str() {
                         "buy" => {

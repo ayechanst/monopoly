@@ -55,10 +55,13 @@ pub fn buttons(
         }
         if ui.button("Roll Dice").clicked() {
             // commands.0.send(Command::RollDice).unwrap();
-            commands.0.send(PlayerCommand {
-                player_number: 1,
-                command: Command::RollDice,
-            });
+            commands
+                .0
+                .send(PlayerCommand {
+                    player_number: 1,
+                    command: Command::RollDice,
+                })
+                .unwrap();
             println!("Roll Dice was clicked");
         }
     });

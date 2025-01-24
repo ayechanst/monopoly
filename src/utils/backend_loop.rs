@@ -15,7 +15,7 @@ pub enum OldChange {
 #[derive(Debug)]
 pub struct Change {
     pub init_game: bool,
-    pub buy_property: bool, // if false => auction
+    pub landed_on_property: bool, // prompts ui
     pub new_position: Option<(f32, f32)>,
     pub balance_change: i32,
 }
@@ -40,7 +40,7 @@ pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitte
                 update_transmitter
                     .send(Change {
                         init_game: true,
-                        buy_property: false,
+                        landed_on_property: false,
                         new_position: None,
                         balance_change: 0,
                     })
@@ -48,10 +48,12 @@ pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitte
                 // update_transmitter.send(Change::PositionChange).unwrap();
             }
             Command::RollDice => {
-                board.player_turn(player_number);
+                board.player_turn(player_number, update_transmitter.clone());
                 // return player_position
+
                 let player_position = board.get_position(player_number);
                 // return a button that says either "buy" or "auction"
+                println!("+++++++++++++++player position: {:?}", player_position);
             }
             Command::Mortgage => println!("boom"),
             Command::Trade => println!("boom"),
