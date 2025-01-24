@@ -57,16 +57,26 @@ pub fn frontend_receiver(
 ) {
     if let Ok(receiver) = update_receiver.0.try_lock() {
         if let Ok(change) = receiver.try_recv() {
+            let Change {
+                init_game,
+                buy_property,
+                new_position,
+                balance_change,
+            } = change;
             println!("---------frontend message received (change): {:?}", change);
-            match change {
-                Change::InitGame => spawn_board(commands, grid_size, scale_factor),
-                Change::PositionChange => {
-                    player_position(query, grid_size, scale_factor);
-                    println!("---------------------------player_position ran");
-                }
-                Change::BalanceChange => println!("beem"),
-                Change::PropertyStateChange => println!("beem"),
+            if change.init_game == true {
+                spawn_board(commands, grid_size, scale_factor);
             }
+
+            // match change {
+            //     Change::InitGame => spawn_board(commands, grid_size, scale_factor),
+            //     Change::PositionChange => {
+            //         player_position(query, grid_size, scale_factor);
+            //         println!("---------------------------player_position ran");
+            //     }
+            //     Change::BalanceChange => println!("beem"),
+            //     Change::PropertyStateChange => println!("beem"),
+            // }
         } else {
             println!("-no message available in channel");
         }

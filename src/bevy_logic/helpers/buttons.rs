@@ -4,7 +4,7 @@ use std::sync::mpsc::Sender;
 
 #[derive(Resource, Debug)]
 pub struct PlayerCommand {
-    pub player_number: u32,
+    pub player_number: usize,
     pub command: Command,
 }
 
