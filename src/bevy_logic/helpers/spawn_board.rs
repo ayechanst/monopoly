@@ -41,7 +41,6 @@ pub fn spawn_board(
     }
     let player_offset = [(0.25, 0.25), (-0.25, 0.25), (-0.25, -0.25), (0.25, -0.25)];
     for (i, &offset) in player_offset.iter().enumerate() {
-        // commands.spawn((
         let player_entity = commands
             .spawn((
                 Player,
@@ -60,7 +59,6 @@ pub fn spawn_board(
             1.0,
         ));
         println!("done spawning player: {:?} ", i + 1);
-        // println!("done spawning player: {:?} ", player_entity);
     }
     println!("done spawning players");
 }

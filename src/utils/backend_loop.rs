@@ -48,7 +48,10 @@ pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitte
                 // update_transmitter.send(Change::PositionChange).unwrap();
             }
             Command::RollDice => {
-                board.player_turn(player_number, update_transmitter.clone());
+                // board.player_turn(player_number, update_transmitter.clone());
+
+                board.player_turn(player_number);
+
                 // return player_position
 
                 let player_position = board.get_position(player_number);

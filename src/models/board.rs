@@ -1,4 +1,5 @@
 use super::{
+    board_msg::BoardMsg,
     player::Player,
     spaces::{
         properties::{
@@ -19,6 +20,7 @@ use crate::{
         backend_loop::Change,
         debug_helpers::{debug_buy_property, debug_property, debug_rent},
         prompts::prompt_player,
+        space_to_coords::space_to_coords,
     },
 };
 use std::rc::Rc;
@@ -60,44 +62,52 @@ impl Board {
         }
     }
 
-    // pub fn player_turn(&mut self, index: usize) {
-    pub fn player_turn(&mut self, index: usize, update_transmitter: Sender<Change>) {
+    pub fn player_turn(&mut self, index: usize) -> BoardMsg {
+        // pub fn player_turn(&mut self, index: usize) {
+        // pub fn player_turn(&mut self, index: usize, update_transmitter: Sender<Change>) {
         self.roll_player_dice(index);
         let position = self.get_position(index);
         let player_ref = self.players[index].clone();
         let mut space_landed_on = self.spaces[position].borrow_mut();
+        let coords = space_to_coords(position);
 
         match &mut *space_landed_on {
             Space::Property(properties) => {
                 if properties.is_for_sale() {
                     debug_property(player_ref.borrow(), *properties);
 
-                    update_transmitter.send(Change {
-                        init_game: false,
-                        landed_on_property: true,
-                        // new_position: position_converter(),
-                        new_position: Some((-2.0, 5.0)),
-                        balance_change: 0,
-                    });
-
-                    let choice = prompt_player("Buy or auction this property? (buy/auction)");
-                    match choice.trim().to_lowercase().as_str() {
-                        "buy" => {
-                            properties.buy_property(player_ref.clone());
-                            debug_buy_property(player_ref.borrow(), *properties);
-                        }
-                        "auction" => {
-                            println!("{:?} will be put up for auction.", properties);
-                            properties.auction(self);
-                        }
-                        _ => println!("Invalid choice buddy"),
+                    BoardMsg {
+                        msg: format!("Would you like to buy the property: {:?}", properties),
+                        player_position: coords,
+                        // pay_rent: todo!(),
                     }
+
+                    // let choice = prompt_player("Buy or auction this property? (buy/auction)");
+                    // match choice.trim().to_lowercase().as_str() {
+                    //     "buy" => {
+                    //         properties.buy_property(player_ref.clone());
+                    //         debug_buy_property(player_ref.borrow(), *properties);
+                    //     }
+                    //     "auction" => {
+                    //         println!("{:?} will be put up for auction.", properties);
+                    //         properties.auction(self);
+                    //     }
+                    //     _ => println!("Invalid choice buddy"),
+                    // }
                 } else {
                     if let Some(owner) = properties.get_owner(self) {
                         properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
                         debug_rent(owner.borrow(), player_ref.borrow());
+
+                        BoardMsg {
+                            msg: "you are paying rent".to_string(),
+                            player_position: coords,
+                        }
                     } else {
-                        println!("owner not found");
+                        BoardMsg {
+                            msg: "owner not found".to_string(),
+                            player_position: coords,
+                        }
                     }
                 }
             }
@@ -106,6 +116,7 @@ impl Board {
                 let chance_card = Chance::random_card();
                 chance_card.execute_card(player_ref.clone(), self);
                 let player_new_balance = player_ref.borrow().money;
+
                 println!(
                     "Player {:?} has landed on Chance variant:{:?}.",
                     player_ref.borrow().player_number,
@@ -113,12 +124,22 @@ impl Board {
                 );
                 println!("OG balance: {:?}", player_og_balance);
                 println!("New balance: {:?}", player_new_balance);
+
+                BoardMsg {
+                    msg: "you landed on chance".to_string(),
+                    player_position: coords,
+                }
             }
             Space::CommunityChest => {
                 println!(
                     "Player {:?} has landed on Community Chest!",
                     player_ref.borrow().player_number
-                )
+                );
+
+                BoardMsg {
+                    msg: "you landed on community chest".to_string(),
+                    player_position: coords,
+                }
             }
             Space::IncomeTax => {
                 println!(
@@ -130,6 +151,10 @@ impl Board {
                 let player_new_balance = player_ref.borrow().money;
                 println!("OG balance: {:?}", player_og_balance);
                 println!("New balance: {:?}", player_new_balance);
+                BoardMsg {
+                    msg: "you landed on income tax".to_string(),
+                    player_position: coords,
+                }
             }
             Space::LuxuryTax => {
                 println!(
@@ -137,27 +162,47 @@ impl Board {
                     player_ref.borrow().player_number
                 );
                 player_ref.borrow_mut().money -= 100;
+                BoardMsg {
+                    msg: "you landed on luxury tax".to_string(),
+                    player_position: coords,
+                }
             }
             Space::Go => {
-                println!("Player {:?} has  pooped", player_ref.borrow().player_number)
+                println!("Player {:?} has  pooped", player_ref.borrow().player_number);
+                BoardMsg {
+                    msg: "Go!".to_string(),
+                    player_position: coords,
+                }
             }
             Space::GoToJail => {
                 println!(
                     "Player {:?} has landed on Go To Jail Bitch!",
                     player_ref.borrow().player_number
-                )
+                );
+                BoardMsg {
+                    msg: "Going to jail".to_string(),
+                    player_position: coords,
+                }
             }
             Space::Jail => {
                 println!(
                     "Player {:?} has landed on Jail (just passing)",
                     player_ref.borrow().player_number
-                )
+                );
+                BoardMsg {
+                    msg: "just passing jail".to_string(),
+                    player_position: coords,
+                }
             }
             Space::FreeParking => {
                 println!(
                     "Player {:?} has landed on Free Parking",
                     player_ref.borrow().player_number
-                )
+                );
+                BoardMsg {
+                    msg: "free parking".to_string(),
+                    player_position: coords,
+                }
             }
         }
     }
