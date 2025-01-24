@@ -70,9 +70,8 @@ pub fn frontend_receiver(
 
             if change.init_game == true {
                 spawn_board(commands, grid_size, scale_factor);
-            }
-
-            if change.landed_on_property == true {
+            } else if change.landed_on_property == true {
+                println!("++++++++++frontend_receiver got the message");
                 egui::Window::new("Buy or Auction?").show(contexts.ctx_mut(), |ui| {
                     if ui.button("Buy").clicked() {
                         println!("player chose to buy");

@@ -55,6 +55,8 @@ pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitte
                 // return a button that says either "buy" or "auction"
                 println!("+++++++++++++++player position: {:?}", player_position);
             }
+            Command::BuyProperty => println!("boom"),
+            Command::AuctionProperty => println!("boom"),
             Command::Mortgage => println!("boom"),
             Command::Trade => println!("boom"),
             Command::BuyHouse => println!("boom"),
