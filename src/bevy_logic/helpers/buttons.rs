@@ -2,9 +2,20 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 use std::sync::mpsc::Sender;
 
-// CommandSender needs to be a resource so bevy knows how to work with it.
+#[derive(Resource, Debug)]
+pub struct PlayerCommand {
+    pub player_number: u32,
+    pub command: Command,
+}
+
 #[derive(Resource)]
-pub struct CommandSender(pub Sender<Command>);
+pub struct PlayerCommandSender(pub Sender<PlayerCommand>);
+
+// CommandSender needs to be a resource so bevy knows how to work with it.
+
+// #[derive(Resource)]
+// pub struct CommandSender(pub Sender<Command>);
+
 // Sender<Command> allows systems to send commands, as seen in the match statements
 #[derive(Debug)]
 pub enum Command {
@@ -18,14 +29,23 @@ pub enum Command {
 
 // could send structs or tuples instead of enums
 
-pub fn buttons(commands: Res<CommandSender>, mut contexts: EguiContexts, mut spawned: Local<bool>) {
+// pub fn buttons(commands: Res<CommandSender>, mut contexts: EguiContexts, mut spawned: Local<bool>) {
+pub fn buttons(
+    commands: Res<PlayerCommandSender>,
+    mut contexts: EguiContexts,
+    mut spawned: Local<bool>,
+) {
     egui::Window::new("Game Controls").show(contexts.ctx_mut(), |ui| {
         if !*spawned {
             if ui.button("Initialize Game").clicked() {
                 *spawned = true;
                 commands
                     .0
-                    .send(Command::SpawnBoard)
+                    // .send(Command::SpawnBoard)
+                    .send(PlayerCommand {
+                        player_number: 1,
+                        command: Command::SpawnBoard,
+                    })
                     // .unwrap_or_else(|_| println!("failed Command::SpawnBoard"));
                     .unwrap();
                 println!("(buttons)----------- Command::SpawnBoard success");
@@ -34,7 +54,11 @@ pub fn buttons(commands: Res<CommandSender>, mut contexts: EguiContexts, mut spa
             ui.label("Game initialized");
         }
         if ui.button("Roll Dice").clicked() {
-            commands.0.send(Command::RollDice).unwrap();
+            // commands.0.send(Command::RollDice).unwrap();
+            commands.0.send(PlayerCommand {
+                player_number: 1,
+                command: Command::RollDice,
+            });
             println!("Roll Dice was clicked");
         }
     });

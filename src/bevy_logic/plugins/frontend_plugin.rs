@@ -2,7 +2,9 @@ use crate::{
     bevy_logic::{
         // buttons::{Command, CommandSender},
         helpers::{
-            buttons::{Command, CommandSender},
+            // buttons::{Command, CommandSender, PlayerCommand},
+            // buttons::{CommandSender, PlayerCommand},
+            buttons::{PlayerCommand, PlayerCommandSender},
             spawn_board::spawn_board,
         },
         player_components::{Offset, Position},
@@ -29,14 +31,16 @@ pub struct FrontEndPlugin;
 
 impl Plugin for FrontEndPlugin {
     fn build(&self, app: &mut App) {
-        let (command_transmitter, command_receiver) = mpsc::channel::<Command>();
+        // let (command_transmitter, command_receiver) = mpsc::channel::<Command>();
+        let (command_transmitter, command_receiver) = mpsc::channel::<PlayerCommand>();
         let (update_transmitter, update_receiver) = mpsc::channel::<Change>();
 
         std::thread::spawn(move || {
             backend_loop(command_receiver, update_transmitter);
             println!("Backend thread exiting");
         });
-        app.insert_resource(CommandSender(command_transmitter))
+        // app.insert_resource(CommandSender(command_transmitter))
+        app.insert_resource(PlayerCommandSender(command_transmitter))
             .insert_resource(ChangeReceiver(Arc::new(Mutex::new(update_receiver))))
             .insert_resource(GridSize(600.0))
             .insert_resource(ScaleFactor(1.0))
