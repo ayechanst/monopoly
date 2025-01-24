@@ -1,6 +1,6 @@
 use crate::{
     bevy_logic::helpers::buttons::{Command, PlayerCommand},
-    models::board::Board,
+    models::{board::Board, board_msg::BoardMsg},
 };
 use std::sync::mpsc::{Receiver, Sender};
 
@@ -27,6 +27,7 @@ pub struct Change {
 // pub fn backend_loop(command_receiver: Receiver<Command>, update_transmitter: Sender<Change>) {
 pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitter: Sender<Change>) {
     let mut board = Board::new();
+
     for player_command in command_receiver {
         let PlayerCommand {
             player_number,
@@ -34,9 +35,9 @@ pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitte
         } = player_command;
         println!("(backend)-----------------Received command: {:?}", command);
 
+        // focus on sending strings back and forth to make sure the channel works correctly
         match command {
             Command::SpawnBoard => {
-                // update_transmitter.send(Change::InitGame).unwrap();
                 update_transmitter
                     .send(Change {
                         init_game: true,
@@ -45,18 +46,23 @@ pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitte
                         balance_change: 0,
                     })
                     .unwrap();
-                // update_transmitter.send(Change::PositionChange).unwrap();
             }
             Command::RollDice => {
-                // board.player_turn(player_number, update_transmitter.clone());
+                let board_msg = board.player_turn(player_number);
+                // let BoardMsg {
+                //     msg,
+                //     player_position,
+                // } = board_msg;
 
-                board.player_turn(player_number);
-
-                // return player_position
-
-                let player_position = board.get_position(player_number);
+                update_transmitter
+                    .send(Change {
+                        init_game: false,
+                        landed_on_property: true,
+                        new_position: Some(board_msg.player_position),
+                        balance_change: 0,
+                    })
+                    .unwrap();
                 // return a button that says either "buy" or "auction"
-                println!("+++++++++++++++player position: {:?}", player_position);
             }
             Command::BuyProperty => println!("boom"),
             Command::AuctionProperty => println!("boom"),

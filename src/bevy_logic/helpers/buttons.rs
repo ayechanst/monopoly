@@ -54,8 +54,5 @@ pub fn buttons(
                 .unwrap();
             println!("Roll Dice was clicked");
         }
-        // if ui.button("Buy Property").clicked() {
-
-        // }
     });
 }

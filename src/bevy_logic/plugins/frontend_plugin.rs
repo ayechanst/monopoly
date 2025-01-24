@@ -32,7 +32,6 @@ pub struct FrontEndPlugin;
 
 impl Plugin for FrontEndPlugin {
     fn build(&self, app: &mut App) {
-        // let (command_transmitter, command_receiver) = mpsc::channel::<Command>();
         let (command_transmitter, command_receiver) = mpsc::channel::<PlayerCommand>();
         let (update_transmitter, update_receiver) = mpsc::channel::<Change>();
 
@@ -40,7 +39,6 @@ impl Plugin for FrontEndPlugin {
             backend_loop(command_receiver, update_transmitter);
             println!("Backend thread exiting");
         });
-        // app.insert_resource(CommandSender(command_transmitter))
         app.insert_resource(PlayerCommandSender(command_transmitter))
             .insert_resource(ChangeReceiver(Arc::new(Mutex::new(update_receiver))))
             .insert_resource(GridSize(600.0))
@@ -72,14 +70,13 @@ pub fn frontend_receiver(
                 spawn_board(commands, grid_size, scale_factor);
             } else if change.landed_on_property == true {
                 println!("++++++++++frontend_receiver got the message");
-                egui::Window::new("Buy or Auction?").show(contexts.ctx_mut(), |ui| {
-                    if ui.button("Buy").clicked() {
-                        println!("player chose to buy");
-                    } else if ui.button("Auction").clicked() {
-                        println!("player chose to auction");
-                    }
-                });
-                // update ui
+                // egui::Window::new("Buy or Auction?").show(contexts.ctx_mut(), |ui| {
+                //     if ui.button("Buy").clicked() {
+                //         println!("player chose to buy");
+                //     } else if ui.button("Auction").clicked() {
+                //         println!("player chose to auction");
+                //     }
+                // });
             }
 
             // match change {
