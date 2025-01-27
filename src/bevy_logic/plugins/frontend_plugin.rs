@@ -78,16 +78,6 @@ pub fn frontend_receiver(
                 //     }
                 // });
             }
-
-            // match change {
-            //     Change::InitGame => spawn_board(commands, grid_size, scale_factor),
-            //     Change::PositionChange => {
-            //         player_position(query, grid_size, scale_factor);
-            //         println!("---------------------------player_position ran");
-            //     }
-            //     Change::BalanceChange => println!("beem"),
-            //     Change::PropertyStateChange => println!("beem"),
-            // }
         } else {
             println!("-no message available in channel");
         }

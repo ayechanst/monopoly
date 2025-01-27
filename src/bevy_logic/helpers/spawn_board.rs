@@ -59,6 +59,9 @@ pub fn spawn_board(
             1.0,
         ));
         println!("done spawning player: {:?} ", i + 1);
+        // TODO: Init the game (front end)
     }
     println!("done spawning players");
+
+    // for each player, give them their game options:
 }

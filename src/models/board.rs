@@ -61,6 +61,15 @@ impl Board {
             _ => println!("Invalid Choice buddy"),
         }
     }
+    pub fn game_loop(&mut self) {
+        let player_count = self.players.len();
+        for i in 0..player_count {
+            self.player_turn(i);
+        }
+        // for player in self.players.iter_mut().enumerate() {
+        //     self.player_turn(player.0);
+        // }
+    }
 
     pub fn player_turn(&mut self, index: usize) -> BoardMsg {
         // pub fn player_turn(&mut self, index: usize) {
