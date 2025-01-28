@@ -104,7 +104,7 @@ impl Board {
     }
 
     // pub fn player_turn(&mut self, index: usize) -> BoardMsg {
-    pub fn player_turn(&mut self, index: usize) {
+    pub fn player_turn(&mut self, index: usize) -> TurnOutcomeForFrontend {
         // pub fn player_turn(&mut self, index: usize, update_transmitter: Sender<Change>) {
         self.roll_player_dice(index);
         let position = self.get_position(index);
@@ -119,6 +119,9 @@ impl Board {
                     debug_property(player_ref.borrow(), *properties);
 
                     // Return input_needed
+                    return TurnOutcomeForFrontend::InputRequiredForFrontend(
+                        RequiredInputsForFrontend::Buy,
+                    );
 
                     // BoardMsg {
                     //     msg: format!("Would you like to buy the property: {:?}", properties),
@@ -144,8 +147,10 @@ impl Board {
                         debug_rent(owner.borrow(), player_ref.borrow());
                         // return board state for this and all matches below
                         println!("you paid rent");
+                        return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                     } else {
                         println!("owner not found");
+                        return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                     }
                 }
             }
@@ -162,12 +167,14 @@ impl Board {
                 );
                 println!("OG balance: {:?}", player_og_balance);
                 println!("New balance: {:?}", player_new_balance);
+                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
             Space::CommunityChest => {
                 println!(
                     "Player {:?} has landed on Community Chest!",
                     player_ref.borrow().player_number
                 );
+                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
             Space::IncomeTax => {
                 println!(
@@ -179,6 +186,7 @@ impl Board {
                 let player_new_balance = player_ref.borrow().money;
                 println!("OG balance: {:?}", player_og_balance);
                 println!("New balance: {:?}", player_new_balance);
+                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
             Space::LuxuryTax => {
                 println!(
@@ -186,27 +194,32 @@ impl Board {
                     player_ref.borrow().player_number
                 );
                 player_ref.borrow_mut().money -= 100;
+                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
             Space::Go => {
                 println!("Player {:?} has  pooped", player_ref.borrow().player_number);
+                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
             Space::GoToJail => {
                 println!(
                     "Player {:?} has landed on Go To Jail Bitch!",
                     player_ref.borrow().player_number
                 );
+                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
             Space::Jail => {
                 println!(
                     "Player {:?} has landed on Jail (just passing)",
                     player_ref.borrow().player_number
                 );
+                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
             Space::FreeParking => {
                 println!(
                     "Player {:?} has landed on Free Parking",
                     player_ref.borrow().player_number
                 );
+                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
         }
         player_ref.borrow_mut().active_player = false;

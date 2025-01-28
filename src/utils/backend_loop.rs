@@ -1,6 +1,9 @@
 use crate::{
     bevy_logic::helpers::buttons::{Command, PlayerCommand},
-    models::{board::Board, board_msg::BoardMsg},
+    models::{
+        board::{Board, TurnOutcomeForFrontend},
+        board_msg::BoardMsg,
+    },
 };
 use std::sync::mpsc::{Receiver, Sender};
 
@@ -24,8 +27,12 @@ pub struct Change {
 // 2. Takes in a `Sender<Change>` to send back to frontend
 // Receiver<T> & Sender<T> allows messages to be passed between threads
 
-// pub fn backend_loop(command_receiver: Receiver<Command>, update_transmitter: Sender<Change>) {
-pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitter: Sender<Change>) {
+// CALLS BACKEND LOGIC
+// pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitter: Sender<Change>) {
+pub fn backend_loop(
+    command_receiver: Receiver<PlayerCommand>,
+    update_transmitter: Sender<TurnOutcomeForFrontend>,
+) {
     let mut board = Board::new();
 
     for player_command in command_receiver {
@@ -48,7 +55,7 @@ pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitte
                     .unwrap();
             }
             Command::RollDice => {
-                let board_msg = board.player_turn(player_number);
+                // let board_msg = board.player_turn(player_number);
                 // let BoardMsg {
                 //     msg,
                 //     player_position,
