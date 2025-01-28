@@ -8,6 +8,7 @@ use super::board::Board;
 #[derive(Debug, PartialEq, Clone)]
 pub struct Player {
     pub player_number: u8,
+    pub active_player: bool,
     pub money: i32,
     pub properties: Vec<Properties>,
     pub get_out_of_jail_cards: u8,
@@ -19,6 +20,7 @@ impl Player {
     pub fn new(player_number: u8) -> Self {
         Player {
             player_number,
+            active_player: false,
             money: 1500,
             properties: Vec::new(),
             get_out_of_jail_cards: 0,

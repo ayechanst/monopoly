@@ -29,6 +29,21 @@ use std::{cell::RefCell, sync::mpsc::Sender};
 pub type PlayerRef = Rc<RefCell<Player>>;
 pub type SpaceRef = Rc<RefCell<Space>>;
 
+pub enum RequiredInputsForFrontend {
+    RollDice,
+    Buy,
+    Auction,
+    Mortgage,
+    Trade,
+    BuyHouse,
+    SellHouse,
+}
+
+pub enum TurnOutcomeForFrontend {
+    BoardUpdated(BoardSnapshot),
+    InputRequiredForFrontend(RequiredInputsForFrontend),
+}
+
 #[derive(Debug, Clone)]
 pub struct BoardSnapshot {
     pub spaces: Vec<Space>,
@@ -67,12 +82,12 @@ impl Board {
             _ => println!("Invalid Choice buddy"),
         }
     }
-    pub fn game_loop(&mut self) {
-        let player_count = self.players.len();
-        for i in 0..player_count {
-            self.player_turn(i);
-        }
-    }
+    // pub fn game_loop(&mut self) {
+    //     let player_count = self.players.len();
+    //     for i in 0..player_count {
+    //         self.player_turn(i);
+    //     }
+    // }
     pub fn snapshot(&self) -> BoardSnapshot {
         BoardSnapshot {
             spaces: self
@@ -88,12 +103,13 @@ impl Board {
         }
     }
 
-    pub fn player_turn(&mut self, index: usize) -> BoardMsg {
-        // pub fn player_turn(&mut self, index: usize) {
+    // pub fn player_turn(&mut self, index: usize) -> BoardMsg {
+    pub fn player_turn(&mut self, index: usize) {
         // pub fn player_turn(&mut self, index: usize, update_transmitter: Sender<Change>) {
         self.roll_player_dice(index);
         let position = self.get_position(index);
         let player_ref = self.players[index].clone();
+        player_ref.borrow_mut().active_player = true;
         let mut space_landed_on = self.spaces[position].borrow_mut();
         let coords = space_to_coords(position);
 
@@ -103,11 +119,12 @@ impl Board {
                     debug_property(player_ref.borrow(), *properties);
 
                     // Return input_needed
-                    BoardMsg {
-                        msg: format!("Would you like to buy the property: {:?}", properties),
-                        player_position: coords,
-                        // pay_rent: todo!(),
-                    }
+
+                    // BoardMsg {
+                    //     msg: format!("Would you like to buy the property: {:?}", properties),
+                    //     player_position: coords,
+                    //     // pay_rent: todo!(),
+                    // }
 
                     // let choice = prompt_player("Buy or auction this property? (buy/auction)");
                     // match choice.trim().to_lowercase().as_str() {
@@ -126,16 +143,9 @@ impl Board {
                         properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
                         debug_rent(owner.borrow(), player_ref.borrow());
                         // return board state for this and all matches below
-
-                        BoardMsg {
-                            msg: "you are paying rent".to_string(),
-                            player_position: coords,
-                        }
+                        println!("you paid rent");
                     } else {
-                        BoardMsg {
-                            msg: "owner not found".to_string(),
-                            player_position: coords,
-                        }
+                        println!("owner not found");
                     }
                 }
             }
@@ -152,22 +162,12 @@ impl Board {
                 );
                 println!("OG balance: {:?}", player_og_balance);
                 println!("New balance: {:?}", player_new_balance);
-
-                BoardMsg {
-                    msg: "you landed on chance".to_string(),
-                    player_position: coords,
-                }
             }
             Space::CommunityChest => {
                 println!(
                     "Player {:?} has landed on Community Chest!",
                     player_ref.borrow().player_number
                 );
-
-                BoardMsg {
-                    msg: "you landed on community chest".to_string(),
-                    player_position: coords,
-                }
             }
             Space::IncomeTax => {
                 println!(
@@ -179,10 +179,6 @@ impl Board {
                 let player_new_balance = player_ref.borrow().money;
                 println!("OG balance: {:?}", player_og_balance);
                 println!("New balance: {:?}", player_new_balance);
-                BoardMsg {
-                    msg: "you landed on income tax".to_string(),
-                    player_position: coords,
-                }
             }
             Space::LuxuryTax => {
                 println!(
@@ -190,49 +186,30 @@ impl Board {
                     player_ref.borrow().player_number
                 );
                 player_ref.borrow_mut().money -= 100;
-                BoardMsg {
-                    msg: "you landed on luxury tax".to_string(),
-                    player_position: coords,
-                }
             }
             Space::Go => {
                 println!("Player {:?} has  pooped", player_ref.borrow().player_number);
-                BoardMsg {
-                    msg: "Go!".to_string(),
-                    player_position: coords,
-                }
             }
             Space::GoToJail => {
                 println!(
                     "Player {:?} has landed on Go To Jail Bitch!",
                     player_ref.borrow().player_number
                 );
-                BoardMsg {
-                    msg: "Going to jail".to_string(),
-                    player_position: coords,
-                }
             }
             Space::Jail => {
                 println!(
                     "Player {:?} has landed on Jail (just passing)",
                     player_ref.borrow().player_number
                 );
-                BoardMsg {
-                    msg: "just passing jail".to_string(),
-                    player_position: coords,
-                }
             }
             Space::FreeParking => {
                 println!(
                     "Player {:?} has landed on Free Parking",
                     player_ref.borrow().player_number
                 );
-                BoardMsg {
-                    msg: "free parking".to_string(),
-                    player_position: coords,
-                }
             }
         }
+        player_ref.borrow_mut().active_player = false;
     }
     pub fn new() -> Self {
         let mut spaces = Vec::new();
