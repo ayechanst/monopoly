@@ -30,6 +30,12 @@ pub type PlayerRef = Rc<RefCell<Player>>;
 pub type SpaceRef = Rc<RefCell<Space>>;
 
 #[derive(Debug, Clone)]
+pub struct BoardSnapshot {
+    pub spaces: Vec<Space>,
+    pub players: Vec<Player>,
+}
+
+#[derive(Debug, Clone)]
 pub struct Board {
     pub spaces: Vec<SpaceRef>,
     pub players: Vec<PlayerRef>,
@@ -66,9 +72,20 @@ impl Board {
         for i in 0..player_count {
             self.player_turn(i);
         }
-        // for player in self.players.iter_mut().enumerate() {
-        //     self.player_turn(player.0);
-        // }
+    }
+    pub fn snapshot(&self) -> BoardSnapshot {
+        BoardSnapshot {
+            spaces: self
+                .spaces
+                .iter()
+                .map(|space| space.borrow().clone())
+                .collect(),
+            players: self
+                .players
+                .iter()
+                .map(|player| player.borrow().clone())
+                .collect(),
+        }
     }
 
     pub fn player_turn(&mut self, index: usize) -> BoardMsg {
@@ -85,6 +102,7 @@ impl Board {
                 if properties.is_for_sale() {
                     debug_property(player_ref.borrow(), *properties);
 
+                    // Return input_needed
                     BoardMsg {
                         msg: format!("Would you like to buy the property: {:?}", properties),
                         player_position: coords,
@@ -107,6 +125,7 @@ impl Board {
                     if let Some(owner) = properties.get_owner(self) {
                         properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
                         debug_rent(owner.borrow(), player_ref.borrow());
+                        // return board state for this and all matches below
 
                         BoardMsg {
                             msg: "you are paying rent".to_string(),
