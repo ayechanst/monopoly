@@ -14,7 +14,6 @@ pub struct TurnOutcomeReceiver(pub Arc<Mutex<Receiver<TurnOutcomeForFrontend>>>)
 pub fn backend_loop(
     command_receiver: Receiver<PlayerCommand>,
     update_transmitter: Sender<TurnOutcomeForFrontend>,
-    // update_transmitter: Sender<TurnOutcomeReceiver>,
 ) {
     let mut board = Board::new();
 
@@ -25,7 +24,6 @@ pub fn backend_loop(
         } = player_command;
         println!("(backend)-----------------Received command: {:?}", command);
 
-        // focus on sending strings back and forth to make sure the channel works correctly
         match command {
             Command::SpawnBoard => {
                 let snapshot = board.snapshot();
@@ -35,7 +33,6 @@ pub fn backend_loop(
             }
             Command::RollDice => {
                 let outcome = board.player_turn(player_number);
-                // will either send BoardSnapshot or requiredInput enum
                 update_transmitter.send(outcome).unwrap();
                 // send another sender along with outcome
             }
