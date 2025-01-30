@@ -54,23 +54,21 @@ pub fn frontend_receiver(
         if let Ok(turn_outcome) = receiver.try_recv() {
             match turn_outcome {
                 TurnOutcomeForFrontend::BoardUpdated(board_snapshot) => {
-                    println!(
-                        "---------frontend message received board_snapshot: {:?}",
-                        board_snapshot
-                    );
+                    println!("--------- board_snapshot: {:?}", board_snapshot);
                     if board_snapshot
                         .players
                         .iter()
                         .all(|player| player.position == 0)
                     {
                         spawn_board(commands, grid_size, scale_factor);
+                        // update all Player Resources with data from snapshot here.
+                    } else {
+                        println!("another player's turn");
+                        // do stuff in here
                     }
                 }
                 TurnOutcomeForFrontend::InputRequiredForFrontend(required_inputs_for_frontend) => {
-                    println!(
-                        "-------------- INPUT REQUIRED: {:?}",
-                        required_inputs_for_frontend
-                    );
+                    println!("---- INPUT REQUIRED: {:?}", required_inputs_for_frontend);
                 }
             }
         } else {

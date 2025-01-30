@@ -43,12 +43,14 @@ pub fn spawn_board(
     for (i, &offset) in player_offset.iter().enumerate() {
         let player_entity = commands
             .spawn((
-                Player,
-                PlayerNumber(i as u32 + 1),
-                Balance(1500),
-                Position((5.0, -5.0)),
-                Offset(offset),
-                Properties(Vec::new()),
+                Player {
+                    player_number: i as u32, // add + here maybe
+                    active_player: false,
+                    balance: 1500,
+                    position: (-5.0, 5.0),
+                    offset,
+                    properties: Vec::new(),
+                },
                 make_player(i + 1, grid_size.0, scale_factor.0),
             ))
             .id();

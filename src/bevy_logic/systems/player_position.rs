@@ -3,6 +3,7 @@ use crate::bevy_logic::{
     plugins::frontend_plugin::{GridSize, ScaleFactor},
 };
 use bevy::prelude::*;
+
 pub fn player_position(
     mut query: Query<(&mut Transform, &Position, &Offset)>,
     grid_size: Res<GridSize>,

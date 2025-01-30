@@ -24,33 +24,7 @@ pub enum Command {
     BuyHouse,
     SellHouse,
 }
-
-pub fn game_loop(
-    mut contexts: EguiContexts,
-    commands: Res<PlayerCommandSender>,
-    selected_players: &mut u32,
-) {
-    egui::Window::new("Main Menu").show(contexts.ctx_mut(), |ui| {
-        ui.label("Select number of players: ");
-        for num in 2..=4 {
-            if ui
-                .radio_value(selected_players, num, format!("{num} players "))
-                .clicked()
-            {
-                println!("{num} players have been selected");
-            }
-        }
-        if ui.button("Initialize Game").clicked() {
-            commands
-                .0
-                .send(PlayerCommand {
-                    player_number: 1,
-                    command: Command::SpawnBoard,
-                })
-                .unwrap();
-        }
-    });
-}
+// TODO: make a window for each player displaying their data
 
 pub fn buttons(
     commands: Res<PlayerCommandSender>,

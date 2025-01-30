@@ -104,23 +104,14 @@ impl Board {
             Space::Property(properties) => {
                 if properties.is_for_sale() {
                     debug_property(player_ref.borrow(), *properties);
-
                     // Return input_needed
                     return TurnOutcomeForFrontend::InputRequiredForFrontend(
                         RequiredInputsForFrontend::Buy,
                     );
-                    // let choice = prompt_player("Buy or auction this property? (buy/auction)");
-                    // match choice.trim().to_lowercase().as_str() {
-                    //     "buy" => {
-                    //         properties.buy_property(player_ref.clone());
+                    //     "buy" =>  properties.buy_property(player_ref.clone());
                     //         debug_buy_property(player_ref.borrow(), *properties);
-                    //     }
-                    //     "auction" => {
-                    //         println!("{:?} will be put up for auction.", properties);
-                    //         properties.auction(self);
-                    //     }
-                    //     _ => println!("Invalid choice buddy"),
-                    // }
+                    //     "auction" => properties.auction(self);
+                    //      println!("{:?} will be put up for auction.", properties);
                 } else {
                     if let Some(owner) = properties.get_owner(self) {
                         properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
@@ -139,7 +130,6 @@ impl Board {
                 let chance_card = Chance::random_card();
                 chance_card.execute_card(player_ref.clone(), self);
                 let player_new_balance = player_ref.borrow().money;
-
                 println!(
                     "Player {:?} has landed on Chance variant:{:?}.",
                     player_ref.borrow().player_number,

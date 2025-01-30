@@ -1,7 +1,17 @@
 use bevy::prelude::*;
 
+// #[derive(Component)]
+// pub struct Player;
+
 #[derive(Component)]
-pub struct Player;
+pub struct Player {
+    pub player_number: u32,
+    pub active_player: bool,
+    pub balance: u32,
+    pub position: (f32, f32),
+    pub offset: (f32, f32),
+    pub properties: Vec<String>,
+}
 
 #[derive(Component)]
 pub struct PlayerNumber(pub u32);
