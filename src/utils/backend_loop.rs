@@ -1,7 +1,7 @@
 use crate::{
     bevy_logic::helpers::buttons::{Command, PlayerCommand},
     models::{
-        board::{Board, TurnOutcomeForFrontend},
+        board::{Board, RequiredInputsForFrontend, TurnOutcomeForFrontend},
         board_msg::BoardMsg,
     },
 };
@@ -45,31 +45,13 @@ pub fn backend_loop(
         // focus on sending strings back and forth to make sure the channel works correctly
         match command {
             Command::SpawnBoard => {
-                update_transmitter
-                    .send(Change {
-                        init_game: true,
-                        landed_on_property: false,
-                        new_position: None,
-                        balance_change: 0,
-                    })
-                    .unwrap();
+                let snapshot = board.snapshot();
+                update_transmitter.send(TurnOutcomeForFrontend::BoardUpdated(snapshot));
             }
             Command::RollDice => {
-                // let board_msg = board.player_turn(player_number);
-                // let BoardMsg {
-                //     msg,
-                //     player_position,
-                // } = board_msg;
-
-                update_transmitter
-                    .send(Change {
-                        init_game: false,
-                        landed_on_property: true,
-                        new_position: Some(board_msg.player_position),
-                        balance_change: 0,
-                    })
-                    .unwrap();
-                // return a button that says either "buy" or "auction"
+                let outcome = board.player_turn(player_number);
+                // will either send BoardSnapshot or requiredInput enum
+                update_transmitter.send(outcome);
             }
             Command::BuyProperty => println!("boom"),
             Command::AuctionProperty => println!("boom"),

@@ -10,6 +10,7 @@ use crate::{
         player_components::{Offset, Position},
         systems::player_position::player_position,
     },
+    models::board::{TurnOutcomeForFrontend, TurnOutcomeStruct},
     utils::backend_loop::{backend_loop, Change},
 };
 use bevy::prelude::*;
@@ -33,14 +34,18 @@ pub struct FrontEndPlugin;
 impl Plugin for FrontEndPlugin {
     fn build(&self, app: &mut App) {
         let (command_transmitter, command_receiver) = mpsc::channel::<PlayerCommand>();
-        let (update_transmitter, update_receiver) = mpsc::channel::<Change>();
+        // let (update_transmitter, update_receiver) = mpsc::channel::<Change>();
+        let (update_transmitter, update_receiver) = mpsc::channel::<TurnOutcomeForFrontend>();
 
         std::thread::spawn(move || {
             backend_loop(command_receiver, update_transmitter);
             println!("Backend thread exiting");
         });
         app.insert_resource(PlayerCommandSender(command_transmitter))
-            .insert_resource(ChangeReceiver(Arc::new(Mutex::new(update_receiver))))
+            // .insert_resource(ChangeReceiver(Arc::new(Mutex::new(update_receiver))))
+            // TODO: Figure out how to insert an enum resource
+            // .insert_resource(TurnOutcomeForFrontend(update_receiver))
+            .insert_resource(TurnOutcomeStruct(Arc::new(Mutex::new(update_receiver))))
             .insert_resource(GridSize(600.0))
             .insert_resource(ScaleFactor(1.0))
             .add_systems(Update, frontend_receiver);

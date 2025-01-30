@@ -1,3 +1,5 @@
+use bevy::prelude::Resource;
+
 use super::{
     board_msg::BoardMsg,
     player::Player,
@@ -23,8 +25,11 @@ use crate::{
         space_to_coords::space_to_coords,
     },
 };
-use std::rc::Rc;
-use std::{cell::RefCell, sync::mpsc::Sender};
+use std::{
+    cell::RefCell,
+    sync::{mpsc::Sender, Arc, Mutex},
+};
+use std::{rc::Rc, sync::mpsc::Receiver};
 
 pub type PlayerRef = Rc<RefCell<Player>>;
 pub type SpaceRef = Rc<RefCell<Space>>;
@@ -32,13 +37,16 @@ pub type SpaceRef = Rc<RefCell<Space>>;
 pub enum RequiredInputsForFrontend {
     RollDice,
     Buy,
-    Auction,
     Mortgage,
     Trade,
     BuyHouse,
     SellHouse,
 }
 
+#[derive(Resource)]
+pub struct TurnOutcomeStruct(pub Arc<Mutex<Receiver<TurnOutcomeForFrontend>>>);
+
+#[derive(Resource)]
 pub enum TurnOutcomeForFrontend {
     BoardUpdated(BoardSnapshot),
     InputRequiredForFrontend(RequiredInputsForFrontend),
@@ -64,6 +72,7 @@ impl Board {
     pub fn get_position(&self, index: usize) -> usize {
         (self.players[index].borrow().position) as usize
     }
+    // first_main_phase will be adapted into backend_loop
     pub fn first_main_phase(&mut self, index: usize) {
         let choice =
             prompt_player("(trade/mortgage/buy-houses/sell-houses/roll-dice? (t/m/bh/sh/rd)");
@@ -82,12 +91,14 @@ impl Board {
             _ => println!("Invalid Choice buddy"),
         }
     }
+
     // pub fn game_loop(&mut self) {
     //     let player_count = self.players.len();
     //     for i in 0..player_count {
     //         self.player_turn(i);
     //     }
     // }
+
     pub fn snapshot(&self) -> BoardSnapshot {
         BoardSnapshot {
             spaces: self
@@ -111,7 +122,7 @@ impl Board {
         let player_ref = self.players[index].clone();
         player_ref.borrow_mut().active_player = true;
         let mut space_landed_on = self.spaces[position].borrow_mut();
-        let coords = space_to_coords(position);
+        // let coords = space_to_coords(position);
 
         match &mut *space_landed_on {
             Space::Property(properties) => {
