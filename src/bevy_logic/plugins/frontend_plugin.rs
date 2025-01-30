@@ -1,27 +1,17 @@
 use crate::{
     bevy_logic::{
-        // buttons::{Command, CommandSender},
-        helpers::{
-            // buttons::{Command, CommandSender, PlayerCommand},
-            // buttons::{CommandSender, PlayerCommand},
-            buttons::{PlayerCommand, PlayerCommandSender},
-            spawn_board::spawn_board,
-        },
+        helpers::buttons::{PlayerCommand, PlayerCommandSender},
         player_components::{Offset, Position},
-        systems::player_position::player_position,
     },
-    models::board::{TurnOutcomeForFrontend, TurnOutcomeStruct},
-    utils::backend_loop::{backend_loop, Change},
+    models::board::TurnOutcomeForFrontend,
+    utils::backend_loop::{backend_loop, TurnOutcomeReceiver},
 };
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContexts};
+use bevy_egui::EguiContexts;
 use std::sync::{
-    mpsc::{self, Receiver},
+    mpsc::{self},
     Arc, Mutex,
 };
-
-#[derive(Resource)]
-pub struct ChangeReceiver(pub Arc<Mutex<Receiver<Change>>>);
 
 #[derive(Resource)]
 pub struct GridSize(pub f32);
@@ -45,7 +35,7 @@ impl Plugin for FrontEndPlugin {
             // .insert_resource(ChangeReceiver(Arc::new(Mutex::new(update_receiver))))
             // TODO: Figure out how to insert an enum resource
             // .insert_resource(TurnOutcomeForFrontend(update_receiver))
-            .insert_resource(TurnOutcomeStruct(Arc::new(Mutex::new(update_receiver))))
+            .insert_resource(TurnOutcomeReceiver(Arc::new(Mutex::new(update_receiver))))
             .insert_resource(GridSize(600.0))
             .insert_resource(ScaleFactor(1.0))
             .add_systems(Update, frontend_receiver);
@@ -53,7 +43,8 @@ impl Plugin for FrontEndPlugin {
 }
 
 pub fn frontend_receiver(
-    update_receiver: Res<ChangeReceiver>,
+    // update_receiver: Res<ChangeReceiver>,
+    update_receiver: Res<TurnOutcomeReceiver>,
     mut query: Query<(&mut Transform, &Position, &Offset)>,
     commands: Commands,
     mut contexts: EguiContexts,
@@ -61,27 +52,27 @@ pub fn frontend_receiver(
     scale_factor: Res<ScaleFactor>,
 ) {
     if let Ok(receiver) = update_receiver.0.try_lock() {
-        if let Ok(change) = receiver.try_recv() {
-            let Change {
-                init_game,
-                landed_on_property,
-                new_position,
-                balance_change,
-            } = change;
+        if let Ok(turn_outcome) = receiver.try_recv() {
+            // let Change {
+            //     init_game,
+            //     landed_on_property,
+            //     new_position,
+            //     balance_change,
+            // } = change;
 
-            println!("---------frontend message received (change): {:?}", change);
-
-            if change.init_game == true {
-                spawn_board(commands, grid_size, scale_factor);
-            } else if change.landed_on_property == true {
-                println!("++++++++++frontend_receiver got the message");
-                // egui::Window::new("Buy or Auction?").show(contexts.ctx_mut(), |ui| {
-                //     if ui.button("Buy").clicked() {
-                //         println!("player chose to buy");
-                //     } else if ui.button("Auction").clicked() {
-                //         println!("player chose to auction");
-                //     }
-                // });
+            match turn_outcome {
+                TurnOutcomeForFrontend::BoardUpdated(board_snapshot) => {
+                    println!(
+                        "---------frontend message received board_snapshot: {:?}",
+                        board_snapshot
+                    );
+                }
+                TurnOutcomeForFrontend::InputRequiredForFrontend(required_inputs_for_frontend) => {
+                    println!(
+                        "-------------- INPUT REQUIRED: {:?}",
+                        required_inputs_for_frontend
+                    );
+                }
             }
         } else {
             println!("-no message available in channel");

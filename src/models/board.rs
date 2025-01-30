@@ -19,21 +19,18 @@ use super::{
 use crate::{
     models::cards::chance::Chance,
     utils::{
-        backend_loop::Change,
         debug_helpers::{debug_buy_property, debug_property, debug_rent},
         prompts::prompt_player,
         space_to_coords::space_to_coords,
     },
 };
-use std::{
-    cell::RefCell,
-    sync::{mpsc::Sender, Arc, Mutex},
-};
-use std::{rc::Rc, sync::mpsc::Receiver};
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub type PlayerRef = Rc<RefCell<Player>>;
 pub type SpaceRef = Rc<RefCell<Space>>;
 
+#[derive(Debug)]
 pub enum RequiredInputsForFrontend {
     RollDice,
     Buy,
@@ -42,9 +39,6 @@ pub enum RequiredInputsForFrontend {
     BuyHouse,
     SellHouse,
 }
-
-#[derive(Resource)]
-pub struct TurnOutcomeStruct(pub Arc<Mutex<Receiver<TurnOutcomeForFrontend>>>);
 
 #[derive(Resource)]
 pub enum TurnOutcomeForFrontend {
@@ -73,24 +67,6 @@ impl Board {
         (self.players[index].borrow().position) as usize
     }
     // first_main_phase will be adapted into backend_loop
-    pub fn first_main_phase(&mut self, index: usize) {
-        let choice =
-            prompt_player("(trade/mortgage/buy-houses/sell-houses/roll-dice? (t/m/bh/sh/rd)");
-        match choice.trim().to_lowercase().as_str() {
-            "t" => todo!(),
-            "m" => {
-                let player_ref = self.players[index].clone();
-                Player::mortgage(player_ref);
-            }
-            "bh" => {
-                let player_ref = self.players[index].clone();
-                Player::buy_house(player_ref, self);
-            }
-            "sh" => todo!(),
-            // "rd" => self.player_turn(index),
-            _ => println!("Invalid Choice buddy"),
-        }
-    }
 
     // pub fn game_loop(&mut self) {
     //     let player_count = self.players.len();
@@ -133,13 +109,6 @@ impl Board {
                     return TurnOutcomeForFrontend::InputRequiredForFrontend(
                         RequiredInputsForFrontend::Buy,
                     );
-
-                    // BoardMsg {
-                    //     msg: format!("Would you like to buy the property: {:?}", properties),
-                    //     player_position: coords,
-                    //     // pay_rent: todo!(),
-                    // }
-
                     // let choice = prompt_player("Buy or auction this property? (buy/auction)");
                     // match choice.trim().to_lowercase().as_str() {
                     //     "buy" => {
@@ -362,6 +331,25 @@ impl Board {
         ];
 
         Board { spaces, players }
+    }
+
+    pub fn first_main_phase(&mut self, index: usize) {
+        let choice =
+            prompt_player("(trade/mortgage/buy-houses/sell-houses/roll-dice? (t/m/bh/sh/rd)");
+        match choice.trim().to_lowercase().as_str() {
+            "t" => todo!(),
+            "m" => {
+                let player_ref = self.players[index].clone();
+                Player::mortgage(player_ref);
+            }
+            "bh" => {
+                let player_ref = self.players[index].clone();
+                Player::buy_house(player_ref, self);
+            }
+            "sh" => todo!(),
+            // "rd" => self.player_turn(index),
+            _ => println!("Invalid Choice buddy"),
+        }
     }
 }
 

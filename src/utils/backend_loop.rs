@@ -1,37 +1,20 @@
 use crate::{
     bevy_logic::helpers::buttons::{Command, PlayerCommand},
-    models::{
-        board::{Board, RequiredInputsForFrontend, TurnOutcomeForFrontend},
-        board_msg::BoardMsg,
-    },
+    models::board::{Board, TurnOutcomeForFrontend},
 };
-use std::sync::mpsc::{Receiver, Sender};
+use bevy::prelude::Resource;
+use std::sync::{
+    mpsc::{Receiver, Sender},
+    Arc, Mutex,
+};
 
-#[derive(Debug)]
-pub enum OldChange {
-    InitGame,
-    PositionChange,
-    BalanceChange,
-    PropertyStateChange,
-}
+#[derive(Resource)]
+pub struct TurnOutcomeReceiver(pub Arc<Mutex<Receiver<TurnOutcomeForFrontend>>>);
 
-#[derive(Debug)]
-pub struct Change {
-    pub init_game: bool,
-    pub landed_on_property: bool, // prompts ui
-    pub new_position: Option<(f32, f32)>,
-    pub balance_change: i32,
-}
-
-// 1. Takes in `Receiver<Command>` from frontend
-// 2. Takes in a `Sender<Change>` to send back to frontend
-// Receiver<T> & Sender<T> allows messages to be passed between threads
-
-// CALLS BACKEND LOGIC
-// pub fn backend_loop(command_receiver: Receiver<PlayerCommand>, update_transmitter: Sender<Change>) {
 pub fn backend_loop(
     command_receiver: Receiver<PlayerCommand>,
     update_transmitter: Sender<TurnOutcomeForFrontend>,
+    // update_transmitter: Sender<TurnOutcomeReceiver>,
 ) {
     let mut board = Board::new();
 
@@ -46,12 +29,15 @@ pub fn backend_loop(
         match command {
             Command::SpawnBoard => {
                 let snapshot = board.snapshot();
-                update_transmitter.send(TurnOutcomeForFrontend::BoardUpdated(snapshot));
+                update_transmitter
+                    .send(TurnOutcomeForFrontend::BoardUpdated(snapshot))
+                    .unwrap();
             }
             Command::RollDice => {
                 let outcome = board.player_turn(player_number);
                 // will either send BoardSnapshot or requiredInput enum
-                update_transmitter.send(outcome);
+                update_transmitter.send(outcome).unwrap();
+                // send another sender along with outcome
             }
             Command::BuyProperty => println!("boom"),
             Command::AuctionProperty => println!("boom"),
