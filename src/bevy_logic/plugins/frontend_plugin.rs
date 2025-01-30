@@ -3,8 +3,9 @@ use crate::{
         helpers::{
             buttons::{PlayerCommand, PlayerCommandSender},
             spawn_board::spawn_board,
+            update_player::update_player,
         },
-        player_components::{Offset, Position},
+        player_components::{FrontendPlayer, Offset, Position},
     },
     models::board::TurnOutcomeForFrontend,
     utils::backend_loop::{backend_loop, TurnOutcomeReceiver},
@@ -44,7 +45,8 @@ impl Plugin for FrontEndPlugin {
 
 pub fn frontend_receiver(
     update_receiver: Res<TurnOutcomeReceiver>,
-    mut query: Query<(&mut Transform, &Position, &Offset)>,
+    // mut query: Query<(&mut Transform, &Position, &Offset)>,
+    mut query: Query<&mut FrontendPlayer>,
     commands: Commands,
     mut contexts: EguiContexts,
     grid_size: Res<GridSize>,
@@ -55,13 +57,13 @@ pub fn frontend_receiver(
             match turn_outcome {
                 TurnOutcomeForFrontend::BoardUpdated(board_snapshot) => {
                     println!("--------- board_snapshot: {:?}", board_snapshot);
-                    if board_snapshot
-                        .players
-                        .iter()
-                        .all(|player| player.position == 0)
-                    {
+                    let spaces = board_snapshot.spaces;
+                    let players = board_snapshot.players;
+
+                    if players.iter().all(|player| player.position == 0) {
                         spawn_board(commands, grid_size, scale_factor);
                         // update all Player Resources with data from snapshot here.
+                        update_player(players, query);
                     } else {
                         println!("another player's turn");
                         // do stuff in here

@@ -4,8 +4,8 @@ use bevy::prelude::*;
 // pub struct Player;
 
 #[derive(Component)]
-pub struct Player {
-    pub player_number: u32,
+pub struct FrontendPlayer {
+    pub player_number: u8,
     pub active_player: bool,
     pub balance: u32,
     pub position: (f32, f32),

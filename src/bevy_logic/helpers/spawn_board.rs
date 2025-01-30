@@ -1,6 +1,6 @@
 use crate::{
     bevy_logic::{
-        player_components::{Balance, Offset, Player, PlayerNumber, Position, Properties},
+        player_components::FrontendPlayer,
         plugins::frontend_plugin::{GridSize, ScaleFactor},
         sprite_builder::{make_player::make_player, make_space::make_space},
     },
@@ -43,8 +43,8 @@ pub fn spawn_board(
     for (i, &offset) in player_offset.iter().enumerate() {
         let player_entity = commands
             .spawn((
-                Player {
-                    player_number: i as u32, // add + here maybe
+                FrontendPlayer {
+                    player_number: i as u8, // add + here maybe
                     active_player: false,
                     balance: 1500,
                     position: (-5.0, 5.0),

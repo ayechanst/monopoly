@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 use std::sync::mpsc::Sender;
 
-use crate::bevy_logic::player_components::{Player, PlayerNumber};
+use crate::bevy_logic::player_components::{FrontendPlayer, PlayerNumber};
 
 #[derive(Resource, Debug)]
 pub struct PlayerCommand {
@@ -30,7 +30,7 @@ pub fn buttons(
     commands: Res<PlayerCommandSender>,
     mut contexts: EguiContexts,
     mut spawned: Local<bool>,
-    query: Query<(Entity, &Player, &PlayerNumber)>,
+    query: Query<(Entity, &FrontendPlayer, &PlayerNumber)>,
 ) {
     egui::Window::new("Game Controls").show(contexts.ctx_mut(), |ui| {
         if !*spawned {

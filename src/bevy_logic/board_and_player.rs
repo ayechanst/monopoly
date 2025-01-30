@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use super::{
-    player_components::{Balance, Offset, Player, PlayerNumber, Position, Properties},
+    player_components::{Balance, Offset, PlayerNumber, Position, Properties},
     sprite_builder::make_player::make_player,
 };
 // put spawn_board and spawn_player in another file
