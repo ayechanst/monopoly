@@ -3,7 +3,7 @@ use bevy::prelude::*;
 // #[derive(Component)]
 // pub struct Player;
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct FrontendPlayer {
     pub player_number: u8,
     pub active_player: bool,

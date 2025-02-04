@@ -75,6 +75,10 @@ impl Board {
     //     }
     // }
 
+    pub fn pass_turn(&mut self) {
+        // find the active_player and change it to the next player in the vector
+    }
+
     pub fn snapshot(&self) -> BoardSnapshot {
         BoardSnapshot {
             spaces: self
@@ -96,7 +100,7 @@ impl Board {
         self.roll_player_dice(index);
         let position = self.get_position(index);
         let player_ref = self.players[index].clone();
-        player_ref.borrow_mut().active_player = true;
+        // player_ref.borrow_mut().active_player = true;
         let mut space_landed_on = self.spaces[position].borrow_mut();
         // let coords = space_to_coords(position);
 
@@ -192,7 +196,7 @@ impl Board {
                 return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
         }
-        player_ref.borrow_mut().active_player = false;
+        // player_ref.borrow_mut().active_player = false;
     }
     pub fn new() -> Self {
         let mut spaces = Vec::new();
@@ -319,6 +323,9 @@ impl Board {
             Rc::new(RefCell::new(Player::new(3))),
             Rc::new(RefCell::new(Player::new(4))),
         ];
+
+        // set first player to active_player
+        players[0].borrow_mut().active_player = true;
 
         Board { spaces, players }
     }

@@ -13,7 +13,7 @@ pub struct PlayerCommand {
 #[derive(Resource)]
 pub struct PlayerCommandSender(pub Sender<PlayerCommand>);
 
-#[derive(Debug)]
+#[derive(Resource, Debug)]
 pub enum Command {
     SpawnBoard,
     RollDice,
@@ -23,14 +23,15 @@ pub enum Command {
     Trade,
     BuyHouse,
     SellHouse,
+    PassTurn,
 }
 // TODO: make a window for each player displaying their data
 
 pub fn buttons(
     commands: Res<PlayerCommandSender>,
+    // commands: Res<Command>,
     mut contexts: EguiContexts,
     mut spawned: Local<bool>,
-    query: Query<(Entity, &FrontendPlayer, &PlayerNumber)>,
 ) {
     egui::Window::new("Game Controls").show(contexts.ctx_mut(), |ui| {
         if !*spawned {
@@ -42,6 +43,7 @@ pub fn buttons(
                         player_number: 1,
                         command: Command::SpawnBoard,
                     })
+                    // .send(Command::SpawnBoard)
                     .unwrap();
                 println!("(buttons)----------- Command::SpawnBoard success");
             }
@@ -60,6 +62,15 @@ pub fn buttons(
                 })
                 .unwrap();
             println!("Roll Dice was clicked");
+        }
+        if ui.button("Pass Turn").clicked() {
+            commands
+                .0
+                .send(PlayerCommand {
+                    player_number: 1,
+                    command: Command::PassTurn,
+                })
+                .unwrap();
         }
     });
 }

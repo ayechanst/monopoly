@@ -12,6 +12,7 @@ pub fn update_player(players: Vec<Player>, mut query: Query<&mut FrontendPlayer>
                 frontend_player.active_player = player.active_player;
                 frontend_player.balance = player.money as u32;
                 frontend_player.position = space_to_coords(player.position as usize);
+                println!("**** frontend_player updated to: {:?}", frontend_player);
             }
         }
     }

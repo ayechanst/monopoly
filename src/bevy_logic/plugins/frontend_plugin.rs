@@ -46,7 +46,7 @@ impl Plugin for FrontEndPlugin {
 pub fn frontend_receiver(
     update_receiver: Res<TurnOutcomeReceiver>,
     // mut query: Query<(&mut Transform, &Position, &Offset)>,
-    mut query: Query<&mut FrontendPlayer>,
+    query: Query<&mut FrontendPlayer>,
     commands: Commands,
     mut contexts: EguiContexts,
     grid_size: Res<GridSize>,
@@ -63,7 +63,7 @@ pub fn frontend_receiver(
                     if players.iter().all(|player| player.position == 0) {
                         spawn_board(commands, grid_size, scale_factor);
                         // update all Player Resources with data from snapshot here.
-                        update_player(players, query);
+                        // update_player(players, query);
                     } else {
                         println!("another player's turn");
                         // do stuff in here
@@ -74,7 +74,7 @@ pub fn frontend_receiver(
                 }
             }
         } else {
-            println!("-no message available in channel");
+            // println!("no message");
         }
     } else {
         println!("Failed to acquire lock on channel");
