@@ -108,13 +108,13 @@ impl Board {
         let position = self.get_position(index);
         let player_ref = self.players[index].clone();
         // player_ref.borrow_mut().active_player = true;
-        let mut space_landed_on = self.spaces[position].borrow_mut();
+        let mut space_landed_on = self.spaces[position].borrow_mut().clone();
         // let coords = space_to_coords(position);
 
-        match &mut *space_landed_on {
+        match &mut space_landed_on {
             Space::Property(properties) => {
                 if properties.is_for_sale() {
-                    debug_property(player_ref.borrow(), *properties);
+                    // debug_property(player_ref.borrow(), properties);
                     // Return input_needed
                     return TurnOutcomeForFrontend::InputRequiredForFrontend(
                         RequiredInputsForFrontend::Buy,

@@ -48,7 +48,6 @@ pub fn frontend_receiver(
     // mut query: Query<(&mut Transform, &Position, &Offset)>,
     query: Query<&mut FrontendPlayer>,
     commands: Commands,
-    mut contexts: EguiContexts,
     grid_size: Res<GridSize>,
     scale_factor: Res<ScaleFactor>,
 ) {
@@ -57,13 +56,13 @@ pub fn frontend_receiver(
             match turn_outcome {
                 TurnOutcomeForFrontend::BoardUpdated(board_snapshot) => {
                     println!("--------- board_snapshot: {:?}", board_snapshot);
-                    let spaces = board_snapshot.spaces;
+                    // let spaces = board_snapshot.spaces;
                     let players = board_snapshot.players;
 
                     if players.iter().all(|player| player.position == 0) {
                         spawn_board(commands, grid_size, scale_factor);
                         // update all Player Resources with data from snapshot here.
-                        // update_player(players, query);
+                        update_player(players, query);
                     } else {
                         println!("another player's turn");
                         // do stuff in here
