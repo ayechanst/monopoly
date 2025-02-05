@@ -66,17 +66,24 @@ impl Board {
     pub fn get_position(&self, index: usize) -> usize {
         (self.players[index].borrow().position) as usize
     }
-    // first_main_phase will be adapted into backend_loop
 
-    // pub fn game_loop(&mut self) {
-    //     let player_count = self.players.len();
-    //     for i in 0..player_count {
-    //         self.player_turn(i);
-    //     }
-    // }
+    pub fn get_active_player_number(&self) -> usize {
+        self.players
+            .iter()
+            .find(|player| player.borrow().active_player)
+            .map(|player| player.borrow().player_number as usize)
+            .unwrap_or(0)
+    }
 
     pub fn pass_turn(&mut self) {
-        // find the active_player and change it to the next player in the vector
+        let active_index = self.get_active_player_number() - 1;
+        println!("-- active_index: {}", active_index);
+        self.players[active_index].borrow_mut().active_player = false;
+        if active_index + 1 >= self.players.len() {
+            self.players[0].borrow_mut().active_player = true;
+        } else {
+            self.players[active_index + 1].borrow_mut().active_player = true;
+        }
     }
 
     pub fn snapshot(&self) -> BoardSnapshot {
@@ -94,9 +101,9 @@ impl Board {
         }
     }
 
-    // pub fn player_turn(&mut self, index: usize) -> BoardMsg {
-    pub fn player_turn(&mut self, index: usize) -> TurnOutcomeForFrontend {
-        // pub fn player_turn(&mut self, index: usize, update_transmitter: Sender<Change>) {
+    // pub fn player_turn(&mut self, index: usize) -> TurnOutcomeForFrontend {
+    pub fn player_turn(&mut self) -> TurnOutcomeForFrontend {
+        let index = self.get_active_player_number() - 1;
         self.roll_player_dice(index);
         let position = self.get_position(index);
         let player_ref = self.players[index].clone();

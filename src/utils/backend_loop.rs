@@ -37,7 +37,8 @@ pub fn backend_loop(
                 // get active player here and update the variable to RollDice can have the correct player
             }
             Command::RollDice => {
-                let outcome = board.player_turn(player_number);
+                // let outcome = board.player_turn(player_number);
+                let outcome = board.player_turn();
                 update_transmitter.send(outcome).unwrap();
                 // send another sender along with outcome
             }
@@ -47,7 +48,9 @@ pub fn backend_loop(
             Command::Trade => println!("boom"),
             Command::BuyHouse => println!("boom"),
             Command::SellHouse => println!("boom"),
-            Command::PassTurn => println!("turn passed"),
+            Command::PassTurn => {
+                board.pass_turn();
+            }
         }
     }
     println!("Backend loop exiting");

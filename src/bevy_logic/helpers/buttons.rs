@@ -32,6 +32,7 @@ pub fn buttons(
     // commands: Res<Command>,
     mut contexts: EguiContexts,
     mut spawned: Local<bool>,
+    query: Query<&FrontendPlayer>,
 ) {
     egui::Window::new("Game Controls").show(contexts.ctx_mut(), |ui| {
         if !*spawned {
@@ -50,6 +51,14 @@ pub fn buttons(
         } else {
             ui.label("Game initialized");
         }
+        //   TODO: the FrontendPlayer component needs to be updated first
+        // for player in query.iter() {
+        //     if player.active_player {
+        //         if ui.button(format!("{:?}", player)).clicked() {
+        //             println!("woohoo");
+        //         }
+        //     }
+        // }
         if ui.button("Roll Dice").clicked() {
             // trying to get current player
             // let player_number = query;
