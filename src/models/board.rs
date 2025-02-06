@@ -114,7 +114,7 @@ impl Board {
         match &mut space_landed_on {
             Space::Property(properties) => {
                 if properties.is_for_sale() {
-                    // debug_property(player_ref.borrow(), properties);
+                    debug_property(player_ref.borrow(), *properties);
                     // Return input_needed
                     return TurnOutcomeForFrontend::InputRequiredForFrontend(
                         RequiredInputsForFrontend::Buy,

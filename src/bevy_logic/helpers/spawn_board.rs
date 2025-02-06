@@ -4,7 +4,11 @@ use crate::{
         plugins::frontend_plugin::{GridSize, ScaleFactor},
         sprite_builder::{make_player::make_player, make_space::make_space},
     },
-    models::board::Board,
+    models::{
+        board::Board,
+        player::{self, Player},
+    },
+    utils::space_to_coords::space_to_coords,
 };
 use bevy::prelude::*;
 
@@ -12,6 +16,7 @@ pub fn spawn_board(
     mut commands: Commands,
     grid_size: Res<GridSize>,
     scale_factor: Res<ScaleFactor>,
+    players: Vec<Player>,
 ) {
     let board = Board::new();
     for (index, space_ref) in board.spaces.iter().cloned().enumerate() {
@@ -40,30 +45,101 @@ pub fn spawn_board(
         ));
     }
     let player_offset = [(0.25, 0.25), (-0.25, 0.25), (-0.25, -0.25), (0.25, -0.25)];
-    for (i, &offset) in player_offset.iter().enumerate() {
+    for (i, player) in players.iter().enumerate() {
+        let offset = player_offset[i % player_offset.len()];
+        let frontend_player = FrontendPlayer {
+            player_number: player.player_number,
+            active_player: player.active_player,
+            balance: player.money as u32,
+            position: space_to_coords(player.position as usize),
+            offset,
+            properties: player.properties.iter().map(|p| p.to_string()).collect(),
+        };
         let player_entity = commands
             .spawn((
-                FrontendPlayer {
-                    player_number: i as u8, // add + here maybe
-                    active_player: false,
-                    balance: 1500,
-                    position: (-5.0, 5.0),
-                    offset,
-                    properties: Vec::new(),
-                },
-                make_player(i + 1, grid_size.0, scale_factor.0),
+                frontend_player,
+                make_player(player.player_number as usize, grid_size.0, scale_factor.0),
             ))
             .id();
+
         let (x_offset, y_offset) = offset;
+        let (x_coords, y_coords) = space_to_coords(player.position as usize);
+        println!(
+            "player: {:?} X: {:?} Y: {:?} ",
+            player.player_number, x_coords, y_coords
+        );
         commands.entity(player_entity).insert(Transform::from_xyz(
-            (5.0 + x_offset) * grid_size.0,
-            (-5.0 + y_offset) * grid_size.0,
+            (x_coords + x_offset) * grid_size.0,
+            (y_coords + y_offset) * grid_size.0,
             1.0,
         ));
-        println!("done spawning player: {:?} ", i + 1);
-        // TODO: Init the game (front end)
+        println!("done spawning player: {:?} ", player.player_number);
     }
-    println!("done spawning players");
+    // let player_offset = [(0.25, 0.25), (-0.25, 0.25), (-0.25, -0.25), (0.25, -0.25)];
+    // for (i, &offset) in player_offset.iter().enumerate() {
+    //     let player_entity = commands
+    //         .spawn((
+    //             FrontendPlayer {
+    //                 player_number: (i + 1) as u8, // add + here maybe
+    //                 active_player: false,
+    //                 balance: 1500,
+    //                 position: (-5.0, 5.0),
+    //                 offset,
+    //                 properties: Vec::new(),
+    //             },
+    //             make_player(i + 1, grid_size.0, scale_factor.0),
+    //         ))
+    //         .id();
+    //     let (x_offset, y_offset) = offset;
+    //     commands.entity(player_entity).insert(Transform::from_xyz(
+    //         (5.0 + x_offset) * grid_size.0,
+    //         (-5.0 + y_offset) * grid_size.0,
+    //         1.0,
+    //     ));
+    //     println!("done spawning player: {:?} ", i + 1);
+    //     // TODO: Init the game (front end)
+    // }
+    // println!("done spawning players");
 
     // for each player, give them their game options:
+}
+
+pub fn spawn_players(
+    mut commands: Commands,
+    grid_size: Res<GridSize>,
+    scale_factor: Res<ScaleFactor>,
+    players: Vec<Player>,
+) {
+    let player_offset = [(0.25, 0.25), (-0.25, 0.25), (-0.25, -0.25), (0.25, -0.25)];
+    for (i, player) in players.iter().enumerate() {
+        let offset = player_offset[i % player_offset.len()];
+        let frontend_player = FrontendPlayer {
+            player_number: player.player_number,
+            active_player: player.active_player,
+            balance: player.money as u32,
+            position: space_to_coords(player.position as usize),
+            offset,
+            properties: player.properties.iter().map(|p| p.to_string()).collect(),
+        };
+        let player_entity = commands
+            .spawn((
+                frontend_player,
+                make_player(player.player_number as usize, grid_size.0, scale_factor.0),
+            ))
+            .id();
+
+        let (x_offset, y_offset) = offset;
+        let (x_coords, y_coords) = space_to_coords(player.position as usize);
+
+        println!(
+            "player: {:?} X: {:?} Y: {:?} ",
+            player.player_number, x_coords, y_coords
+        );
+        commands.entity(player_entity).insert(Transform::from_xyz(
+            x_coords + x_offset,
+            y_coords + y_offset,
+            1.0,
+        ));
+        println!("done spawning player: {:?} ", player.player_number);
+    }
 }

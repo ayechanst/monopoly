@@ -70,4 +70,8 @@ impl Properties {
             Properties::Railroad(railroads) => todo!(),
         }
     }
+
+    pub fn to_string(&self) -> String {
+        format!("{:?}", self)
+    }
 }
