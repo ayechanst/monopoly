@@ -58,8 +58,12 @@ pub fn frontend_receiver(
                     println!("--------- board_snapshot: {:?}", board_snapshot);
                     let spaces = board_snapshot.spaces;
                     let players = board_snapshot.players;
-                    spawn_board(commands, grid_size, scale_factor, players);
-                    // update_player(players, query);
+                    if players.iter().all(|player| player.position == 0) {
+                        spawn_board(commands, grid_size, scale_factor, players);
+                    } else {
+                        println!("update players goes here");
+                        update_player(players, query);
+                    }
                     // spawn_players(commands, grid_size, scale_factor, players);
                 }
                 TurnOutcomeForFrontend::InputRequiredForFrontend(required_inputs_for_frontend) => {
