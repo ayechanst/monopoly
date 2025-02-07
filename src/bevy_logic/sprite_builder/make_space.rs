@@ -18,9 +18,9 @@ pub fn make_space(
     let fill_color = make_color(&borrowed_space);
     let text_and_size = make_text(&borrowed_space);
     // coordinates logic
-    let text_coordinates = make_coordinates_text(coordinates);
-    let size: f32 = 0.3;
-    let coordinate_text_and_size = (text_coordinates.as_str(), size);
+    // let text_coordinates = make_coordinates_text(coordinates);
+    // let size: f32 = 0.3;
+    // let coordinate_text_and_size = (text_coordinates.as_str(), size);
     // end coors
     let border_size = Vec2::splat(grid_size * scale_factor);
     let inner_size = border_size * 0.92;
@@ -33,8 +33,8 @@ pub fn make_space(
         .with_children(|parent| {
             parent.spawn(make_border_bundle(border_size));
             parent.spawn(make_color_bundle(inner_size, fill_color));
-            // parent.spawn(make_text_bundle(grid_size, text_and_size));
-            parent.spawn(make_text_bundle(grid_size, coordinate_text_and_size));
+            parent.spawn(make_text_bundle(grid_size, text_and_size));
+            // parent.spawn(make_text_bundle(grid_size, coordinate_text_and_size));
         });
     entity
 }

@@ -4,10 +4,7 @@ use crate::{
         plugins::frontend_plugin::{GridSize, ScaleFactor},
         sprite_builder::{make_player::make_player, make_space::make_space},
     },
-    models::{
-        board::Board,
-        player::{self, Player},
-    },
+    models::{board::Board, player::Player},
     utils::space_to_coords::space_to_coords,
 };
 use bevy::prelude::*;
@@ -61,7 +58,6 @@ pub fn spawn_board(
                 make_player(player.player_number as usize, grid_size.0, scale_factor.0),
             ))
             .id();
-
         let (x_offset, y_offset) = offset;
         let (x_coords, y_coords) = space_to_coords(player.position as usize);
         println!(

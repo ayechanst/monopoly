@@ -5,7 +5,6 @@ use bevy_logic::{
     helpers::buttons::buttons,
     plugins::{frontend_plugin::FrontEndPlugin, world::WorldPlugin},
 };
-use std::io::{self, Write};
 mod utils;
 use bevy::prelude::*;
 
@@ -14,16 +13,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugins(EguiPlugin)
         .add_plugins(WorldPlugin)
-        // these 2 can be switched:
         .add_plugins(FrontEndPlugin)
         .add_systems(Update, buttons)
-        // these two ^
         .run();
-}
-
-fn wait_for_player() {
-    print!("Press Enter to pass the turn... ");
-    io::stdout().flush().unwrap(); // Ensures the message is displayed immediately
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).unwrap(); // Waits for player input
 }

@@ -5,7 +5,6 @@ use std::sync::mpsc::Sender;
 
 #[derive(Resource, Debug)]
 pub struct PlayerCommand {
-    pub player_number: usize,
     pub command: Command,
 }
 
@@ -24,7 +23,6 @@ pub enum Command {
     SellHouse,
     PassTurn,
 }
-// TODO: make a window for each player displaying their data
 
 pub fn buttons(
     commands: Res<PlayerCommandSender>,
@@ -39,7 +37,6 @@ pub fn buttons(
                 commands
                     .0
                     .send(PlayerCommand {
-                        player_number: 1,
                         command: Command::SpawnBoard,
                     })
                     .unwrap();
@@ -48,7 +45,6 @@ pub fn buttons(
         } else {
             ui.label("Game initialized");
         }
-        //   TODO: the FrontendPlayer component needs to be updated first
         for player in query.iter() {
             if player.active_player {
                 if ui
@@ -58,7 +54,6 @@ pub fn buttons(
                     commands
                         .0
                         .send(PlayerCommand {
-                            player_number: player.player_number as usize,
                             command: Command::RollDice,
                         })
                         .unwrap();
@@ -71,7 +66,6 @@ pub fn buttons(
                     commands
                         .0
                         .send(PlayerCommand {
-                            player_number: player.player_number as usize,
                             command: Command::PassTurn,
                         })
                         .unwrap();

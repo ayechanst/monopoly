@@ -5,14 +5,12 @@ use crate::{
             spawn_board::spawn_board,
             update_player::update_player,
         },
-        // player_components::{FrontendPlayer, Offset, Position},
         player_components::FrontendPlayer,
     },
     models::board::TurnOutcomeForFrontend,
     utils::backend_loop::{backend_loop, TurnOutcomeReceiver},
 };
 use bevy::prelude::*;
-use bevy_egui::EguiContexts;
 use std::sync::{
     mpsc::{self},
     Arc, Mutex,
@@ -46,8 +44,8 @@ impl Plugin for FrontEndPlugin {
 
 pub fn frontend_receiver(
     update_receiver: Res<TurnOutcomeReceiver>,
-    query: Query<&mut FrontendPlayer>,
-    mut commands: Commands,
+    query: Query<(&mut FrontendPlayer, &mut Transform)>,
+    commands: Commands,
     grid_size: Res<GridSize>,
     scale_factor: Res<ScaleFactor>,
 ) {
@@ -55,14 +53,11 @@ pub fn frontend_receiver(
         if let Ok(turn_outcome) = receiver.try_recv() {
             match turn_outcome {
                 TurnOutcomeForFrontend::BoardUpdated(board_snapshot) => {
-                    println!("--------- board_snapshot: {:?}", board_snapshot);
-                    let spaces = board_snapshot.spaces;
                     let players = board_snapshot.players;
                     if players.iter().all(|player| player.position == 0) {
                         spawn_board(commands, grid_size, scale_factor, players);
                     } else {
-                        println!("update players goes here");
-                        update_player(players, query);
+                        update_player(players, query, grid_size);
                     }
                 }
                 TurnOutcomeForFrontend::InputRequiredForFrontend(required_inputs_for_frontend) => {
