@@ -3,6 +3,15 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 use std::sync::mpsc::Sender;
 
+use crate::{
+    bevy_logic::plugins::frontend_plugin::GridSize,
+    models::{
+        board::{RequiredInputsForFrontend, TurnOutcomeForFrontend},
+        player::Player,
+    },
+    utils::space_to_coords::space_to_coords,
+};
+
 #[derive(Resource, Debug)]
 pub struct PlayerCommand {
     pub command: Command,
@@ -70,7 +79,20 @@ pub fn buttons(
                         })
                         .unwrap();
                 }
-                // if player.input_required == true
+                if player.required_input == RequiredInputsForFrontend::Buy {
+                    if ui
+                        .button(format!("Player {:?} Buy Property?", player.player_number))
+                        .clicked()
+                    {
+                        // commands
+                        //     .0
+                        //     .send(PlayerCommand {
+                        //         command: Command::PassTurn,
+                        //     })
+                        //     .unwrap();
+                        println!("this works");
+                    }
+                }
             }
         }
     });

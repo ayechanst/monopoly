@@ -27,7 +27,7 @@ use std::rc::Rc;
 pub type PlayerRef = Rc<RefCell<Player>>;
 pub type SpaceRef = Rc<RefCell<Space>>;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum RequiredInputsForFrontend {
     None,
     RollDice,
