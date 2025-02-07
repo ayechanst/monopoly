@@ -14,9 +14,10 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugins(EguiPlugin)
         .add_plugins(WorldPlugin)
-        .add_systems(Update, buttons)
+        // these 2 can be switched:
         .add_plugins(FrontEndPlugin)
-        // .add_plugins(PlayerPlugin)
+        .add_systems(Update, buttons)
+        // these two ^
         .run();
 }
 

@@ -29,7 +29,6 @@ pub fn backend_loop(
         match command {
             Command::SpawnBoard => {
                 let snapshot = board.snapshot();
-
                 println!("updating transmitter with snapshot");
                 update_transmitter
                     .send(TurnOutcomeForFrontend::BoardUpdated(snapshot))
@@ -50,6 +49,11 @@ pub fn backend_loop(
             Command::SellHouse => println!("boom"),
             Command::PassTurn => {
                 board.pass_turn();
+                let snapshot = board.snapshot();
+                println!("updating transmitter with snapshot");
+                update_transmitter
+                    .send(TurnOutcomeForFrontend::BoardUpdated(snapshot))
+                    .unwrap();
             }
         }
     }

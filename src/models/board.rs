@@ -1,7 +1,4 @@
-use bevy::prelude::Resource;
-
 use super::{
-    board_msg::BoardMsg,
     player::Player,
     spaces::{
         properties::{
@@ -19,11 +16,11 @@ use super::{
 use crate::{
     models::cards::chance::Chance,
     utils::{
-        debug_helpers::{debug_buy_property, debug_property, debug_rent},
+        debug_helpers::{debug_property, debug_rent},
         prompts::prompt_player,
-        space_to_coords::space_to_coords,
     },
 };
+use bevy::prelude::Resource;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -82,27 +79,17 @@ impl Board {
 
     pub fn pass_turn(&mut self) {
         let active_index = self.get_active_player_number() - 1;
-        println!("-- active_index: {}", active_index);
+        println!(
+            "-- active_index: {} (of active player number)",
+            active_index
+        );
         self.players[active_index].borrow_mut().active_player = false;
         if active_index + 1 >= self.players.len() {
             self.players[0].borrow_mut().active_player = true;
+            println!("--- a round is complete");
         } else {
             self.players[active_index + 1].borrow_mut().active_player = true;
-        }
-    }
-
-    pub fn snapshot(&self) -> BoardSnapshot {
-        BoardSnapshot {
-            spaces: self
-                .spaces
-                .iter()
-                .map(|space| space.borrow().clone())
-                .collect(),
-            players: self
-                .players
-                .iter()
-                .map(|player| player.borrow().clone())
-                .collect(),
+            println!("--- the player has passed the turn");
         }
     }
 
@@ -211,6 +198,22 @@ impl Board {
         }
         // player_ref.borrow_mut().active_player = false;
     }
+
+    pub fn snapshot(&self) -> BoardSnapshot {
+        BoardSnapshot {
+            spaces: self
+                .spaces
+                .iter()
+                .map(|space| space.borrow().clone())
+                .collect(),
+            players: self
+                .players
+                .iter()
+                .map(|player| player.borrow().clone())
+                .collect(),
+        }
+    }
+
     pub fn new() -> Self {
         let mut spaces = Vec::new();
         // Bottom 0-9

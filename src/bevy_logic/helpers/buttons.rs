@@ -28,7 +28,6 @@ pub enum Command {
 
 pub fn buttons(
     commands: Res<PlayerCommandSender>,
-    // commands: Res<Command>,
     mut contexts: EguiContexts,
     mut spawned: Local<bool>,
     query: Query<&FrontendPlayer>,
@@ -43,7 +42,6 @@ pub fn buttons(
                         player_number: 1,
                         command: Command::SpawnBoard,
                     })
-                    // .send(Command::SpawnBoard)
                     .unwrap();
                 println!("(buttons)----------- Command::SpawnBoard success");
             }
@@ -54,13 +52,9 @@ pub fn buttons(
         for player in query.iter() {
             if player.active_player {
                 if ui
-                    .button(format!(
-                        "{:?}'s turn to roll the dice",
-                        player.player_number
-                    ))
+                    .button(format!("Player {:?} Roll Dice", player.player_number))
                     .clicked()
                 {
-                    println!("woohoo");
                     commands
                         .0
                         .send(PlayerCommand {
@@ -70,29 +64,19 @@ pub fn buttons(
                         .unwrap();
                     println!("Roll Dice was clicked");
                 }
+                if ui
+                    .button(format!("Player {:?} Pass Turn", player.player_number))
+                    .clicked()
+                {
+                    commands
+                        .0
+                        .send(PlayerCommand {
+                            player_number: player.player_number as usize,
+                            command: Command::PassTurn,
+                        })
+                        .unwrap();
+                }
             }
-        }
-        // if ui.button("Roll Dice").clicked() {
-        //     // trying to get current player
-        //     // let player_number = query;
-
-        //     commands
-        //         .0
-        //         .send(PlayerCommand {
-        //             player_number: 1,
-        //             command: Command::RollDice,
-        //         })
-        //         .unwrap();
-        //     println!("Roll Dice was clicked");
-        // }
-        if ui.button("Pass Turn").clicked() {
-            commands
-                .0
-                .send(PlayerCommand {
-                    player_number: 1,
-                    command: Command::PassTurn,
-                })
-                .unwrap();
         }
     });
 }
