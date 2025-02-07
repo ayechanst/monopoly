@@ -1,8 +1,7 @@
+use crate::bevy_logic::player_components::FrontendPlayer;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 use std::sync::mpsc::Sender;
-
-use crate::bevy_logic::player_components::{FrontendPlayer, PlayerNumber};
 
 #[derive(Resource, Debug)]
 pub struct PlayerCommand {

@@ -2,10 +2,11 @@ use crate::{
     bevy_logic::{
         helpers::{
             buttons::{PlayerCommand, PlayerCommandSender},
-            spawn_board::{spawn_board, spawn_players},
+            spawn_board::spawn_board,
             update_player::update_player,
         },
-        player_components::{FrontendPlayer, Offset, Position},
+        // player_components::{FrontendPlayer, Offset, Position},
+        player_components::FrontendPlayer,
     },
     models::board::TurnOutcomeForFrontend,
     utils::backend_loop::{backend_loop, TurnOutcomeReceiver},
@@ -46,7 +47,6 @@ impl Plugin for FrontEndPlugin {
 pub fn frontend_receiver(
     update_receiver: Res<TurnOutcomeReceiver>,
     query: Query<&mut FrontendPlayer>,
-    // mut query: Query<(Entity, &mut FrontendPlayer)>,
     mut commands: Commands,
     grid_size: Res<GridSize>,
     scale_factor: Res<ScaleFactor>,
@@ -64,7 +64,6 @@ pub fn frontend_receiver(
                         println!("update players goes here");
                         update_player(players, query);
                     }
-                    // spawn_players(commands, grid_size, scale_factor, players);
                 }
                 TurnOutcomeForFrontend::InputRequiredForFrontend(required_inputs_for_frontend) => {
                     println!("---- INPUT REQUIRED: {:?}", required_inputs_for_frontend);

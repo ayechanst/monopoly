@@ -64,15 +64,20 @@ impl Board {
         player.roll_dice();
     }
     pub fn get_position(&self, index: usize) -> usize {
-        (self.players[index].borrow().position) as usize
+        let position = (self.players[index].borrow().position) as usize;
+        println!("----------get_position: {}", position);
+        position
     }
 
     pub fn get_active_player_number(&self) -> usize {
-        self.players
+        let active_player_number = self
+            .players
             .iter()
             .find(|player| player.borrow().active_player)
             .map(|player| player.borrow().player_number as usize)
-            .unwrap_or(0)
+            .unwrap_or(0);
+        println!("active player: {}", active_player_number);
+        active_player_number
     }
 
     pub fn pass_turn(&mut self) {
@@ -101,7 +106,6 @@ impl Board {
         }
     }
 
-    // pub fn player_turn(&mut self, index: usize) -> TurnOutcomeForFrontend {
     pub fn player_turn(&mut self) -> TurnOutcomeForFrontend {
         let index = self.get_active_player_number() - 1;
         self.roll_player_dice(index);
@@ -109,7 +113,7 @@ impl Board {
         let player_ref = self.players[index].clone();
         // player_ref.borrow_mut().active_player = true;
         let mut space_landed_on = self.spaces[position].borrow_mut().clone();
-        // let coords = space_to_coords(position);
+        // let mut space_landed_on = self.spaces[self.get_position(index)].borrow_mut().clone();
 
         match &mut space_landed_on {
             Space::Property(properties) => {
@@ -178,7 +182,10 @@ impl Board {
                 return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
             Space::Go => {
-                println!("Player {:?} has  pooped", player_ref.borrow().player_number);
+                println!(
+                    "Player {:?} has landed on GO!",
+                    player_ref.borrow().player_number
+                );
                 return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
             }
             Space::GoToJail => {
