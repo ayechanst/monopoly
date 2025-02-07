@@ -51,26 +51,40 @@ pub fn buttons(
             ui.label("Game initialized");
         }
         //   TODO: the FrontendPlayer component needs to be updated first
-        // for player in query.iter() {
-        //     if player.active_player {
-        //         if ui.button(format!("{:?}", player)).clicked() {
-        //             println!("woohoo");
-        //         }
-        //     }
-        // }
-        if ui.button("Roll Dice").clicked() {
-            // trying to get current player
-            // let player_number = query;
-
-            commands
-                .0
-                .send(PlayerCommand {
-                    player_number: 1,
-                    command: Command::RollDice,
-                })
-                .unwrap();
-            println!("Roll Dice was clicked");
+        for player in query.iter() {
+            if player.active_player {
+                if ui
+                    .button(format!(
+                        "{:?}'s turn to roll the dice",
+                        player.player_number
+                    ))
+                    .clicked()
+                {
+                    println!("woohoo");
+                    commands
+                        .0
+                        .send(PlayerCommand {
+                            player_number: player.player_number as usize,
+                            command: Command::RollDice,
+                        })
+                        .unwrap();
+                    println!("Roll Dice was clicked");
+                }
+            }
         }
+        // if ui.button("Roll Dice").clicked() {
+        //     // trying to get current player
+        //     // let player_number = query;
+
+        //     commands
+        //         .0
+        //         .send(PlayerCommand {
+        //             player_number: 1,
+        //             command: Command::RollDice,
+        //         })
+        //         .unwrap();
+        //     println!("Roll Dice was clicked");
+        // }
         if ui.button("Pass Turn").clicked() {
             commands
                 .0

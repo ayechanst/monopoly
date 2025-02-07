@@ -109,11 +109,10 @@ impl Board {
     pub fn player_turn(&mut self) -> TurnOutcomeForFrontend {
         let index = self.get_active_player_number() - 1;
         self.roll_player_dice(index);
-        let position = self.get_position(index);
+        // let position = self.get_position(index);
         let player_ref = self.players[index].clone();
-        // player_ref.borrow_mut().active_player = true;
-        let mut space_landed_on = self.spaces[position].borrow_mut().clone();
-        // let mut space_landed_on = self.spaces[self.get_position(index)].borrow_mut().clone();
+        // let mut space_landed_on = self.spaces[position].borrow_mut().clone();
+        let mut space_landed_on = self.spaces[self.get_position(index)].borrow_mut().clone();
 
         match &mut space_landed_on {
             Space::Property(properties) => {

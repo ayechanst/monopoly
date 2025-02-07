@@ -82,15 +82,11 @@ impl Player {
         dice.0 == dice.1
     }
 
-    // updates the player's true position
     pub fn roll_dice(&mut self) {
         let dice_roll = Self::dice_logic();
-        // let new_position = Self::movement(dice_roll, self.position);
-        // let new_position = self.movement(dice_roll, self.position);
         self.position = self.movement(dice_roll, self.position);
     }
 
-    // pub fn movement(dice: (i32, i32), position: i32) -> i32 {
     pub fn movement(&mut self, dice: (i32, i32), position: i32) -> i32 {
         let dice_total = dice.0 + dice.1;
         let new_position = (position + dice_total) % 40;
@@ -98,11 +94,5 @@ impl Player {
             self.money += 200;
         }
         new_position
-        // if position + dice_total >= 39 {
-        //     self.money += 200;
-        //     (position - 40) + dice_total
-        // } else {
-        //     position + dice_total
-        // }
     }
 }
