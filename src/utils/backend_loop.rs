@@ -1,6 +1,6 @@
 use crate::{
     bevy_logic::helpers::buttons::{Command, PlayerCommand},
-    models::board::{Board, TurnOutcomeForFrontend},
+    models::board::{Board, RequiredInputsForFrontend, TurnOutcomeForFrontend},
 };
 use bevy::prelude::Resource;
 use std::sync::{
@@ -22,7 +22,11 @@ pub fn backend_loop(
             Command::SpawnBoard => {
                 let snapshot = board.snapshot();
                 update_transmitter
-                    .send(TurnOutcomeForFrontend::BoardUpdated(snapshot))
+                    // .send(TurnOutcomeForFrontend::BoardUpdated(snapshot))
+                    .send(TurnOutcomeForFrontend {
+                        board_snapshot: snapshot,
+                        required_input: RequiredInputsForFrontend::None,
+                    })
                     .unwrap();
             }
             Command::RollDice => {
@@ -41,7 +45,11 @@ pub fn backend_loop(
                 let snapshot = board.snapshot();
                 println!("updating transmitter with snapshot");
                 update_transmitter
-                    .send(TurnOutcomeForFrontend::BoardUpdated(snapshot))
+                    // .send(TurnOutcomeForFrontend::BoardUpdated(snapshot))
+                    .send(TurnOutcomeForFrontend {
+                        board_snapshot: snapshot,
+                        required_input: RequiredInputsForFrontend::None,
+                    })
                     .unwrap();
             }
         }

@@ -27,8 +27,9 @@ use std::rc::Rc;
 pub type PlayerRef = Rc<RefCell<Player>>;
 pub type SpaceRef = Rc<RefCell<Space>>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum RequiredInputsForFrontend {
+    None,
     RollDice,
     Buy,
     Mortgage,
@@ -37,10 +38,16 @@ pub enum RequiredInputsForFrontend {
     SellHouse,
 }
 
+// #[derive(Resource)]
+// pub enum TurnOutcomeForFrontend {
+//     BoardUpdated(BoardSnapshot),
+//     InputRequiredForFrontend(RequiredInputsForFrontend, BoardSnapshot),
+// }
+
 #[derive(Resource)]
-pub enum TurnOutcomeForFrontend {
-    BoardUpdated(BoardSnapshot),
-    InputRequiredForFrontend(RequiredInputsForFrontend),
+pub struct TurnOutcomeForFrontend {
+    pub board_snapshot: BoardSnapshot,
+    pub required_input: RequiredInputsForFrontend,
 }
 
 #[derive(Debug, Clone)]
@@ -56,59 +63,26 @@ pub struct Board {
 }
 
 impl Board {
-    pub fn roll_player_dice(&self, index: usize) {
-        let mut player = self.players[index].borrow_mut();
-        player.roll_dice();
-    }
-    pub fn get_position(&self, index: usize) -> usize {
-        let position = (self.players[index].borrow().position) as usize;
-        println!("----------get_position: {}", position);
-        position
-    }
-
-    pub fn get_active_player_number(&self) -> usize {
-        let active_player_number = self
-            .players
-            .iter()
-            .find(|player| player.borrow().active_player)
-            .map(|player| player.borrow().player_number as usize)
-            .unwrap_or(0);
-        println!("active player: {}", active_player_number);
-        active_player_number
-    }
-
-    pub fn pass_turn(&mut self) {
-        let active_index = self.get_active_player_number() - 1;
-        println!(
-            "-- active_index: {} (of active player number)",
-            active_index
-        );
-        self.players[active_index].borrow_mut().active_player = false;
-        if active_index + 1 >= self.players.len() {
-            self.players[0].borrow_mut().active_player = true;
-            println!("--- a round is complete");
-        } else {
-            self.players[active_index + 1].borrow_mut().active_player = true;
-            println!("--- the player has passed the turn");
-        }
-    }
-
     pub fn player_turn(&mut self) -> TurnOutcomeForFrontend {
         let index = self.get_active_player_number() - 1;
         self.roll_player_dice(index);
-        // let position = self.get_position(index);
         let player_ref = self.players[index].clone();
-        // let mut space_landed_on = self.spaces[position].borrow_mut().clone();
         let mut space_landed_on = self.spaces[self.get_position(index)].borrow_mut().clone();
 
         match &mut space_landed_on {
             Space::Property(properties) => {
                 if properties.is_for_sale() {
                     debug_property(player_ref.borrow(), *properties);
-                    // Return input_needed
-                    return TurnOutcomeForFrontend::InputRequiredForFrontend(
-                        RequiredInputsForFrontend::Buy,
-                    );
+                    // return TurnOutcomeForFrontend::InputRequiredForFrontend(
+                    //     RequiredInputsForFrontend::Buy,
+                    //     self.snapshot(),
+                    // );
+
+                    return TurnOutcomeForFrontend {
+                        board_snapshot: self.snapshot(),
+                        required_input: RequiredInputsForFrontend::Buy,
+                    };
+
                     //     "buy" =>  properties.buy_property(player_ref.clone());
                     //         debug_buy_property(player_ref.borrow(), *properties);
                     //     "auction" => properties.auction(self);
@@ -119,10 +93,18 @@ impl Board {
                         debug_rent(owner.borrow(), player_ref.borrow());
                         // return board state for this and all matches below
                         println!("you paid rent");
-                        return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                        // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                        return TurnOutcomeForFrontend {
+                            board_snapshot: self.snapshot(),
+                            required_input: RequiredInputsForFrontend::None,
+                        };
                     } else {
                         println!("owner not found");
-                        return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                        // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                        return TurnOutcomeForFrontend {
+                            board_snapshot: self.snapshot(),
+                            required_input: RequiredInputsForFrontend::None,
+                        };
                     }
                 }
             }
@@ -138,14 +120,22 @@ impl Board {
                 );
                 println!("OG balance: {:?}", player_og_balance);
                 println!("New balance: {:?}", player_new_balance);
-                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                return TurnOutcomeForFrontend {
+                    board_snapshot: self.snapshot(),
+                    required_input: RequiredInputsForFrontend::None,
+                };
             }
             Space::CommunityChest => {
                 println!(
                     "Player {:?} has landed on Community Chest!",
                     player_ref.borrow().player_number
                 );
-                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                return TurnOutcomeForFrontend {
+                    board_snapshot: self.snapshot(),
+                    required_input: RequiredInputsForFrontend::None,
+                };
             }
             Space::IncomeTax => {
                 println!(
@@ -157,7 +147,11 @@ impl Board {
                 let player_new_balance = player_ref.borrow().money;
                 println!("OG balance: {:?}", player_og_balance);
                 println!("New balance: {:?}", player_new_balance);
-                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                return TurnOutcomeForFrontend {
+                    board_snapshot: self.snapshot(),
+                    required_input: RequiredInputsForFrontend::None,
+                };
             }
             Space::LuxuryTax => {
                 println!(
@@ -165,35 +159,55 @@ impl Board {
                     player_ref.borrow().player_number
                 );
                 player_ref.borrow_mut().money -= 100;
-                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                return TurnOutcomeForFrontend {
+                    board_snapshot: self.snapshot(),
+                    required_input: RequiredInputsForFrontend::None,
+                };
             }
             Space::Go => {
                 println!(
                     "Player {:?} has landed on GO!",
                     player_ref.borrow().player_number
                 );
-                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                return TurnOutcomeForFrontend {
+                    board_snapshot: self.snapshot(),
+                    required_input: RequiredInputsForFrontend::None,
+                };
             }
             Space::GoToJail => {
                 println!(
                     "Player {:?} has landed on Go To Jail Bitch!",
                     player_ref.borrow().player_number
                 );
-                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                return TurnOutcomeForFrontend {
+                    board_snapshot: self.snapshot(),
+                    required_input: RequiredInputsForFrontend::None,
+                };
             }
             Space::Jail => {
                 println!(
                     "Player {:?} has landed on Jail (just passing)",
                     player_ref.borrow().player_number
                 );
-                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                return TurnOutcomeForFrontend {
+                    board_snapshot: self.snapshot(),
+                    required_input: RequiredInputsForFrontend::None,
+                };
             }
             Space::FreeParking => {
                 println!(
                     "Player {:?} has landed on Free Parking",
                     player_ref.borrow().player_number
                 );
-                return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
+                return TurnOutcomeForFrontend {
+                    board_snapshot: self.snapshot(),
+                    required_input: RequiredInputsForFrontend::None,
+                };
             }
         }
         // player_ref.borrow_mut().active_player = false;
@@ -211,6 +225,37 @@ impl Board {
                 .iter()
                 .map(|player| player.borrow().clone())
                 .collect(),
+        }
+    }
+
+    pub fn roll_player_dice(&self, index: usize) {
+        let mut player = self.players[index].borrow_mut();
+        player.roll_dice();
+    }
+    pub fn get_position(&self, index: usize) -> usize {
+        let position = (self.players[index].borrow().position) as usize;
+        println!("(Board.rs) get_position: {}", position);
+        position
+    }
+
+    pub fn get_active_player_number(&self) -> usize {
+        let active_player_number = self
+            .players
+            .iter()
+            .find(|player| player.borrow().active_player)
+            .map(|player| player.borrow().player_number as usize)
+            .unwrap_or(0);
+        println!("(Board.rs) active player: {}", active_player_number);
+        active_player_number
+    }
+
+    pub fn pass_turn(&mut self) {
+        let active_index = self.get_active_player_number() - 1;
+        self.players[active_index].borrow_mut().active_player = false;
+        if active_index + 1 >= self.players.len() {
+            self.players[0].borrow_mut().active_player = true;
+        } else {
+            self.players[active_index + 1].borrow_mut().active_player = true;
         }
     }
 

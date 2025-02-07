@@ -1,3 +1,4 @@
+use crate::models::board::RequiredInputsForFrontend;
 use crate::{
     bevy_logic::{
         player_components::FrontendPlayer,
@@ -51,6 +52,7 @@ pub fn spawn_board(
             position: space_to_coords(player.position as usize),
             offset,
             properties: player.properties.iter().map(|p| p.to_string()).collect(),
+            required_input: RequiredInputsForFrontend::None,
         };
         let player_entity = commands
             .spawn((

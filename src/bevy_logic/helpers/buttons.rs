@@ -70,6 +70,7 @@ pub fn buttons(
                         })
                         .unwrap();
                 }
+                // if player.input_required == true
             }
         }
     });
