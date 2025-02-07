@@ -59,14 +59,14 @@ pub fn spawn_board(
             ))
             .id();
         let (x_offset, y_offset) = offset;
-        let (x_coords, y_coords) = space_to_coords(player.position as usize);
+        let (x_coord, y_coord) = space_to_coords(player.position as usize);
         println!(
             "player: {:?} X: {:?} Y: {:?} ",
-            player.player_number, x_coords, y_coords
+            player.player_number, x_coord, y_coord
         );
         commands.entity(player_entity).insert(Transform::from_xyz(
-            (x_coords + x_offset) * grid_size.0,
-            (y_coords + y_offset) * grid_size.0,
+            (x_coord + x_offset) * grid_size.0,
+            (y_coord + y_offset) * grid_size.0,
             1.0,
         ));
         println!("done spawning player: {:?} ", player.player_number);

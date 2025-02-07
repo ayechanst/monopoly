@@ -18,8 +18,12 @@ pub fn update_player(
                 frontend_player.position = space_to_coords(player.position as usize);
                 frontend_player.set_changed();
 
-                let (x, y) = space_to_coords(player.position as usize);
-                transform.translation = Vec3::new(x * grid_size.0, y * grid_size.0, 1.0);
+                let (x_coord, y_coord) = space_to_coords(player.position as usize);
+                transform.translation = Vec3::new(
+                    (x_coord + frontend_player.offset.0) * grid_size.0,
+                    (y_coord + frontend_player.offset.1) * grid_size.0,
+                    1.0,
+                );
             }
         }
     }
