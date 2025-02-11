@@ -21,10 +21,10 @@ pub fn update_players(
                 frontend_player.balance = player.money as u32;
                 frontend_player.position = space_to_coords(player.position as usize);
                 frontend_player.required_input = required_input.clone();
-                println!(
-                    "(update_player.rs) required_input: {:?}",
-                    required_input.clone()
-                );
+                // println!(
+                //     "(update_player.rs) required_input: {:?}",
+                //     required_input.clone()
+                // );
                 frontend_player.set_changed();
 
                 let (x_coord, y_coord) = space_to_coords(player.position as usize);

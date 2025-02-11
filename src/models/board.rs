@@ -38,12 +38,6 @@ pub enum RequiredInputsForFrontend {
     SellHouse,
 }
 
-// #[derive(Resource)]
-// pub enum TurnOutcomeForFrontend {
-//     BoardUpdated(BoardSnapshot),
-//     InputRequiredForFrontend(RequiredInputsForFrontend, BoardSnapshot),
-// }
-
 #[derive(Resource)]
 pub struct TurnOutcomeForFrontend {
     pub board_snapshot: BoardSnapshot,
@@ -63,6 +57,28 @@ pub struct Board {
 }
 
 impl Board {
+    pub fn buy_property(&mut self) -> TurnOutcomeForFrontend {
+        let index = self.get_active_player_number() - 1;
+        let position = self.get_position(index);
+        if let Space::Property(mut properties) = self.spaces[position].borrow_mut().clone() {
+            // if properties.is_for_sale() {
+            properties.buy_property(self.players[index].clone());
+            println!(
+                "Property Owner after purches: {:?}",
+                properties.get_owner(self)
+            );
+            println!(
+                "------properties.is_for_sale: {:?}",
+                properties.is_for_sale()
+            );
+            // }
+        }
+        return TurnOutcomeForFrontend {
+            board_snapshot: self.snapshot(),
+            required_input: RequiredInputsForFrontend::None,
+        };
+    }
+
     pub fn player_turn(&mut self) -> TurnOutcomeForFrontend {
         let index = self.get_active_player_number() - 1;
         self.roll_player_dice(index);
@@ -72,11 +88,12 @@ impl Board {
         match &mut space_landed_on {
             Space::Property(properties) => {
                 if properties.is_for_sale() {
+                    println!(
+                        "-----properties.is_for_sale: {:?}",
+                        properties.is_for_sale()
+                    );
                     debug_property(player_ref.borrow(), *properties);
-                    // return TurnOutcomeForFrontend::InputRequiredForFrontend(
-                    //     RequiredInputsForFrontend::Buy,
-                    //     self.snapshot(),
-                    // );
+                    println!("---Sending buy option to front end");
 
                     return TurnOutcomeForFrontend {
                         board_snapshot: self.snapshot(),
@@ -88,19 +105,21 @@ impl Board {
                     //     "auction" => properties.auction(self);
                     //      println!("{:?} will be put up for auction.", properties);
                 } else {
+                    println!(
+                        "-----is not for sale, proof properties.is_for_sale(): {:?}",
+                        properties.is_for_sale()
+                    );
                     if let Some(owner) = properties.get_owner(self) {
                         properties.pay_rent(player_ref.clone(), self); // PAYING RENT HERE
                         debug_rent(owner.borrow(), player_ref.borrow());
                         // return board state for this and all matches below
                         println!("you paid rent");
-                        // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                         return TurnOutcomeForFrontend {
                             board_snapshot: self.snapshot(),
                             required_input: RequiredInputsForFrontend::None,
                         };
                     } else {
                         println!("owner not found");
-                        // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                         return TurnOutcomeForFrontend {
                             board_snapshot: self.snapshot(),
                             required_input: RequiredInputsForFrontend::None,
@@ -120,7 +139,6 @@ impl Board {
                 );
                 println!("OG balance: {:?}", player_og_balance);
                 println!("New balance: {:?}", player_new_balance);
-                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                 return TurnOutcomeForFrontend {
                     board_snapshot: self.snapshot(),
                     required_input: RequiredInputsForFrontend::None,
@@ -131,7 +149,6 @@ impl Board {
                     "Player {:?} has landed on Community Chest!",
                     player_ref.borrow().player_number
                 );
-                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                 return TurnOutcomeForFrontend {
                     board_snapshot: self.snapshot(),
                     required_input: RequiredInputsForFrontend::None,
@@ -147,7 +164,6 @@ impl Board {
                 let player_new_balance = player_ref.borrow().money;
                 println!("OG balance: {:?}", player_og_balance);
                 println!("New balance: {:?}", player_new_balance);
-                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                 return TurnOutcomeForFrontend {
                     board_snapshot: self.snapshot(),
                     required_input: RequiredInputsForFrontend::None,
@@ -159,7 +175,6 @@ impl Board {
                     player_ref.borrow().player_number
                 );
                 player_ref.borrow_mut().money -= 100;
-                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                 return TurnOutcomeForFrontend {
                     board_snapshot: self.snapshot(),
                     required_input: RequiredInputsForFrontend::None,
@@ -170,7 +185,6 @@ impl Board {
                     "Player {:?} has landed on GO!",
                     player_ref.borrow().player_number
                 );
-                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                 return TurnOutcomeForFrontend {
                     board_snapshot: self.snapshot(),
                     required_input: RequiredInputsForFrontend::None,
@@ -181,7 +195,6 @@ impl Board {
                     "Player {:?} has landed on Go To Jail Bitch!",
                     player_ref.borrow().player_number
                 );
-                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                 return TurnOutcomeForFrontend {
                     board_snapshot: self.snapshot(),
                     required_input: RequiredInputsForFrontend::None,
@@ -192,7 +205,6 @@ impl Board {
                     "Player {:?} has landed on Jail (just passing)",
                     player_ref.borrow().player_number
                 );
-                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                 return TurnOutcomeForFrontend {
                     board_snapshot: self.snapshot(),
                     required_input: RequiredInputsForFrontend::None,
@@ -203,14 +215,12 @@ impl Board {
                     "Player {:?} has landed on Free Parking",
                     player_ref.borrow().player_number
                 );
-                // return TurnOutcomeForFrontend::BoardUpdated(self.snapshot());
                 return TurnOutcomeForFrontend {
                     board_snapshot: self.snapshot(),
                     required_input: RequiredInputsForFrontend::None,
                 };
             }
         }
-        // player_ref.borrow_mut().active_player = false;
     }
 
     pub fn snapshot(&self) -> BoardSnapshot {

@@ -79,20 +79,58 @@ pub fn buttons(
                         })
                         .unwrap();
                 }
-                if player.required_input == RequiredInputsForFrontend::Buy {
-                    if ui
-                        .button(format!("Player {:?} Buy Property?", player.player_number))
-                        .clicked()
-                    {
-                        // commands
-                        //     .0
-                        //     .send(PlayerCommand {
-                        //         command: Command::PassTurn,
-                        //     })
-                        //     .unwrap();
-                        println!("this works");
+                match player.required_input {
+                    // RequiredInputsForFrontend::None => println!("No input"),
+                    RequiredInputsForFrontend::RollDice => println!("Roll Dice?"),
+                    RequiredInputsForFrontend::Buy => {
+                        if ui
+                            .button(format!("Player {:?} Buy Property?", player.player_number))
+                            .clicked()
+                        {
+                            commands
+                                .0
+                                .send(PlayerCommand {
+                                    command: Command::BuyProperty,
+                                })
+                                .unwrap();
+                            println!("Property Bought!");
+                        }
+                        if ui
+                            .button(format!(
+                                "Player {:?} Auction Property?",
+                                player.player_number
+                            ))
+                            .clicked()
+                        {
+                            commands
+                                .0
+                                .send(PlayerCommand {
+                                    command: Command::AuctionProperty,
+                                })
+                                .unwrap();
+                            println!("Property Bought!");
+                        }
                     }
+                    RequiredInputsForFrontend::Mortgage => println!("mortgage"),
+                    RequiredInputsForFrontend::Trade => println!("trade"),
+                    RequiredInputsForFrontend::BuyHouse => println!("buy house"),
+                    RequiredInputsForFrontend::SellHouse => println!("sell house"),
+                    _ => {}
                 }
+                // if player.required_input == RequiredInputsForFrontend::Buy {
+                //     if ui
+                //         .button(format!("Player {:?} Buy Property?", player.player_number))
+                //         .clicked()
+                //     {
+                //         // commands
+                //         //     .0
+                //         //     .send(PlayerCommand {
+                //         //         command: Command::PassTurn,
+                //         //     })
+                //         //     .unwrap();
+                //         println!("this works");
+                //     }
+                // }
             }
         }
     });

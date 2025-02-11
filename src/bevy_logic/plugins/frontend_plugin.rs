@@ -58,39 +58,6 @@ pub fn frontend_receiver(
             } else {
                 update_players(players, query, grid_size, turn_outcome.required_input);
             }
-
-            // match turn_outcome {
-            //     TurnOutcomeForFrontend::BoardUpdated(board_snapshot) => {
-            //         let players = board_snapshot.players;
-            //         if players.iter().all(|player| player.position == 0) {
-            //             spawn_board(commands, grid_size, scale_factor, players);
-            //         } else {
-            //             update_players(players, query, grid_size);
-            //         }
-            //     }
-            //     TurnOutcomeForFrontend::InputRequiredForFrontend(
-            //         required_inputs_for_frontend,
-            //         board_snapshot,
-            //     ) => {
-            //         let players = board_snapshot.players;
-            //         update_players(players, query, grid_size);
-
-            //         match required_inputs_for_frontend {
-            //             RequiredInputsForFrontend::None => println!("No input required"),
-            //             RequiredInputsForFrontend::RollDice => println!("(frontend.rs) roll dice"),
-            //             RequiredInputsForFrontend::Buy => {
-            //                 // needs to update something to display on buttons.rs the option
-            //                 println!("(frontend.rs) buy?")
-            //             }
-            //             RequiredInputsForFrontend::Mortgage => println!("(frontend.rs) mortgage"),
-            //             RequiredInputsForFrontend::Trade => println!("(frontend.rs) trade"),
-            //             RequiredInputsForFrontend::BuyHouse => println!("(frontend.rs) house"),
-            //             RequiredInputsForFrontend::SellHouse => {
-            //                 println!("(frontend.rs) sell house")
-            //             }
-            //         }
-            //     }
-            // }
         } else {
             // println!("no message");
         }

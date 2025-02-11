@@ -34,7 +34,12 @@ pub fn backend_loop(
                 update_transmitter.send(outcome).unwrap();
                 // send another sender along with outcome
             }
-            Command::BuyProperty => println!("boom"),
+            Command::BuyProperty => {
+                let outcome = board.buy_property();
+                // println!("(backend_loop.rs) property bought");
+                update_transmitter.send(outcome).unwrap();
+                // println!("(backend_loop.rs) transmitter updated");
+            }
             Command::AuctionProperty => println!("boom"),
             Command::Mortgage => println!("boom"),
             Command::Trade => println!("boom"),
