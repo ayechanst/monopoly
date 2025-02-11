@@ -1,9 +1,6 @@
 use crate::{
     bevy_logic::{player_components::FrontendPlayer, plugins::frontend_plugin::GridSize},
-    models::{
-        board::{RequiredInputsForFrontend, TurnOutcomeForFrontend},
-        player::Player,
-    },
+    models::{board::RequiredInputsForFrontend, player::Player},
     utils::space_to_coords::space_to_coords,
 };
 use bevy::prelude::*;

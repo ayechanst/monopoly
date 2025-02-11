@@ -1,4 +1,5 @@
 use crate::models::board::RequiredInputsForFrontend;
+use crate::models::spaces::space::Space;
 use crate::{
     bevy_logic::{
         player_components::FrontendPlayer,
@@ -15,9 +16,11 @@ pub fn spawn_board(
     grid_size: Res<GridSize>,
     scale_factor: Res<ScaleFactor>,
     players: Vec<Player>,
+    spaces: Vec<Space>,
 ) {
-    let board = Board::new();
-    for (index, space_ref) in board.spaces.iter().cloned().enumerate() {
+    // let board = Board::new();
+    // for (index, space_ref) in board.spaces.iter().cloned().enumerate() {
+    for (index, space_ref) in spaces.iter().cloned().enumerate() {
         let i = index as f32;
         let (x, y) = if i < 10.0 {
             (5.0 - i, -5.0)

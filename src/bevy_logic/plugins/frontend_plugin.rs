@@ -7,7 +7,7 @@ use crate::{
         },
         player_components::FrontendPlayer,
     },
-    models::board::{RequiredInputsForFrontend, TurnOutcomeForFrontend},
+    models::board::TurnOutcomeForFrontend,
     utils::backend_loop::{backend_loop, TurnOutcomeReceiver},
 };
 use bevy::prelude::*;
@@ -52,9 +52,9 @@ pub fn frontend_receiver(
     if let Ok(receiver) = update_receiver.0.try_lock() {
         if let Ok(turn_outcome) = receiver.try_recv() {
             let players = turn_outcome.board_snapshot.players;
-
+            let spaces = turn_outcome.board_snapshot.spaces;
             if players.iter().all(|player| player.position == 0) {
-                spawn_board(commands, grid_size, scale_factor, players);
+                spawn_board(commands, grid_size, scale_factor, players, spaces);
             } else {
                 update_players(players, query, grid_size, turn_outcome.required_input);
             }

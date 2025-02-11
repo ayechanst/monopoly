@@ -8,13 +8,15 @@ use super::space_text::{make_coordinates_text, make_text};
 pub type SpaceRef = Rc<RefCell<Space>>;
 
 pub fn make_space(
-    space_ref: SpaceRef,
+    // space_ref: SpaceRef,
+    space_ref: Space,
     commands: &mut Commands,
     grid_size: f32,
     scale_factor: f32,
     coordinates: (f32, f32),
 ) -> Entity {
-    let borrowed_space = space_ref.borrow();
+    // let borrowed_space = space_ref.borrow();
+    let borrowed_space = space_ref;
     let fill_color = make_color(&borrowed_space);
     let text_and_size = make_text(&borrowed_space);
     // coordinates logic
