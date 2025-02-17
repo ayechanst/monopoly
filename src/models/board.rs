@@ -60,7 +60,9 @@ impl Board {
     pub fn buy_property(&mut self) -> TurnOutcomeForFrontend {
         let index = self.get_active_player_number() - 1;
         let position = self.get_position(index);
-        if let Space::Property(mut properties) = self.spaces[position].borrow_mut().clone() {
+        let mut space_ref = self.spaces[position].borrow_mut();
+        // if let Space::Property(mut properties) = self.spaces[position].borrow_mut().clone() {
+        if let Space::Property(ref mut properties) = *space_ref {
             // if properties.is_for_sale() {
             properties.buy_property(self.players[index].clone());
             println!(
@@ -92,7 +94,8 @@ impl Board {
                         "-----properties.is_for_sale: {:?}",
                         properties.is_for_sale()
                     );
-                    debug_property(player_ref.borrow(), *properties);
+                    // debug_property(player_ref.borrow(), *properties);
+                    // debug_property(player_ref.borrow(), properties.clone());
                     println!("---Sending buy option to front end");
 
                     return TurnOutcomeForFrontend {
@@ -223,7 +226,39 @@ impl Board {
         }
     }
 
+    // pub fn snapshot(&self) -> BoardSnapshot {
+    //     BoardSnapshot {
+    //         spaces: self
+    //             .spaces
+    //             .iter()
+    //             .map(|space| space.borrow().clone())
+    //             .collect(),
+    //         players: self
+    //             .players
+    //             .iter()
+    //             .map(|player| player.borrow().clone())
+    //             .collect(),
+    //     }
+    // }
     pub fn snapshot(&self) -> BoardSnapshot {
+        println!("Taking snapshot...");
+
+        for (i, space) in self.spaces.iter().enumerate() {
+            if let Ok(space) = space.try_borrow() {
+                println!("Space {i} is borrowed safely.");
+            } else {
+                println!("Space {i} is ALREADY MUTABLY BORROWED!");
+            }
+        }
+
+        for (i, player) in self.players.iter().enumerate() {
+            if let Ok(player) = player.try_borrow() {
+                println!("Player {i} is borrowed safely.");
+            } else {
+                println!("Player {i} is ALREADY MUTABLY BORROWED!");
+            }
+        }
+
         BoardSnapshot {
             spaces: self
                 .spaces

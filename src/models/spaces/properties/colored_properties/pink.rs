@@ -13,6 +13,7 @@ use crate::{
     utils::prompts::bid,
 };
 #[derive(Debug, PartialEq, Clone, Copy)]
+// #[derive(Debug, PartialEq, Clone)]
 pub enum PinkProperty {
     StCharlesPlace { state: PropertyState },
     VermontAve { state: PropertyState },
@@ -27,12 +28,16 @@ impl PinkProperty {
         };
         let mut player = player_ref.borrow_mut();
         player.money -= cost;
-        match self {
-            PinkProperty::StCharlesPlace { state }
-            | PinkProperty::VermontAve { state }
-            | PinkProperty::ConnecticutAve { state } => *state = PropertyState::Owned,
-        }
-        player.add_property(Properties::ColoredProperty(ColoredProperties::Pink(*self)));
+        // match self {
+        //     PinkProperty::StCharlesPlace { state }
+        //     | PinkProperty::VermontAve { state }
+        //     | PinkProperty::ConnecticutAve { state } => *state = PropertyState::Owned,
+        // }
+        // player.add_property(Properties::ColoredProperty(ColoredProperties::Pink(*self)));
+        player.add_property(Properties::ColoredProperty(ColoredProperties::Pink(
+            self.clone(),
+        )));
+        self.update_property_state(player, PropertyState::Owned);
     }
     pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
         let owner_ref = self.get_owner(board).unwrap();
@@ -72,10 +77,14 @@ impl PinkProperty {
                     }
                 }
                 winner.add_property(Properties::ColoredProperty(ColoredProperties::Pink(*self)));
+                // winner.add_property(Properties::ColoredProperty(ColoredProperties::Pink(
+                //     self.clone(),
+                // )));
                 println!(
                     "Player {:?} has aquired {:?} for ${:?}",
                     winner.player_number,
                     ColoredProperties::Pink(*self),
+                    // ColoredProperties::Pink(self.clone()),
                     bid_price - 10
                 );
                 break;

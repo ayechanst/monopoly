@@ -4,7 +4,8 @@ use super::{
 };
 use crate::models::board::{Board, PlayerRef};
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+// #[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum ColoredProperties {
     Brown(BrownProperty),
     LightBlue(LightBlueProperty),

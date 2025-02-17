@@ -27,14 +27,19 @@ impl OrangeProperty {
         };
         let mut player = player_ref.borrow_mut();
         player.money -= cost;
-        match self {
-            OrangeProperty::StJamesPlace { state }
-            | OrangeProperty::TennesseeAve { state }
-            | OrangeProperty::NewYorkAve { state } => *state = PropertyState::Owned,
-        }
+        // match self {
+        //     OrangeProperty::StJamesPlace { state }
+        //     | OrangeProperty::TennesseeAve { state }
+        //     | OrangeProperty::NewYorkAve { state } => *state = PropertyState::Owned,
+        // }
+        // self.update_property_state(
+        //     RefMut::map(player_ref.borrow_mut(), |p| p),
+        //     PropertyState::Owned,
+        // );
         player.add_property(Properties::ColoredProperty(ColoredProperties::Orange(
             *self,
         )));
+        self.update_property_state(player, PropertyState::Owned);
     }
     pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
         let owner_ref = self.get_owner(board).unwrap();

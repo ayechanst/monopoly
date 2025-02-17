@@ -1,4 +1,4 @@
-use std::cell::RefMut;
+use std::{cell::RefMut, ops::DerefMut};
 
 use super::colored_properties::ColoredProperties;
 use crate::{
@@ -13,6 +13,7 @@ use crate::{
     utils::prompts::bid,
 };
 #[derive(Debug, PartialEq, Clone, Copy)]
+// #[derive(Debug, PartialEq, Clone)]
 pub enum LightBlueProperty {
     OrientalAve { state: PropertyState },
     VermontAve { state: PropertyState },
@@ -27,14 +28,40 @@ impl LightBlueProperty {
         };
         let mut player = player_ref.borrow_mut();
         player.money -= cost;
+
+        player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
+            // self.clone(),
+            *self,
+        )));
+        self.update_property_state(player, PropertyState::Owned);
+        // self.update_property_state(player_ref.borrow_mut(), PropertyState::Owned);
+    }
+    pub fn update_property_state(
+        &mut self,
+        mut player: RefMut<'_, Player>,
+        new_state: PropertyState,
+    ) {
         match self {
             LightBlueProperty::OrientalAve { state }
             | LightBlueProperty::VermontAve { state }
-            | LightBlueProperty::ConnecticutAve { state } => *state = PropertyState::Owned,
+            | LightBlueProperty::ConnecticutAve { state } => {
+                *state = new_state;
+            }
         }
-        player.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
-            *self,
-        )));
+        if let Some(property) = player.properties.iter_mut().find(|p| match p {
+            Properties::ColoredProperty(ColoredProperties::LightBlue(inner)) => inner == self,
+            _ => false,
+        }) {
+            if let Properties::ColoredProperty(ColoredProperties::LightBlue(inner)) = property {
+                match inner {
+                    LightBlueProperty::OrientalAve { state }
+                    | LightBlueProperty::VermontAve { state }
+                    | LightBlueProperty::ConnecticutAve { state } => {
+                        *state = new_state;
+                    }
+                }
+            }
+        }
     }
     pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
         let owner_ref = self.get_owner(board).unwrap();
@@ -75,11 +102,13 @@ impl LightBlueProperty {
                 }
                 winner.add_property(Properties::ColoredProperty(ColoredProperties::LightBlue(
                     *self,
+                    // self.clone(),
                 )));
                 println!(
                     "Player {:?} has aquired {:?} for ${:?}",
                     winner.player_number,
                     ColoredProperties::LightBlue(*self),
+                    // ColoredProperties::LightBlue(self.clone()),
                     bid_price - 10
                 );
                 break;
@@ -132,33 +161,6 @@ impl LightBlueProperty {
             },
         };
         self.update_property_state(player, new_state);
-    }
-    pub fn update_property_state(
-        &mut self,
-        mut player: RefMut<'_, Player>,
-        new_state: PropertyState,
-    ) {
-        match self {
-            LightBlueProperty::OrientalAve { state }
-            | LightBlueProperty::VermontAve { state }
-            | LightBlueProperty::ConnecticutAve { state } => {
-                *state = new_state;
-            }
-        }
-        if let Some(property) = player.properties.iter_mut().find(|p| match p {
-            Properties::ColoredProperty(ColoredProperties::LightBlue(inner)) => inner == self,
-            _ => false,
-        }) {
-            if let Properties::ColoredProperty(ColoredProperties::LightBlue(inner)) = property {
-                match inner {
-                    LightBlueProperty::OrientalAve { state }
-                    | LightBlueProperty::VermontAve { state }
-                    | LightBlueProperty::ConnecticutAve { state } => {
-                        *state = new_state;
-                    }
-                }
-            }
-        }
     }
     pub fn legal_house_purchase(&self, board: &Board) -> bool {
         let (oriental_ave, vermont_ave, connecticut_ave) = self.house_count(board);

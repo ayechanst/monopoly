@@ -1,7 +1,8 @@
 use crate::models::spaces::space::Space;
 
 pub fn make_text(space: &Space) -> (&str, f32) {
-    let text = match *space {
+    // let text = match *space {
+    let text = match space {
         Space::Property(properties) => ("", 0.0),
         Space::Chance => ("?", 0.6),
         Space::CommunityChest => ("!", 0.6),

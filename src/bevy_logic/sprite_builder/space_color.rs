@@ -3,7 +3,8 @@ use crate::models::spaces::space::Space;
 use bevy::prelude::*;
 
 pub fn make_color(space: &Space) -> Color {
-    let fill_color = match *space {
+    // let fill_color = match *space {
+    let fill_color = match space {
         Space::Property(properties) => match properties {
             crate::models::spaces::properties::properties::Properties::ColoredProperty(
                 colored_properties,

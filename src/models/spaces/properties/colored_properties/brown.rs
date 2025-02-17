@@ -13,6 +13,7 @@ use crate::{
     utils::prompts::bid,
 };
 #[derive(Debug, PartialEq, Clone, Copy)]
+// #[derive(Debug, PartialEq, Clone)]
 pub enum BrownProperty {
     MediterraneanAve { state: PropertyState },
     BalticAve { state: PropertyState },
@@ -21,19 +22,24 @@ pub enum BrownProperty {
 impl BrownProperty {
     pub fn buy_property(&mut self, player_ref: PlayerRef) {
         let cost = match self {
-            BrownProperty::MediterraneanAve { state } => 60,
-            BrownProperty::BalticAve { state } => 60,
+            BrownProperty::MediterraneanAve { .. } => 60,
+            BrownProperty::BalticAve { .. } => 60,
             // _ => 100,
         };
         let mut player = player_ref.borrow_mut();
         player.money -= cost;
-        match self {
-            BrownProperty::MediterraneanAve { state }
-            | BrownProperty::BalticAve { state }
-            // | BrownProperty::IllinoisAve { state } => *state = PropertyState::Owned,
-             => *state = PropertyState::Owned,
-        }
-        player.add_property(Properties::ColoredProperty(ColoredProperties::Brown(*self)));
+        // match self {
+        //     BrownProperty::MediterraneanAve { state }
+        //     | BrownProperty::BalticAve { state }
+        //     // | BrownProperty::IllinoisAve { state } => *state = PropertyState::Owned,
+        //      => *state = PropertyState::Owned,
+        // }
+        // player.add_property(Properties::ColoredProperty(ColoredProperties::Brown(*self)));
+        player.add_property(Properties::ColoredProperty(ColoredProperties::Brown(
+            // self.clone(),
+            *self,
+        )));
+        self.update_property_state(player, PropertyState::Owned);
     }
     pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
         let owner_ref = self.get_owner(board).unwrap();
@@ -67,17 +73,19 @@ impl BrownProperty {
                 winner.money -= highest_bid - 10;
                 match self {
                     BrownProperty::MediterraneanAve { state }
-                    | BrownProperty::BalticAve { state }
-                    // | BrownProperty::IllinoisAve { state } => {
-                     => {
+                    | BrownProperty::BalticAve { state } => {
                         *state = PropertyState::Owned;
                     }
                 }
                 winner.add_property(Properties::ColoredProperty(ColoredProperties::Brown(*self)));
+                // winner.add_property(Properties::ColoredProperty(ColoredProperties::Brown(
+                //     self.clone(),
+                // )));
                 println!(
                     "Player {:?} has aquired {:?} for ${:?}",
                     winner.player_number,
                     ColoredProperties::Brown(*self),
+                    // ColoredProperties::Brown(self.clone()),
                     bid_price - 10
                 );
                 break;
@@ -92,10 +100,8 @@ impl BrownProperty {
     pub fn mortgage(&mut self, player_ref: PlayerRef) {
         // TODO: cant mortgage if a property has houses on it
         let mortgage_value = match self {
-            // BrownProperty::IllinoisAve { .. } => 60,
             BrownProperty::MediterraneanAve { .. } => 350 / 2,
             BrownProperty::BalticAve { .. } => 200,
-            // _ => 50,
         };
         let mut player = player_ref.borrow_mut();
         player.money += mortgage_value;
@@ -111,26 +117,25 @@ impl BrownProperty {
             return;
         }
         let new_state = match self {
-            BrownProperty::MediterraneanAve { state }
-            | BrownProperty::BalticAve { state }
-            // | BrownProperty::IllinoisAve { state } => match state {
-            => match state {
-                PropertyState::Houses(house_count) => match house_count {
-                    HouseCount::Zero => PropertyState::Houses(HouseCount::One),
-                    HouseCount::One => PropertyState::Houses(HouseCount::Two),
-                    HouseCount::Two => PropertyState::Houses(HouseCount::Three),
-                    HouseCount::Three => PropertyState::Houses(HouseCount::Four),
-                    HouseCount::Four => PropertyState::Houses(HouseCount::Hotel),
-                    HouseCount::Hotel => {
-                        println!("Your property is already developed to the max!");
+            BrownProperty::MediterraneanAve { state } | BrownProperty::BalticAve { state } => {
+                match state {
+                    PropertyState::Houses(house_count) => match house_count {
+                        HouseCount::Zero => PropertyState::Houses(HouseCount::One),
+                        HouseCount::One => PropertyState::Houses(HouseCount::Two),
+                        HouseCount::Two => PropertyState::Houses(HouseCount::Three),
+                        HouseCount::Three => PropertyState::Houses(HouseCount::Four),
+                        HouseCount::Four => PropertyState::Houses(HouseCount::Hotel),
+                        HouseCount::Hotel => {
+                            println!("Your property is already developed to the max!");
+                            return;
+                        }
+                    },
+                    _ => {
+                        println!("You need to spread your houses out better to buy!");
                         return;
                     }
-                },
-                _ => {
-                    println!("You need to spread your houses out better to buy!");
-                    return;
                 }
-            },
+            }
         };
         self.update_property_state(player, new_state);
     }
@@ -140,10 +145,7 @@ impl BrownProperty {
         new_state: PropertyState,
     ) {
         match self {
-            BrownProperty::MediterraneanAve { state }
-            | BrownProperty::BalticAve { state }
-            // | BrownProperty::IllinoisAve { state } => {
-            => {
+            BrownProperty::MediterraneanAve { state } | BrownProperty::BalticAve { state } => {
                 *state = new_state;
             }
         }
@@ -154,9 +156,7 @@ impl BrownProperty {
             if let Properties::ColoredProperty(ColoredProperties::Brown(inner)) = property {
                 match inner {
                     BrownProperty::MediterraneanAve { state }
-                    | BrownProperty::BalticAve { state }
-                    // | BrownProperty::IllinoisAve { state } => {
-                    => {
+                    | BrownProperty::BalticAve { state } => {
                         *state = new_state;
                     }
                 }

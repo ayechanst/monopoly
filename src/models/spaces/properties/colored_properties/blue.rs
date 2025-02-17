@@ -1,141 +1,3 @@
-// use super::colored_properties::ColoredProperties;
-// use crate::models::{
-//     board::{Board, PlayerRef},
-//     player::Player,
-//     spaces::{
-//         properties::properties::Properties,
-//         space::{HouseCount, PropertyState, Space},
-//     },
-// };
-
-// #[derive(Debug, PartialEq, Clone, Copy)]
-// pub enum BlueProperty {
-//     ParkPlace { state: PropertyState },
-//     Boardwalk { state: PropertyState },
-// }
-
-// impl BlueProperty {
-//     pub fn rent_price(&self) -> i32 {
-//         match self {
-//             BlueProperty::ParkPlace { state } => {
-//                 let rent = 2;
-//                 match state {
-//                     PropertyState::Houses(house_count) => match house_count {
-//                         HouseCount::Zero => rent,
-//                         HouseCount::One => rent * 5,
-//                         HouseCount::Two => rent * 15,
-//                         HouseCount::Three => rent * 45,
-//                         HouseCount::Four => rent * 80,
-//                         HouseCount::Hotel => rent * 125,
-//                     },
-//                     _ => rent,
-//                 }
-//             }
-//             BlueProperty::Boardwalk { state } => {
-//                 let rent = 4;
-//                 match state {
-//                     PropertyState::Houses(house_count) => match house_count {
-//                         HouseCount::Zero => rent,
-//                         HouseCount::One => rent * 5,
-//                         HouseCount::Two => rent * 15,
-//                         HouseCount::Three => rent * 45,
-//                         HouseCount::Four => rent * 80,
-//                         HouseCount::Hotel => 450,
-//                     },
-//                     _ => rent,
-//                 }
-//             }
-//         }
-//     }
-
-//     pub fn get_owner(&self, board: &Board) -> Option<PlayerRef> {
-//         let players = &board.players;
-//         match self {
-//             BlueProperty::ParkPlace { state } => {
-//                 for player in players.iter() {
-//                     let properties = &player.borrow().properties;
-//                     for property in properties.iter() {
-//                         if let Properties::ColoredProperty(ColoredProperties::Blue(blue_property)) =
-//                             property
-//                         {
-//                             if blue_property == self {
-//                                 return Some(player.clone());
-//                             }
-//                         }
-//                     }
-//                 }
-//                 None
-//             }
-//             BlueProperty::Boardwalk { state } => {
-//                 for player in players.iter() {
-//                     let properties = &player.borrow().properties;
-//                     for property in properties.iter() {
-//                         if let Properties::ColoredProperty(ColoredProperties::Blue(blue_property)) =
-//                             property
-//                         {
-//                             if blue_property == self {
-//                                 return Some(player.clone());
-//                             }
-//                         }
-//                     }
-//                 }
-//                 None
-//             }
-//         }
-//     }
-
-//     pub fn for_sale(&self) -> bool {
-//         match self {
-//             BlueProperty::ParkPlace { state } => {
-//                 matches!(state, PropertyState::ForSale)
-//             }
-//             BlueProperty::Boardwalk { state } => {
-//                 matches!(state, PropertyState::ForSale)
-//             }
-//         }
-//     }
-//     pub fn buy_property(&mut self, player: PlayerRef) {
-//         match self {
-//             BlueProperty::ParkPlace { state } => {
-//                 if *state == PropertyState::ForSale {
-//                     player.borrow_mut().money -= 350;
-//                     let bought_property = Properties::ColoredProperty(ColoredProperties::Blue(
-//                         BlueProperty::ParkPlace {
-//                             state: PropertyState::Owned,
-//                         },
-//                     ));
-//                     player.borrow_mut().add_property(bought_property);
-//                 }
-//             }
-//             BlueProperty::Boardwalk { state } => {
-//                 if *state == PropertyState::ForSale {
-//                     player.borrow_mut().money -= 400;
-//                     let bought_property = Properties::ColoredProperty(ColoredProperties::Blue(
-//                         BlueProperty::Boardwalk {
-//                             state: PropertyState::Owned,
-//                         },
-//                     ));
-//                     player.borrow_mut().add_property(bought_property);
-//                 }
-//             }
-//         }
-//     }
-//     pub fn park_place() -> Self {
-//         BlueProperty::ParkPlace {
-//             state: PropertyState::ForSale,
-//         }
-//     }
-//     pub fn boardwalk() -> Self {
-//         BlueProperty::Boardwalk {
-//             state: PropertyState::ForSale,
-//         }
-//     }
-//     pub fn as_space(self) -> Space {
-//         Space::Property(Properties::ColoredProperty(ColoredProperties::Blue(self)))
-//     }
-// }
-use std::cell::RefMut;
-
 use super::colored_properties::ColoredProperties;
 use crate::{
     models::{
@@ -148,6 +10,7 @@ use crate::{
     },
     utils::prompts::bid,
 };
+use std::cell::RefMut;
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum BlueProperty {
     ParkPlace { state: PropertyState },
@@ -157,19 +20,24 @@ pub enum BlueProperty {
 impl BlueProperty {
     pub fn buy_property(&mut self, player_ref: PlayerRef) {
         let cost = match self {
-            BlueProperty::ParkPlace { state } => 350,
-            BlueProperty::Boardwalk { state } => 400,
+            BlueProperty::ParkPlace { .. } => 350,
+            BlueProperty::Boardwalk { .. } => 400,
             // _ => 100,
         };
         let mut player = player_ref.borrow_mut();
         player.money -= cost;
-        match self {
-            BlueProperty::ParkPlace { state }
-            | BlueProperty::Boardwalk { state }
-            // | BlueProperty::IllinoisAve { state } => *state = PropertyState::Owned,
-             => *state = PropertyState::Owned,
-        }
+        // match self {
+        //     BlueProperty::ParkPlace { state }
+        //     | BlueProperty::Boardwalk { state }
+        //     // | BlueProperty::IllinoisAve { state } => *state = PropertyState::Owned,
+        //      => *state = PropertyState::Owned,
+        // }
+        // self.update_property_state(
+        //     RefMut::map(player_ref.borrow_mut(), |p| p),
+        //     PropertyState::Owned,
+        // );
         player.add_property(Properties::ColoredProperty(ColoredProperties::Blue(*self)));
+        self.update_property_state(player, PropertyState::Owned);
     }
     pub fn pay_rent(&self, renter_ref: PlayerRef, board: &Board) {
         let owner_ref = self.get_owner(board).unwrap();
